@@ -14,7 +14,13 @@
     "paths": "Application Paths",
     "documents": "Documents",
     "track": "Track",
-    "skip": "Skip to main content"
+    "skip": "Skip to main content",
+    "voiceGuide": "Voice",
+    "voiceOn": "ON",
+    "voiceOff": "OFF",
+    "voiceGuideOnTitle": "Turn ON voice guidance (cursor reading)",
+    "voiceGuideOffTitle": "Turn OFF voice guidance",
+    "voiceGuideAnnounceOn": "Voice guidance enabled. Move your cursor over any item to hear it."
   },
   "landing": {
     "heroBadge": "Government schemes, made understandable",
@@ -71,7 +77,8 @@
     "s4d": "Get document help and track every application stage.",
     "voiceBannerTitle": "Prefer listening instead of reading?",
     "voiceBannerDesc": "Tap the speaker icon anywhere to hear guidance in your language.",
-    "voiceBannerBtn": "Try voice guidance"
+    "voiceBannerBtn": "Try voice guidance",
+    "voiceBannerBtnActive": "Voice Guidance: ON — Click to stop"
   },
   "form": {
     "title": "Let’s find the right scheme for you",

@@ -1,12 +1,150 @@
-import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { useI18n } from "../i18n.jsx";
+import { useAppState } from "../state.jsx";
+import { speak, cancelSpeech, extractReadableText } from "../speech.js";
 import Icon from "./Icon.jsx";
 import Sarthi from "./Sarthi.jsx";
 
 export default function Layout({ children }) {
-  const { t, toggle, lang } = useI18n();
+  const { t, toggle, lang, speakLang } = useI18n();
+  const { voiceGuideEnabled, toggleVoiceGuide } = useAppState();
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+
+  const debounceTimerRef = useRef(null);
+  const lastElementRef = useRef(null);
+  const activeHighlightRef = useRef(null);
+  const isAnnouncingRef = useRef(false);
+  const isFirstMountRef = useRef(true);
+
+  const langRef = useRef(lang);
+  langRef.current = lang;
+  const speakLangRef = useRef(speakLang);
+  speakLangRef.current = speakLang;
+  const tRef = useRef(t);
+  tRef.current = t;
+
+  // Announce short confirmation when turned ON, cancel immediately when turned OFF
+  useEffect(() => {
+    if (isFirstMountRef.current) {
+      isFirstMountRef.current = false;
+      return;
+    }
+    if (voiceGuideEnabled) {
+      isAnnouncingRef.current = true;
+      cancelSpeech();
+      if (activeHighlightRef.current) {
+        activeHighlightRef.current.classList.remove("voice-reading-active");
+        activeHighlightRef.current = null;
+      }
+      speak(tRef.current("nav.voiceGuideAnnounceOn"), speakLangRef.current, {
+        onEnd: () => {
+          isAnnouncingRef.current = false;
+        },
+      });
+      const timer = setTimeout(() => {
+        isAnnouncingRef.current = false;
+      }, 4000);
+      return () => clearTimeout(timer);
+    } else {
+      isAnnouncingRef.current = false;
+      cancelSpeech();
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      if (activeHighlightRef.current) {
+        activeHighlightRef.current.classList.remove("voice-reading-active");
+        activeHighlightRef.current = null;
+      }
+      lastElementRef.current = null;
+    }
+  }, [voiceGuideEnabled]);
+
+  // Cancel speech and clear highlight when navigating between pages
+  useEffect(() => {
+    cancelSpeech();
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    if (activeHighlightRef.current) {
+      activeHighlightRef.current.classList.remove("voice-reading-active");
+      activeHighlightRef.current = null;
+    }
+    lastElementRef.current = null;
+  }, [location.pathname]);
+
+  // Global cursor (mouseover) & focusin listeners for hover-to-speak
+  useEffect(() => {
+    if (!voiceGuideEnabled) return;
+
+    const handleInteraction = (target) => {
+      if (isAnnouncingRef.current) return;
+      if (!target || !target.closest) return;
+
+      const el = target.closest(
+        "button, a, h1, h2, h3, h4, p, label, input, select, textarea, li, [data-speak]"
+      );
+      if (!el) return;
+
+      if (
+        el.getAttribute("aria-hidden") === "true" &&
+        !el.getAttribute("aria-label") &&
+        !el.getAttribute("data-speak")
+      ) {
+        return;
+      }
+
+      if (el === lastElementRef.current) return;
+      lastElementRef.current = el;
+
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+
+      const text = extractReadableText(el, langRef.current);
+      if (!text) return;
+
+      debounceTimerRef.current = setTimeout(() => {
+        cancelSpeech();
+
+        if (activeHighlightRef.current && activeHighlightRef.current !== el) {
+          activeHighlightRef.current.classList.remove("voice-reading-active");
+        }
+
+        el.classList.add("voice-reading-active");
+        activeHighlightRef.current = el;
+
+        speak(text, speakLangRef.current, {
+          onEnd: () => {
+            if (activeHighlightRef.current === el) {
+              el.classList.remove("voice-reading-active");
+              activeHighlightRef.current = null;
+            }
+          },
+        });
+      }, 200);
+    };
+
+    const onMouseOver = (e) => handleInteraction(e.target);
+    const onFocusIn = (e) => handleInteraction(e.target);
+
+    document.addEventListener("mouseover", onMouseOver, { passive: true });
+    document.addEventListener("focusin", onFocusIn, { passive: true });
+
+    return () => {
+      document.removeEventListener("mouseover", onMouseOver);
+      document.removeEventListener("focusin", onFocusIn);
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      if (activeHighlightRef.current) {
+        activeHighlightRef.current.classList.remove("voice-reading-active");
+        activeHighlightRef.current = null;
+      }
+      lastElementRef.current = null;
+    };
+  }, [voiceGuideEnabled]);
 
   const navItems = [
     { to: "/", label: t("nav.home"), icon: "home" },
@@ -62,8 +200,31 @@ export default function Layout({ children }) {
             ))}
           </nav>
 
-          {/* Actions: Clean EN / हिं Toggle and Mobile Menu Button */}
+          {/* Actions: Voice Guide Speaker Toggle, Clean EN / हिं Toggle and Mobile Menu Button */}
           <div className="header-actions">
+            <button
+              className={`voice-guide-btn ${voiceGuideEnabled ? "active" : ""}`}
+              type="button"
+              onClick={() => toggleVoiceGuide()}
+              aria-pressed={voiceGuideEnabled}
+              aria-label={
+                voiceGuideEnabled
+                  ? t("nav.voiceGuideOffTitle")
+                  : t("nav.voiceGuideOnTitle")
+              }
+              title={
+                voiceGuideEnabled
+                  ? t("nav.voiceGuideOffTitle")
+                  : t("nav.voiceGuideOnTitle")
+              }
+            >
+              <Icon name="speaker" size={17} />
+              <span className="voice-guide-label">{t("nav.voiceGuide")}</span>
+              <span className="voice-guide-status">
+                {voiceGuideEnabled ? t("nav.voiceOn") : t("nav.voiceOff")}
+              </span>
+            </button>
+
             <button
               className="language-btn"
               type="button"

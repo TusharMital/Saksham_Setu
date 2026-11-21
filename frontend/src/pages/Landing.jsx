@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
 import Icon from "../components/Icon.jsx";
 import { useI18n } from "../i18n.jsx";
-import { speak } from "../speech.js";
 
 export default function Landing() {
-  const { t, speakLang } = useI18n();
+  const { t } = useI18n();
 
   const steps = [
     { num: "01", icon: "user", title: t("landing.s1"), desc: t("landing.s1d") },
@@ -165,34 +164,6 @@ export default function Landing() {
               <Icon name="arrow" size={20} />
             </Link>
           </div>
-        </div>
-      </section>
-
-      {/* Voice Support Banner */}
-      <section className="page-shell-compact">
-        <div className="support-banner">
-          <div className="support-copy">
-            <span className="support-icon">
-              <Icon name="speaker" size={24} />
-            </span>
-            <p>
-              <strong>{t("landing.voiceBannerTitle")}</strong>
-              <small>{t("landing.voiceBannerDesc")}</small>
-            </p>
-          </div>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() =>
-              speak(
-                `${t("landing.voiceBannerTitle")} ${t("landing.voiceBannerDesc")} ${t("landing.promise")}`,
-                speakLang
-              )
-            }
-          >
-            <Icon name="speaker" size={18} />
-            <span>{t("landing.voiceBannerBtn")}</span>
-          </button>
         </div>
       </section>
     </div>

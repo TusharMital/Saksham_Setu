@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo, useState } from "react";
 
 const KEY = "ss-form";
+const VOICE_KEY = "ss-voice-guide";
 const empty = {
   full_name: "",
   mobile: "",
@@ -38,6 +39,13 @@ export function AppStateProvider({ children }) {
   const [scheme, setScheme] = useState(null);
   const [branch, setBranch] = useState(null);
   const [refNo, setRefNo] = useState("");
+  const [voiceGuideEnabled, setVoiceGuideEnabledState] = useState(() => {
+    try {
+      return localStorage.getItem(VOICE_KEY) === "true";
+    } catch {
+      return false;
+    }
+  });
 
   const updateForm = (patch) => {
     setForm((prev) => {
@@ -47,9 +55,37 @@ export function AppStateProvider({ children }) {
     });
   };
 
+  const setVoiceGuideEnabled = (val) => {
+    setVoiceGuideEnabledState((prev) => {
+      const next = typeof val === "function" ? val(prev) : typeof val === "boolean" ? val : !prev;
+      try {
+        localStorage.setItem(VOICE_KEY, String(next));
+      } catch {}
+      return next;
+    });
+  };
+
+  const toggleVoiceGuide = (forceState) => {
+    setVoiceGuideEnabled((prev) => (typeof forceState === "boolean" ? forceState : !prev));
+  };
+
   const value = useMemo(
-    () => ({ form, updateForm, result, setResult, scheme, setScheme, branch, setBranch, refNo, setRefNo }),
-    [form, result, scheme, branch, refNo]
+    () => ({
+      form,
+      updateForm,
+      result,
+      setResult,
+      scheme,
+      setScheme,
+      branch,
+      setBranch,
+      refNo,
+      setRefNo,
+      voiceGuideEnabled,
+      setVoiceGuideEnabled,
+      toggleVoiceGuide,
+    }),
+    [form, result, scheme, branch, refNo, voiceGuideEnabled]
   );
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
 }
