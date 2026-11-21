@@ -1,0 +1,137 @@
+openapi: 3.0.3
+info:
+  title: Saksham Setu API
+  description: Backend APIs for Saksham Setu (साक्षम सेतु) GovTech loan recommendation platform.
+  version: 1.0.0
+paths:
+  /api/recommend/:
+    post:
+      summary: Recommend schemes based on applicant criteria
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: List of accepted (scored) and rejected schemes.
+  /api/schemes/:
+    get:
+      summary: Retrieve all loan schemes
+      responses:
+        '200':
+          description: All schemes in the system.
+  /api/branches/:
+    get:
+      summary: Retrieve ranked partner branches by location and scheme
+      parameters:
+        - name: scheme
+          in: query
+          schema:
+            type: string
+        - name: lat
+          in: query
+          schema:
+            type: number
+        - name: lng
+          in: query
+          schema:
+            type: number
+        - name: pin
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ranked branches with health checks.
+  /api/emi/:
+    post:
+      summary: Calculate loan EMI and amortization schedule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: EMI calculation and amortization schedule.
+  /api/applications/:
+    post:
+      summary: Create a new loan application draft
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: Created application.
+  /api/applications/{ref}/:
+    get:
+      summary: Get application status and timeline by reference number
+      parameters:
+        - name: ref
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Application details and timeline.
+        '404':
+          description: Application not found.
+  /api/applications/{ref}/pdf/:
+    get:
+      summary: Download summary PDF for an application
+      parameters:
+        - name: ref
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ReportLab PDF stream.
+  /api/chat/:
+    post:
+      summary: Send query to Sarthi chatbot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message:
+                  type: string
+                history:
+                  type: array
+                language:
+                  type: string
+      responses:
+        '200':
+          description: Assistant reply.
+        '400':
+          description: Validation error.
+        '401':
+          description: Groq authentication missing.
+        '429':
+          description: Rate limited.
+  /api/pin-lookup/:
+    get:
+      summary: Look up latitude/longitude by PIN code
+      parameters:
+        - name: pin
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Coordinates and place name.
+        '404':
+          description: PIN not found.
