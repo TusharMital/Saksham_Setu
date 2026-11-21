@@ -351,3 +351,18 @@ What failed or was missing: None (protected docs and `.env` stayed untouched).
 Did it follow the rules? Yes.
 Next prompt it led to: Step 6 local end-to-end walkthrough and live browser testing.
 Screenshot file names: `docs/03_AI_Tools/p0c_steps2to5_build.png`, `docs/03_AI_Tools/p0c_steps2to5_tests.png`
+
+
+### P4 | Bolt.new, Figma & Antigravity | Role-based & Multi-Tool UI/UX Prompting
+Date: 2026-11-21
+Run by: Bhumi (25bcon2360)
+Prompt (exact text): Generated 8-page GovTech UI prototypes in Bolt.new and Figma (Saffron/White/Green, 360px mobile-first, 16px+ text, 48px+ targets), then prompted Antigravity as a senior GovTech & Indian Fintech UI/UX engineer to combine the best of both into `Saksham_Setu/frontend/` with interactive micro-interactions, real-time validation ticks, Chart.js, CartoDB Leaflet map, and full `en.json`/`hi.json` + Django API wiring without touching backend or protected files.
+Output summary (3 lines):
+- Created `Icon.jsx` and upgraded all 8 pages, `Layout.jsx`, `HelpField.jsx`, `Sarthi.jsx`, `index.css`, and `en.json`/`hi.json`.
+- Preserved all real Django API integrations (`/api/recommend/`, `/api/emi/`, `/api/branches/`, `/api/applications/`, `/api/chat/`) and `speech.js` voice controls.
+- Rebuilt frontend (`vite build`), ran `collectstatic`, and passed 25/25 automated tests.
+What worked: Clean GovTech design, live validation ticks, interactive sliders/checklist, 25/25 tests passing.
+What failed or was missing: Found 3 real UI bugs during local walkthrough: (1) CartoDB map tiles show "API KEY REQUIRED" + broken Leaflet marker pins, (2) "Best for You" badge clipped on Results card #1, (3) slight top spacing overlap on `/apply`.
+Did it follow the rules? Yes (modified `frontend/` only; `.env` and protected docs untouched).
+Next prompt it led to: P8a (fixing the 3 real UI/map bugs found in walkthrough).
+Screenshot file names: `docs/04_Prompt_Improvements/ui_before.png`, `docs/03_AI_Tools/bolt_ui_output_1.png` to `_8.png`, `docs/03_AI_Tools/figma_ui_output.png` to `_5.png`
