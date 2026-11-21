@@ -322,3 +322,19 @@ and wait for me to say "continue".
 **Next prompt it led to:** P0c (answers to its questions), then Step 1 (migrations).
 
 **Screenshots:** docs/02_Initial_Prompt/p0b_handover_prompt.png, docs/03_AI_Tools/p0b_antigravity_audit_*.png
+
+
+### P0c (Step 1) | Antigravity | Constraint-based & Step-by-step Prompting
+Date: 2026-11-21
+Run by: Tushar (25bcon2455)
+Prompt (exact text): Answered Antigravity's 5 audit questions (keep .env manual, keep demo seed data per spec, short openapi.yaml/CHANGELOG.md, unified Django server, no extra PDF fields) and instructed: "Go ahead with Step 1 only (migrations). Tell me what changed, the exact test commands, and wait for confirmation."
+Output summary (3 lines):
+- Generated `core/migrations/0001_initial.py` for LoanScheme, Branch, and Application models.
+- Applied migrations to SQLite (`db.sqlite3`) and created short `CHANGELOG.md` and `openapi.yaml`.
+- Provided verification commands and paused for confirmation before Step 2.
+What worked: Migrations applied cleanly; all 3 core tables created; all 9 unit tests passed.
+What failed or was missing: None in Step 1.
+Did it follow the rules? Yes (did not touch `.env` or protected docs; stopped after Step 1).
+Next prompt it led to: Confirmation to proceed to Step 2 (`seed_data`).
+Screenshot file names: `docs/03_AI_Tools/p0c_step1_migrations.png`, `docs/03_AI_Tools/p0c_step1_tests.png`
+
