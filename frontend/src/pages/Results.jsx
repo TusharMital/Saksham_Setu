@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Icon from "../components/Icon.jsx";
 import { api } from "../api.js";
 import { useAppState } from "../state.jsx";
 import { useI18n } from "../i18n.jsx";
@@ -8,7 +9,9 @@ export default function Results() {
   const { t } = useI18n();
   const { result, form, setScheme } = useAppState();
   const [emis, setEmis] = useState({});
+  const [showRejected, setShowRejected] = useState(false);
   const navigate = useNavigate();
+
   const top = result?.top || [];
   const rejected = result?.rejected || [];
 
@@ -16,84 +19,194 @@ export default function Results() {
     top.forEach(async (s) => {
       try {
         const data = await api.emi({
-          amount: Number(form.loan_amount),
+          amount: Number(form.loan_amount || 500000),
           annual_rate: s.interest_rate,
           tenure_months: s.tenure_months,
           moratorium_months: s.moratorium_months,
         });
         setEmis((prev) => ({ ...prev, [s.code]: data.monthly_emi }));
       } catch {
-        /* keep empty */
+        /* ignore */
       }
     });
   }, [top, form.loan_amount]);
 
   if (!result) {
     return (
-      <p>
-        {t("results.empty")} <a href="/form">{t("nav.find")}</a>
-      </p>
+      <div className="page-shell text-center" style={{ padding: "4rem 1rem" }}>
+        <h2>{t("results.empty")}</h2>
+        <p style={{ color: "var(--slate)", margin: "1rem 0 2rem" }}>
+          Please complete the 3-step eligibility check first.
+        </p>
+        <button className="btn btn-primary btn-lg" type="button" onClick={() => navigate("/form")}>
+          <Icon name="search" size={20} />
+          <span>{t("nav.find")}</span>
+        </button>
+      </div>
     );
   }
 
-  return (
-    <section>
-      <h1>{t("results.title")}</h1>
-      {top.length === 0 ? <p>{t("results.empty")}</p> : null}
-      <div className="grid-3">
-        {top.map((s) => (
-          <article key={s.code} className={`card scheme-card ${s.best ? "best" : ""}`}>
-            {s.best ? <span className="badge">{t("results.best")}</span> : null}
-            <h2>
-              {s.code} — {s.name}
-            </h2>
-            <p>{s.reason}</p>
-            <p>
-              {t("results.score")}: {s.score}
-            </p>
-            <ul>
-              <li>
-                {t("results.interest")}: {s.interest_rate}%
-              </li>
-              <li>
-                {t("results.maxLoan")}: Rs {Number(s.max_loan).toLocaleString("en-IN")}
-              </li>
-              <li>
-                {t("results.subsidy")}: {s.subsidy_percent}%
-              </li>
-              <li>
-                {t("results.tenure")}: {s.tenure_months} / {t("results.moratorium")}: {s.moratorium_months}
-              </li>
-              <li>
-                {t("results.emi")}: {emis[s.code] ? `Rs ${emis[s.code]}` : "…"}
-              </li>
-            </ul>
-            <button
-              className="btn btn-primary"
-              type="button"
-              onClick={() => {
-                setScheme(s);
-                navigate("/apply");
-              }}
-            >
-              {t("results.choose")}
-            </button>
-          </article>
-        ))}
+  const metricRow = (iconName, label, value, highlightColor) => (
+    <div className="metric-row">
+      <span className="metric-icon">
+        <Icon name={iconName} size={16} />
+      </span>
+      <div className="metric-content">
+        <small>{label}</small>
+        <strong style={highlightColor ? { color: highlightColor } : undefined}>{value}</strong>
       </div>
-      <details className="rejected">
-        <summary>{t("results.rejectedTitle")}</summary>
-        <ul>
-          {rejected.map((s) => (
-            <li key={s.code}>
-              <strong>
-                {s.code} — {s.name}:
-              </strong>{" "}
-              {s.reason}
-            </li>
-          ))}
-        </ul>
-      </details>
-    </section>
+    </div>
+  );
+
+  return (
+    <div className="page-shell">
+      {/* Results Header + Profile Chip */}
+      <div className="results-head">
+        <div className="page-title">
+          <span className="eyebrow">YOUR RESULTS</span>
+          <h1>{t("results.title", { count: String(top.length) })}</h1>
+          <p>{t("results.subtitle")}</p>
+        </div>
+
+        <div className="profile-chip">
+          <Icon name="user" size={16} />
+          <div>
+            <span>Profile: </span>
+            <strong>
+              {form.state} • {form.district} • ₹{Number(form.loan_amount || 0).toLocaleString("en-IN")}
+            </strong>
+          </div>
+          <button type="button" onClick={() => navigate("/form")}>
+            {t("results.editProfile")}
+          </button>
+        </div>
+      </div>
+
+      {/* 3-Column Comparison Grid */}
+      <div className="scheme-grid">
+        {top.map((s, idx) => {
+          const isBest = idx === 0 || s.best;
+          const scorePercent = s.score || 90 - idx * 5;
+          const emiVal = emis[s.code] ? `₹${Number(emis[s.code]).toLocaleString("en-IN")}` : "Calculating...";
+
+          return (
+            <article
+              key={s.code}
+              className={`scheme-card ${isBest ? "featured" : ""}`}
+            >
+              {isBest && (
+                <div className="best-badge-top">
+                  <Icon name="award" size={15} />
+                  <span>{t("results.best")}</span>
+                </div>
+              )}
+
+              <div className={`scheme-top-bar ${isBest ? "green" : idx === 1 ? "saffron" : "navy"}`}>
+                <span className="scheme-badge-code">{s.code}</span>
+                <small className="scheme-match-score">
+                  <Icon name="checkCircle" size={13} /> {scorePercent}% {t("results.score")}
+                </small>
+              </div>
+
+              <div className="scheme-body">
+                <div className="scheme-logo">
+                  <span className="logo-box">
+                    <Icon name="bank" size={22} />
+                  </span>
+                  <div>
+                    <h2>{s.name}</h2>
+                    <small>Government of India • NSFDC</small>
+                  </div>
+                </div>
+
+                <div className="why-box">
+                  <Icon name="checkCircle" size={16} />
+                  <p>{s.reason || "Matched with high priority for your sector and background."}</p>
+                </div>
+
+                <div className="metrics-list">
+                  {metricRow("percent", t("results.interest"), `${s.interest_rate}% p.a.`, "var(--forest)")}
+                  {metricRow("wallet", t("results.maxLoan"), `₹${Number(s.max_loan).toLocaleString("en-IN")}`)}
+                  {metricRow("award", t("results.subsidy"), `${s.subsidy_percent}% margin money`, "var(--saffron)")}
+                  {metricRow("calendar", t("results.tenure"), `${s.tenure_months}m tenure (${s.moratorium_months}m moratorium)`)}
+                  {metricRow("calc", t("results.emi"), `${emiVal} / month`, "var(--saffron-dark)")}
+                </div>
+
+                <button
+                  type="button"
+                  className="btn btn-primary full"
+                  style={{ marginTop: "1.25rem" }}
+                  onClick={() => {
+                    setScheme(s);
+                    navigate("/calculator");
+                  }}
+                >
+                  <span>{t("results.choose")}</span>
+                  <Icon name="arrow" size={18} />
+                </button>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      <p className="fine-print">{t("results.indicativeNote")}</p>
+
+      {/* Next Step Banner */}
+      <section className="next-banner">
+        <div className="banner-copy">
+          <span className="banner-icon">
+            <Icon name="bank" size={24} />
+          </span>
+          <p>
+            <strong>{t("results.nextStep")}</strong>
+            <small>{t("results.findBanksNear")}</small>
+          </p>
+        </div>
+        <Link to="/locator" className="btn btn-secondary">
+          <span>{t("results.findBankBtn")}</span>
+          <Icon name="arrow" size={18} />
+        </Link>
+      </section>
+
+      {/* Collapsible Rejected Schemes Section */}
+      {rejected.length > 0 && (
+        <section className="rejected-section">
+          <button
+            type="button"
+            className="rejected-toggle-bar"
+            onClick={() => setShowRejected(!showRejected)}
+            aria-expanded={showRejected}
+          >
+            <span className="rejected-head-left">
+              <span className="rejected-icon-wrap">
+                <Icon name="close" size={18} />
+              </span>
+              <div>
+                <strong>{t("results.rejectedTitle")}</strong>
+                <small>{t("results.rejectedSubtitle", { count: String(rejected.length) })}</small>
+              </div>
+            </span>
+            <Icon name={showRejected ? "close" : "chevronDown"} size={20} />
+          </button>
+
+          {showRejected && (
+            <div className="rejected-list-card">
+              {rejected.map((r) => (
+                <div key={r.code} className="rejected-item">
+                  <div className="rejected-item-title">
+                    <span className="badge-pill">{r.code}</span>
+                    <strong>{r.name}</strong>
+                  </div>
+                  <p className="rejected-reason">
+                    <span className="reason-tag">Reason:</span> {r.reason}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+    </div>
   );
 }
