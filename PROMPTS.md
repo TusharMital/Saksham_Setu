@@ -338,3 +338,16 @@ Did it follow the rules? Yes (did not touch `.env` or protected docs; stopped af
 Next prompt it led to: Confirmation to proceed to Step 2 (`seed_data`).
 Screenshot file names: `docs/03_AI_Tools/p0c_step1_migrations.png`, `docs/03_AI_Tools/p0c_step1_tests.png`
 
+### P0c (Steps 2–5) | Antigravity | Chain & Constraint-based Prompting
+Date: 2026-11-21
+Run by: Tushar (25bcon2455)
+Prompt (exact text): "Confirmed, Step 1 passed (migrations applied, 3 core tables created, 9/9 tests OK). To save time, please execute Steps 2, 3, 4, and 5 together in order: Step 2: Run `python manage.py seed_data` (verify 9 schemes, 27 branches, 4 applications). Step 3: Remove the unused `scheme_to_dict` import in `core/views.py` and add API integration tests for all endpoints, then run `python manage.py test`. Step 4: Install frontend dependencies if needed and run `npm --prefix frontend run build` to create `frontend/dist`. Step 5: Run `python manage.py collectstatic --noinput` and verify the unified Django server can serve `/` and `/api/schemes/`. Do not touch `.env`, `PROMPTS.md`, `README.md`, `LICENSE`, or `docs/`."
+Output summary (3 lines):
+- Seeded SQLite with 9 schemes, 28 branches, and 4 sample applications (`SS-2026-10001` to `10004`).
+- Removed unused import in `core/views.py` and added API integration tests (25/25 tests passing).
+- Built React frontend into `frontend/dist`, ran `collectstatic` (166 files), and verified `/` and `/api/schemes/`.
+What worked: Full backend + frontend unified build and all 25 unit/integration tests passed cleanly.
+What failed or was missing: None (protected docs and `.env` stayed untouched).
+Did it follow the rules? Yes.
+Next prompt it led to: Step 6 local end-to-end walkthrough and live browser testing.
+Screenshot file names: `docs/03_AI_Tools/p0c_steps2to5_build.png`, `docs/03_AI_Tools/p0c_steps2to5_tests.png`
