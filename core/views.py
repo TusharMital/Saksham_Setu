@@ -9,7 +9,7 @@ from core.emi import calculate_emi
 from core.geo import coords_from_pin, rank_branches
 from core.models import Application, Branch, LoanScheme
 from core.pdf_generator import generate_application_pdf
-from core.recommender import recommend, scheme_to_dict
+from core.recommender import recommend
 from core.serializers import ApplicationSerializer, LoanSchemeSerializer
 from core.validation import validate_applicant, validate_emi_payload
 

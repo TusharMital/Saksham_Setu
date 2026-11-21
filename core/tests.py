@@ -205,3 +205,160 @@ class ChatApiTests(TestCase):
         self.assertEqual(res.status_code, 400)
         self.assertIn("message", res.data)
         self.assertTrue(res.data.get("error"))
+
+    def test_message_too_long_returns_400(self):
+        client = APIClient()
+        res = client.post("/api/chat/", {"message": "x" * 501, "language": "en"}, format="json")
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(res.data.get("code"), "too_long")
+
+
+class ApiIntegrationTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        from core.models import Application, Branch, LoanScheme
+        self.scheme = LoanScheme.objects.create(
+            code="MSY",
+            name="Mahila Samriddhi Yojana",
+            max_loan=100000,
+            min_loan=10000,
+            interest_rate=4.0,
+            subsidy_percent=15,
+            finance_percent=95,
+            tenure_months=36,
+            moratorium_months=3,
+            income_ceiling=500000,
+            min_age=18,
+            max_age=60,
+            applicant_types=["individual", "shg"],
+            states_supported=["all"],
+            women_only=True,
+            pwd_only=False,
+            sectors=["trade", "service"],
+            description="Women micro-credit demo",
+            documents=["Caste certificate", "Aadhaar"],
+        )
+        self.branch = Branch.objects.create(
+            name="ANUPEKSHA (Rajasthan SCA)",
+            partner_type="SCA",
+            state="Rajasthan",
+            city="Jaipur",
+            address="Demo office, C-Scheme, Jaipur",
+            phone="0141-2220001",
+            lat=26.892,
+            lng=75.8038,
+            schemes_supported=["MSY"],
+            fund_quota_crore=50,
+            npa_percent=3.2,
+            status="Active",
+        )
+        self.app = Application.objects.create(
+            ref_no="SS-2026-10001",
+            applicant_name="Sunita Meghwal",
+            scheme_code="MSY",
+            partner="ANUPEKSHA (Rajasthan SCA)",
+            stage="Decision",
+            status="approved",
+            pending_document="",
+            rejection_reason="",
+            fix_suggestion="",
+            payload={"loan_amount": 80000, "state": "Rajasthan", "mobile": "9876543210"},
+        )
+
+    def test_schemes_list(self):
+        res = self.client.get("/api/schemes/")
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(res.data.get("demo"))
+        self.assertTrue(any(s["code"] == "MSY" for s in res.data["schemes"]))
+
+    def test_recommend_endpoint_success(self):
+        res = self.client.post("/api/recommend/", woman_rajasthan(), format="json")
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(res.data.get("demo"))
+        self.assertIn("accepted", res.data)
+        self.assertIn("rejected", res.data)
+
+    def test_recommend_endpoint_validation_error(self):
+        bad_data = woman_rajasthan()
+        bad_data["mobile"] = "123"  # invalid mobile
+        res = self.client.post("/api/recommend/", bad_data, format="json")
+        self.assertEqual(res.status_code, 400)
+        self.assertIn("mobile", res.data)
+
+    def test_branches_endpoint_with_lat_lng(self):
+        res = self.client.get("/api/branches/?lat=26.9124&lng=75.7873&scheme=MSY")
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(res.data.get("demo"))
+        self.assertTrue(len(res.data["branches"]) > 0)
+        first = res.data["branches"][0]
+        self.assertIn("branch_score", first)
+        self.assertIn("health", first)
+
+    def test_branches_endpoint_with_pin(self):
+        res = self.client.get("/api/branches/?pin=302001&scheme=MSY")
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(len(res.data["branches"]) > 0)
+
+    def test_branches_endpoint_missing_location(self):
+        res = self.client.get("/api/branches/")
+        self.assertEqual(res.status_code, 400)
+        self.assertIn("detail", res.data)
+
+    def test_emi_endpoint_success(self):
+        payload = {"amount": 500000, "annual_rate": 6, "tenure_months": 60, "moratorium_months": 0}
+        res = self.client.post("/api/emi/", payload, format="json")
+        self.assertEqual(res.status_code, 200)
+        self.assertAlmostEqual(res.data["monthly_emi"], 9666, delta=2)
+        self.assertEqual(len(res.data["schedule"]), 60)
+
+    def test_emi_endpoint_validation_error(self):
+        bad_payload = {"amount": -500, "annual_rate": 6, "tenure_months": 60}
+        res = self.client.post("/api/emi/", bad_payload, format="json")
+        self.assertEqual(res.status_code, 400)
+
+    def test_application_create(self):
+        payload = {
+            "applicant_name": "Radha Rani",
+            "scheme_code": "MSY",
+            "partner": "ANUPEKSHA (Rajasthan SCA)",
+            "mobile": "9876543210",
+        }
+        res = self.client.post("/api/applications/", payload, format="json")
+        self.assertEqual(res.status_code, 201)
+        self.assertIn("ref_no", res.data)
+        self.assertEqual(res.data["applicant_name"], "Radha Rani")
+
+    def test_application_detail_found(self):
+        res = self.client.get("/api/applications/SS-2026-10001/")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.data["application"]["applicant_name"], "Sunita Meghwal")
+        self.assertEqual(len(res.data["timeline"]), 4)
+
+    def test_application_detail_not_found(self):
+        res = self.client.get("/api/applications/NONEXISTENT/")
+        self.assertEqual(res.status_code, 404)
+
+    def test_application_pdf_download(self):
+        res = self.client.get("/api/applications/SS-2026-10001/pdf/")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res["Content-Type"], "application/pdf")
+        self.assertTrue(res.content.startswith(b"%PDF"))
+
+    def test_pin_lookup_found(self):
+        res = self.client.get("/api/pin-lookup/?pin=302001")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.data["place"], "Jaipur")
+
+    def test_pin_lookup_not_found(self):
+        res = self.client.get("/api/pin-lookup/?pin=999999")
+        self.assertEqual(res.status_code, 404)
+
+    def test_spa_fallback_serves_index(self):
+        res = self.client.get("/")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn(b"id=\"root\"", res.content)
+        # Also verify client-side route fallback works
+        res_route = self.client.get("/locator")
+        self.assertEqual(res_route.status_code, 200)
+        self.assertIn(b"id=\"root\"", res_route.content)
+
