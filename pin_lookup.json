@@ -1,0 +1,22 @@
+{
+  "302001": {"lat": 26.9124, "lng": 75.7873, "place": "Jaipur"},
+  "302002": {"lat": 26.915, "lng": 75.81, "place": "Jaipur MI Road"},
+  "302004": {"lat": 26.899, "lng": 75.826, "place": "Jaipur Raja Park"},
+  "302020": {"lat": 26.858, "lng": 75.764, "place": "Jaipur Mansarovar"},
+  "302017": {"lat": 26.854, "lng": 75.818, "place": "Jaipur Malviya Nagar"},
+  "226001": {"lat": 26.8467, "lng": 80.9462, "place": "Lucknow"},
+  "226010": {"lat": 26.866, "lng": 81.0004, "place": "Lucknow Gomti Nagar"},
+  "226005": {"lat": 26.85, "lng": 80.92, "place": "Lucknow Aminabad"},
+  "225001": {"lat": 26.94, "lng": 81.19, "place": "Barabanki"},
+  "600001": {"lat": 13.0827, "lng": 80.2707, "place": "Chennai"},
+  "600035": {"lat": 13.0368, "lng": 80.252, "place": "Chennai Nandanam"},
+  "600017": {"lat": 13.04, "lng": 80.233, "place": "Chennai T Nagar"},
+  "600040": {"lat": 13.087, "lng": 80.217, "place": "Chennai Anna Nagar"},
+  "631501": {"lat": 12.834, "lng": 79.7036, "place": "Kanchipuram"},
+  "110001": {"lat": 28.6139, "lng": 77.209, "place": "New Delhi"},
+  "400001": {"lat": 18.9388, "lng": 72.8354, "place": "Mumbai Fort"},
+  "560001": {"lat": 12.9784, "lng": 77.5946, "place": "Bengaluru"},
+  "700001": {"lat": 22.5726, "lng": 88.3639, "place": "Kolkata"},
+  "160017": {"lat": 30.7333, "lng": 76.7794, "place": "Chandigarh"},
+  "680001": {"lat": 10.5276, "lng": 76.2144, "place": "Thrissur"}
+}

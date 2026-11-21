@@ -221,3 +221,16 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Node / Vite frontend
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Django collected static and local media
+staticfiles/
+media/
+
+# Local env (never commit secrets)
+.env.local
+*.pem

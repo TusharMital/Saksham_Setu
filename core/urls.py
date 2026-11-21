@@ -1,0 +1,15 @@
+from django.urls import path
+
+from core import views
+
+urlpatterns = [
+    path("recommend/", views.RecommendView.as_view()),
+    path("schemes/", views.SchemeListView.as_view()),
+    path("branches/", views.BranchListView.as_view()),
+    path("emi/", views.EmiView.as_view()),
+    path("applications/<str:ref>/", views.ApplicationDetailView.as_view()),
+    path("applications/<str:ref>/pdf/", views.ApplicationPdfView.as_view()),
+    path("applications/", views.ApplicationCreateView.as_view()),
+    path("chat/", views.ChatView.as_view()),
+    path("pin-lookup/", views.PinLookupView.as_view()),
+]
