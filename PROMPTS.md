@@ -4,7 +4,7 @@
 | Tool | Used for |
 |---|---|
 | Cursor (Grok 4.6 Medium) | P0 first build (57 files), stopped at usage limit |
-| Antigravity | P0b audit and continuation (to be filled) |
+| Antigravity | P0b audit and continuation|
 | Claude | Prompt critique, review, docs (to be filled) |
 
 ## Prompt entries
@@ -286,3 +286,39 @@ and wait for me to say "continue".
 - docs/02_Initial_Prompt/p0_prompt.png
 - docs/02_Initial_Prompt/p0_output_files.png
 - docs/04_Prompt_Improvements/p0_usage_limit.png
+
+
+
+
+### P0b | Antigravity | Reverse prompting, chain prompting, response evaluation
+**Date:** 21 Nov 2026
+**Run by:** Tushar (25bcon2455)
+**Reason for the switch:** Cursor hit its usage limit during P0.
+
+**Prompt (exact text):** see docs/02_Initial_Prompt/p0b_handover_prompt.png
+(Handover note with Cursor's output summary and two known problems, then the full P0 spec. It asked for an audit first, with no file changes.)
+
+**What the prompt added over P0:**
+| Change | Purpose |
+|---|---|
+| Cursor handover facts (57 files, commit f5b7fec) | Context, so the tool continues instead of restarting |
+| Two known problems (no migrations, npm unfinished) | Targeted audit |
+| "Audit, plan, ask questions, then stop" | Reverse prompting |
+| "One step at a time, wait for confirmation" | Chain prompting |
+
+**Output summary:**
+1. Antigravity inspected about 50 files and ran Django check, showmigrations and the test suite, without changing anything.
+2. It reported 10 of 10 modules complete at file level, all 5 acceptance criteria PASS, and 9 endpoints (7 required plus 2 extra).
+3. It found 3 critical blockers (no migrations, no db.sqlite3, no frontend/dist), plus 2 high, 3 medium and 2 low issues. It gave a 6-step plan and 5 clarifying questions.
+
+**What worked:** it followed "audit only" and changed no files, verified the acceptance criteria by actually running them, and produced a ranked problem list.
+
+**What it got wrong or needed correcting:**
+- It applied a general project rule ("no demo data") that conflicts with this spec. We clarified in the next prompt.
+- It proposed openapi.yaml and CHANGELOG.md, which are not course requirements. We kept them short.
+
+**Response evaluation (by us):** the audit matched Cursor's output, since we had already seen that migrations were missing. Acceptance results are credible because they cite test names and shell runs.
+
+**Next prompt it led to:** P0c (answers to its questions), then Step 1 (migrations).
+
+**Screenshots:** docs/02_Initial_Prompt/p0b_handover_prompt.png, docs/03_AI_Tools/p0b_antigravity_audit_*.png
