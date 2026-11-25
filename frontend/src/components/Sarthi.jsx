@@ -1,17 +1,38 @@
 import { useEffect, useRef, useState } from "react";
 import { api } from "../api.js";
 import { useI18n } from "../i18n.jsx";
-import { speak, startMic } from "../speech.js";
+import {
+  speak,
+  cancelSpeech,
+  startMic,
+  hasSpeechRecognition,
+  hasSpeechSynthesis,
+  getVoiceStatus,
+} from "../speech.js";
 import Icon from "./Icon.jsx";
 
+const AUTO_SPEAK_KEY = "ss-sarthi-autospeak";
+
 export default function Sarthi() {
-  const { t, lang, speakLang } = useI18n();
+  const { t, lang, speakLang, currentLanguageMeta } = useI18n();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [history, setHistory] = useState([]);
   const [typing, setTyping] = useState(false);
   const [recording, setRecording] = useState(false);
+  const [micNotice, setMicNotice] = useState("");
+  const [autoSpeak, setAutoSpeak] = useState(() => {
+    try {
+      return localStorage.getItem(AUTO_SPEAK_KEY) === "true";
+    } catch {
+      return false;
+    }
+  });
+  const [speakingId, setSpeakingId] = useState(null);
+  const [voiceInfo, setVoiceInfo] = useState(() => getVoiceStatus(speakLang));
+
   const chatLogRef = useRef(null);
+  const recRef = useRef(null);
 
   useEffect(() => {
     if (chatLogRef.current) {
@@ -19,16 +40,74 @@ export default function Sarthi() {
     }
   }, [history, typing, open]);
 
+  useEffect(() => {
+    const refresh = () => setVoiceInfo(getVoiceStatus(speakLang));
+    refresh();
+    if (!hasSpeechSynthesis()) return undefined;
+    const synth = window.speechSynthesis;
+    synth.addEventListener?.("voiceschanged", refresh);
+    return () => synth.removeEventListener?.("voiceschanged", refresh);
+  }, [speakLang]);
+
+  useEffect(() => {
+    if (!open) {
+      cancelSpeech();
+      setSpeakingId(null);
+    }
+  }, [open]);
+
+  const toggleAutoSpeak = () => {
+    setAutoSpeak((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(AUTO_SPEAK_KEY, String(next));
+      } catch {
+        /* ignore */
+      }
+      if (!next) {
+        cancelSpeech();
+        setSpeakingId(null);
+      }
+      return next;
+    });
+  };
+
+  const speakMessage = (id, text) => {
+    if (speakingId === id) {
+      cancelSpeech();
+      setSpeakingId(null);
+      return;
+    }
+    const res = speak(text, speakLang, {
+      onStart: () => setSpeakingId(id),
+      onEnd: () => setSpeakingId((curr) => (curr === id ? null : curr)),
+      onNoVoice: () => setSpeakingId(null),
+    });
+    if (!res.spoken) {
+      setSpeakingId(null);
+    }
+  };
+
   const send = async (text) => {
-    const message = (text || input).trim();
+    const message = (text ?? input).trim();
     if (!message) return;
+    setMicNotice("");
     const next = [...history, { role: "user", content: message }];
     setHistory(next);
     setInput("");
     setTyping(true);
     try {
-      const data = await api.chat({ message, history: next.slice(-6), language: lang });
-      setHistory([...next, { role: "assistant", content: data.reply }]);
+      const data = await api.chat({
+        message,
+        history: next.slice(-6),
+        lang,
+        language: lang,
+      });
+      const updated = [...next, { role: "assistant", content: data.reply }];
+      setHistory(updated);
+      if (autoSpeak && voiceInfo.available && data.reply) {
+        speakMessage(updated.length - 1, data.reply);
+      }
     } catch (e) {
       const body = e.body || {};
       setHistory([...next, { role: "assistant", content: body.message || e.message }]);
@@ -38,18 +117,49 @@ export default function Sarthi() {
   };
 
   const handleMic = () => {
-    setRecording(true);
-    startMic((transcript) => {
-      setRecording(false);
-      if (transcript) {
-        setInput(transcript);
+    if (recording && recRef.current) {
+      try {
+        recRef.current.stop();
+      } catch {
+        /* ignore */
       }
-    }, speakLang);
+      setRecording(false);
+      return;
+    }
+
+    if (!hasSpeechRecognition()) {
+      setMicNotice("Voice input is not supported in this browser. Please type your question.");
+      return;
+    }
+
+    setMicNotice("");
+    setRecording(true);
+    recRef.current = startMic(
+      (transcript, errMsg) => {
+        setRecording(false);
+        if (errMsg) {
+          setMicNotice(errMsg);
+          return;
+        }
+        if (transcript) {
+          setInput((prev) => (prev.trim() ? `${prev.trim()} ${transcript}` : transcript));
+        }
+      },
+      speakLang,
+      {
+        onEnd: () => setRecording(false),
+      }
+    );
   };
+
+  const welcomeText =
+    lang === "hi"
+      ? "नमस्ते! मैं सारथी हूँ। मैं आपको योजनाएँ खोजने, आवश्यक दस्तावेज़ समझने और ऋण आवेदन में सहायता कर सकता हूँ।"
+      : "Namaste! I’m Sarthi, your GovTech scheme advisor. Ask me anything about loans, subsidies, documents, or bank branches.";
 
   return (
     <div className={`chatbot-widget ${open ? "open" : ""}`}>
-      {/* Floating Action Button (FAB) with gentle pulse ring */}
+      {/* Floating Action Button (FAB) */}
       <button
         className="chat-fab"
         type="button"
@@ -76,14 +186,36 @@ export default function Sarthi() {
             <div className="bot-meta">
               <strong>{t("chat.title")}</strong>
               <small>
-                <i className="online-dot" /> {lang === "hi" ? "सहायक सक्रिय" : "Here to guide you"}
+                <i className="online-dot" />{" "}
+                <span dir={currentLanguageMeta.direction}>{currentLanguageMeta.native_name}</span>
               </small>
             </div>
             <div className="chat-head-actions">
               <button
                 type="button"
+                className={`autospeak-btn ${autoSpeak ? "active" : ""}`}
+                onClick={toggleAutoSpeak}
+                aria-pressed={autoSpeak}
+                aria-label={autoSpeak ? "Turn off auto-speak" : "Turn on auto-speak"}
+                title={
+                  !voiceInfo.available
+                    ? `No browser voice for ${currentLanguageMeta.name} (${speakLang})`
+                    : autoSpeak
+                      ? "Auto-speak ON (click to disable)"
+                      : "Auto-speak OFF (click to enable)"
+                }
+              >
+                <Icon name="speaker" size={15} />
+                <span>{autoSpeak ? "Auto" : "Mute"}</span>
+              </button>
+              <button
+                type="button"
                 className="clear-btn"
-                onClick={() => setHistory([])}
+                onClick={() => {
+                  cancelSpeech();
+                  setSpeakingId(null);
+                  setHistory([]);
+                }}
                 aria-label={t("chat.clear")}
                 title={t("chat.clear")}
               >
@@ -103,25 +235,17 @@ export default function Sarthi() {
           <div className="chat-body" ref={chatLogRef}>
             <div className="chat-welcome">
               <div className="bot-msg">
-                <p>
-                  {lang === "hi"
-                    ? "नमस्ते! मैं सारथी हूँ। मैं आपको योजनाएँ खोजने, आवश्यक दस्तावेज़ समझने और ऋण आवेदन में सहायता कर सकता हूँ।"
-                    : "Namaste! I’m Sarthi, your GovTech scheme advisor. Ask me anything about loans, subsidies, documents, or bank branches."}
-                </p>
-                <button
-                  type="button"
-                  className="speech-listen-btn"
-                  onClick={() =>
-                    speak(
-                      lang === "hi"
-                        ? "नमस्ते! मैं सारथी हूँ। ऋण, सब्सिडी या बैंक के बारे में पूछें।"
-                        : "Namaste! I am Sarthi. Ask me about loans, subsidies, or bank partners.",
-                      speakLang
-                    )
-                  }
-                >
-                  <Icon name="speaker" size={14} /> {lang === "hi" ? "सुनें" : "Listen"}
-                </button>
+                <p>{welcomeText}</p>
+                {voiceInfo.available && (
+                  <button
+                    type="button"
+                    className="speech-listen-btn"
+                    onClick={() => speakMessage("welcome", welcomeText)}
+                  >
+                    <Icon name={speakingId === "welcome" ? "close" : "speaker"} size={14} />{" "}
+                    {speakingId === "welcome" ? "Stop" : lang === "hi" ? "सुनें" : "Listen"}
+                  </button>
+                )}
               </div>
             </div>
 
@@ -129,14 +253,15 @@ export default function Sarthi() {
               <div key={i} className={`chat-bubble-row ${m.role === "user" ? "user-row" : "bot-row"}`}>
                 <div className={`chat-bubble ${m.role === "user" ? "user-bubble" : "bot-bubble"}`}>
                   <p>{m.content}</p>
-                  {m.role === "assistant" && (
+                  {m.role === "assistant" && voiceInfo.available && (
                     <button
                       type="button"
                       className="speech-listen-btn"
-                      onClick={() => speak(m.content, speakLang)}
-                      aria-label="Listen to message"
+                      onClick={() => speakMessage(i, m.content)}
+                      aria-label={speakingId === i ? "Stop reading message" : "Replay message aloud"}
                     >
-                      <Icon name="speaker" size={13} /> {lang === "hi" ? "सुनें" : "Listen"}
+                      <Icon name={speakingId === i ? "close" : "speaker"} size={13} />{" "}
+                      {speakingId === i ? "Stop" : "Replay"}
                     </button>
                   )}
                 </div>
@@ -168,6 +293,12 @@ export default function Sarthi() {
             )}
           </div>
 
+          {micNotice && (
+            <div className="chat-mic-notice" role="status">
+              <small>{micNotice}</small>
+            </div>
+          )}
+
           <form
             className="chat-input-bar"
             onSubmit={(e) => {
@@ -179,13 +310,14 @@ export default function Sarthi() {
               type="button"
               className={`chat-mic-btn ${recording ? "recording" : ""}`}
               onClick={handleMic}
-              aria-label="Speak into microphone"
+              aria-label={recording ? "Stop voice recording" : "Start voice input"}
+              title={recording ? "Tap to stop listening" : `Speak (${speakLang})`}
             >
               <Icon name="mic" size={18} />
             </button>
             <input
               aria-label={t("chat.placeholder")}
-              placeholder={t("chat.placeholder")}
+              placeholder={recording ? "Listening..." : t("chat.placeholder")}
               value={input}
               onChange={(e) => setInput(e.target.value)}
             />
@@ -195,7 +327,10 @@ export default function Sarthi() {
           </form>
 
           <div className="chat-disclaimer">
-            <small>{t("chat.note")}</small>
+            <small>
+              {t("chat.note")}
+              {!voiceInfo.available ? ` • Voice playback unavailable for ${currentLanguageMeta.name}` : ""}
+            </small>
           </div>
         </section>
       ) : null}

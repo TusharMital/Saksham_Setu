@@ -103,15 +103,15 @@ export default function Tracker() {
               <small>APPLICATION</small>
               <strong>{data.application.applicant_name}</strong>
               <span>
-                {data.application.scheme_code}
-                {loanAmount ? ` • ₹${Number(loanAmount).toLocaleString("en-IN")}` : ""}
+                <bdi>{data.application.scheme_code}</bdi>
+                {loanAmount ? <> • <bdi>₹{Number(loanAmount).toLocaleString("en-IN")}</bdi></> : ""}
               </span>
             </div>
 
             <div className="summary-col">
               <small>PARTNER BANK & BRANCH</small>
               <strong>{data.application.partner}</strong>
-              <span>Ref: {data.application.ref_no}</span>
+              <span>Ref: <bdi>{data.application.ref_no}</bdi></span>
             </div>
 
             <div className="summary-col status-col">

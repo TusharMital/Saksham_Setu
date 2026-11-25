@@ -1,15 +1,34 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
 import L from "leaflet";
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import Icon from "../components/Icon.jsx";
 import { api } from "../api.js";
 import { useAppState } from "../state.jsx";
 import { useI18n } from "../i18n.jsx";
 
-L.Icon.Default.mergeOptions({ iconUrl: markerIcon, shadowUrl: markerShadow });
+function createBranchIcon(isSelected, healthColor) {
+  const fill = isSelected
+    ? "#ea580c"
+    : healthColor === "green"
+      ? "#15803d"
+      : healthColor === "amber"
+        ? "#d97706"
+        : "#dc2626";
+  const ring = isSelected ? "#0f172a" : "#ffffff";
+  const scale = isSelected ? 1.15 : 1;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 32 40" style="transform:scale(${scale});transform-origin:16px 40px;">
+    <path d="M16 1C8.3 1 2 7.3 2 15c0 10.5 14 23.5 14 23.5S30 25.5 30 15C30 7.3 23.7 1 16 1z" fill="${fill}" stroke="${ring}" stroke-width="2.5"/>
+    <circle cx="16" cy="15" r="5.5" fill="#ffffff"/>
+  </svg>`;
+  return L.divIcon({
+    className: "custom-map-pin",
+    html: svg,
+    iconSize: [32, 40],
+    iconAnchor: [16, 40],
+    popupAnchor: [0, -36],
+  });
+}
 
 // Helper to pan map smoothly when branch selection changes
 function MapRecenter({ center }) {
@@ -141,11 +160,10 @@ export default function Locator() {
             scrollWheelZoom={false}
             style={{ height: "100%", width: "100%" }}
           >
-            {/* CartoDB Voyager TileLayer to avoid OSM 403 blocks */}
+            {/* Esri World Street Map TileLayer (no API key watermark) */}
             <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-              subdomains="abcd"
+              attribution="Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ"
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
               maxZoom={19}
             />
             <MapRecenter center={selectedBranch ? [selectedBranch.lat, selectedBranch.lng] : center} />
@@ -154,6 +172,7 @@ export default function Locator() {
               <Marker
                 key={b.name + i}
                 position={[b.lat, b.lng]}
+                icon={createBranchIcon(selectedBranch?.name === b.name, b.health?.color)}
                 eventHandlers={{
                   click: () => setSelectedBranch(b),
                 }}
@@ -163,7 +182,7 @@ export default function Locator() {
                     <strong style={{ fontSize: "14px", color: "var(--navy)" }}>{b.name}</strong>
                     <p style={{ margin: "4px 0", fontSize: "12px", color: "var(--slate)" }}>{b.address}</p>
                     <span style={{ fontSize: "12px", fontWeight: "700", color: "var(--forest)" }}>
-                      {b.distance_km} km away
+                      <bdi>{b.distance_km} km</bdi> away
                     </span>
                   </div>
                 </Popup>
@@ -226,7 +245,7 @@ export default function Locator() {
                       <h2>{b.name}</h2>
                       <p>{b.address}</p>
                     </div>
-                    <span className="distance-badge">{b.distance_km} km</span>
+                    <span className="distance-badge"><bdi>{b.distance_km} km</bdi></span>
                   </div>
 
                   <p className="branch-open-status">

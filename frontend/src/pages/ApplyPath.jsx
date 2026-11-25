@@ -21,7 +21,7 @@ export default function ApplyPath() {
   ];
 
   return (
-    <div className="page-shell">
+    <div className="page-shell apply-path-page">
       {/* Page Title */}
       <div className="page-title">
         <span className="eyebrow">CHOOSE HOW TO APPLY</span>

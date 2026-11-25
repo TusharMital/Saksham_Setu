@@ -28,4 +28,6 @@ export const api = {
   pdfUrl: (ref) => `${BASE}/applications/${encodeURIComponent(ref)}/pdf/`,
   chat: (body) => request("/chat/", { method: "POST", body: JSON.stringify(body) }),
   pin: (pin) => request(`/pin-lookup/?pin=${encodeURIComponent(pin)}`),
+  languages: () => request("/i18n/languages/"),
+  i18nBundle: (code) => request(`/i18n/${encodeURIComponent(code)}/`),
 };

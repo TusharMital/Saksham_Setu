@@ -73,7 +73,7 @@ export default function Results() {
           <div>
             <span>Profile: </span>
             <strong>
-              {form.state} • {form.district} • ₹{Number(form.loan_amount || 0).toLocaleString("en-IN")}
+              {form.state} • {form.district} • <bdi>₹{Number(form.loan_amount || 0).toLocaleString("en-IN")}</bdi>
             </strong>
           </div>
           <button type="button" onClick={() => navigate("/form")}>
@@ -125,11 +125,11 @@ export default function Results() {
                 </div>
 
                 <div className="metrics-list">
-                  {metricRow("percent", t("results.interest"), `${s.interest_rate}% p.a.`, "var(--forest)")}
-                  {metricRow("wallet", t("results.maxLoan"), `₹${Number(s.max_loan).toLocaleString("en-IN")}`)}
-                  {metricRow("award", t("results.subsidy"), `${s.subsidy_percent}% margin money`, "var(--saffron)")}
+                  {metricRow("percent", t("results.interest"), <bdi>{s.interest_rate}% p.a.</bdi>, "var(--forest)")}
+                  {metricRow("wallet", t("results.maxLoan"), <bdi>₹{Number(s.max_loan).toLocaleString("en-IN")}</bdi>)}
+                  {metricRow("award", t("results.subsidy"), <><bdi>{s.subsidy_percent}%</bdi> margin money</>, "var(--saffron)")}
                   {metricRow("calendar", t("results.tenure"), `${s.tenure_months}m tenure (${s.moratorium_months}m moratorium)`)}
-                  {metricRow("calc", t("results.emi"), `${emiVal} / month`, "var(--saffron-dark)")}
+                  {metricRow("calc", t("results.emi"), <><bdi>{emiVal}</bdi> / month</>, "var(--saffron-dark)")}
                 </div>
 
                 <button
