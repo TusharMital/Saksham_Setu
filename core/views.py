@@ -1,3 +1,7 @@
+import hashlib
+import json
+from pathlib import Path
+
 from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -8,6 +12,8 @@ from rest_framework.views import APIView
 from core.chatbot import chat_completion
 from core.emi import calculate_emi
 from core.geo import coords_from_pin, rank_branches
+from core.i18n_validator import sanitize_bundle_with_fallback
+from core.languages import get_language_meta, list_supported_languages
 from core.models import Application, Branch, LoanScheme
 from core.pdf_generator import generate_application_pdf
 from core.recommender import recommend
@@ -138,10 +144,67 @@ class ChatView(APIView):
     def post(self, request):
         message = request.data.get("message") or request.data.get("query") or ""
         history = request.data.get("history") or []
-        language = request.data.get("language") or request.data.get("lang") or "en"
+        language = request.data.get("lang") or request.data.get("language") or "en"
         ip = request.META.get("REMOTE_ADDR", "unknown")
         body, code = chat_completion(message, history, language, client_ip=ip)
         return Response(body, status=code)
+
+
+TRANSLATIONS_DIR = Path(__file__).resolve().parent / "translations"
+I18N_VERSION = "1.0.0"
+
+
+class I18nLanguagesView(APIView):
+    def get(self, request):
+        languages = list_supported_languages()
+        return Response({"version": I18N_VERSION, "count": len(languages), "languages": languages})
+
+
+class I18nBundleView(APIView):
+    def get(self, request, lang_code):
+        try:
+            meta = get_language_meta(lang_code)
+        except ValueError:
+            return Response(
+                {"detail": f"Unsupported language code: {lang_code}"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        en_path = TRANSLATIONS_DIR / "en.json"
+        target_path = TRANSLATIONS_DIR / f"{meta['code']}.json"
+        if not target_path.exists():
+            return Response(
+                {"detail": f"Translation bundle not found for: {meta['code']}"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        en_bundle = json.loads(en_path.read_text(encoding="utf-8"))
+        target_bundle = json.loads(target_path.read_text(encoding="utf-8"))
+        translations, _ = sanitize_bundle_with_fallback(en_bundle, target_bundle)
+
+        payload = {
+            "language": meta["code"],
+            "name": meta["name"],
+            "native_name": meta["native_name"],
+            "script": meta["script"],
+            "direction": meta["direction"],
+            "speech_locale": meta["speech_locale"],
+            "version": I18N_VERSION,
+            "translations": translations,
+        }
+        canonical = json.dumps(payload, sort_keys=True, ensure_ascii=False).encode("utf-8")
+        etag = f'"{hashlib.sha256(canonical).hexdigest()[:16]}"'
+
+        if request.META.get("HTTP_IF_NONE_MATCH") == etag:
+            resp = HttpResponse(status=status.HTTP_304_NOT_MODIFIED)
+            resp["Cache-Control"] = "public, max-age=86400"
+            resp["ETag"] = etag
+            return resp
+
+        resp = Response(payload, status=status.HTTP_200_OK)
+        resp["Cache-Control"] = "public, max-age=86400"
+        resp["ETag"] = etag
+        return resp
 
 
 class PinLookupView(APIView):

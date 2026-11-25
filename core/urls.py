@@ -12,4 +12,6 @@ urlpatterns = [
     path("applications/", views.ApplicationCreateView.as_view()),
     path("chat/", views.ChatView.as_view()),
     path("pin-lookup/", views.PinLookupView.as_view()),
+    path("i18n/languages/", views.I18nLanguagesView.as_view()),
+    path("i18n/<str:lang_code>/", views.I18nBundleView.as_view()),
 ]
