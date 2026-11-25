@@ -13,9 +13,10 @@ CATEGORY_CERT_MAP = {
     "OBC": "obc_cert",
     "EWS": "ews_cert",
     "GENERAL": "none",
+    "MINORITY": "none",
 }
 
-VALID_CATEGORIES = {"SC", "ST", "OBC", "EWS", "GENERAL"}
+VALID_CATEGORIES = {"SC", "ST", "OBC", "EWS", "GENERAL", "MINORITY"}
 VALID_CERT_TYPES = {"sc_cert", "ews_cert", "st_cert", "obc_cert", "none"}
 
 
@@ -344,12 +345,32 @@ def verify_category_and_document(payload: dict[str, Any]) -> dict[str, Any]:
             ),
         }
 
-    # ST, OBC, or General
+    if category == "MINORITY" and certificate_type in {"sc_cert", "st_cert", "obc_cert", "ews_cert"}:
+        return {
+            "status": "document_category_mismatch",
+            "valid": False,
+            "in_claimed_category": False,
+            "nsfdc_eligible": False,
+            "ews_eligible": False,
+            "category": category,
+            "loan_state": loan_state,
+            "certificate_type": certificate_type,
+            "citation": dopt_citation if certificate_type == "ews_cert" else art341_citation,
+            "message": (
+                f"Certificate mismatch: '{certificate_type}' does not match Minority community selection. "
+                "Select 'Not Available Yet' or the exact category printed on your certificate."
+            ),
+            "next_step": "Choose 'Not Available Yet' or select the category matching your certificate.",
+        }
+
+    # ST, OBC, Minority, or General
     alt_agency = (
         "NSTFDC (National Scheduled Tribes Finance & Development Corp.)"
         if category == "ST"
         else "NBCFDC (National Backward Classes Finance & Development Corp.)"
         if category == "OBC"
+        else "NMDFC (National Minorities Development & Finance Corp.)"
+        if category == "MINORITY"
         else "PM MUDRA Yojana (PMMY) or PMEGP"
     )
     return {

@@ -7,6 +7,7 @@ import Form from "./pages/Form.jsx";
 import Landing from "./pages/Landing.jsx";
 import Locator from "./pages/Locator.jsx";
 import Results from "./pages/Results.jsx";
+import SchemeDetail from "./pages/SchemeDetail.jsx";
 import Tracker from "./pages/Tracker.jsx";
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/form" element={<Form />} />
         <Route path="/results" element={<Results />} />
+        <Route path="/scheme/:code" element={<SchemeDetail />} />
         <Route path="/apply" element={<ApplyPath />} />
         <Route path="/locator" element={<Locator />} />
         <Route path="/calculator" element={<Calculator />} />

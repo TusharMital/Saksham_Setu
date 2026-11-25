@@ -87,31 +87,38 @@ def friendly(code, lang_meta, http_status):
     }, http_status
 
 
+def _schemes_path():
+    data_path = Path(settings.BASE_DIR) / "data" / "schemes.json"
+    return data_path if data_path.exists() else Path(settings.BASE_DIR) / "schemes.json"
+
+
 def load_scheme_grounding():
-    path = Path(settings.BASE_DIR) / "schemes.json"
+    path = _schemes_path()
     if not path.exists():
         return "(no scheme file found)"
     data = json.loads(path.read_text(encoding="utf-8"))
     lines = []
     for s in data:
+        states = s.get("applicable_states") or s.get("states_supported") or ["ALL"]
+        ceiling = s.get("max_income", s.get("income_ceiling"))
         lines.append(
-            f"- {s['code']} {s['name']}: interest {s['interest_rate']}%, "
-            f"loan Rs {s['min_loan']}-{s['max_loan']}, income ceiling Rs {s['income_ceiling']}, "
-            f"women_only={s['women_only']}, pwd_only={s['pwd_only']}, "
-            f"types={s['applicant_types']}, sectors={s['sectors']}, states={s['states_supported']}. "
-            f"{s.get('description', '')}"
+            f"- {s['code']} {s['name']} ({s.get('level', 'central')}, {s.get('agency', '')}): "
+            f"interest {s.get('interest_rate')}%, loan Rs {s.get('min_loan')}-{s.get('max_loan')}, "
+            f"income ceiling {ceiling}, women_only={s.get('women_only')}, "
+            f"categories={s.get('eligible_categories')}, states={states}. "
+            f"{s.get('overview') or s.get('description', '')}"
         )
     return "\n".join(lines)
 
 
 def relevant_schemes(message):
-    path = Path(settings.BASE_DIR) / "schemes.json"
+    path = _schemes_path()
     if not path.exists():
         return load_scheme_grounding()
     data = json.loads(path.read_text(encoding="utf-8"))
     text = (message or "").lower()
     picked = [s for s in data if s["code"].lower() in text or s["name"].lower() in text]
-    use = picked or data
+    use = picked or data[:15]
     return json.dumps(use, ensure_ascii=False)[:6000]
 
 

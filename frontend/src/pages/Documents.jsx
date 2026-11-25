@@ -34,15 +34,14 @@ export default function Documents() {
     { id: "photo", label: "Passport-size photographs (2)", hint: "Recent color photographs" },
   ];
 
-  const docList = scheme?.documents?.length
-    ? scheme.documents.map((d, i) => {
+  const rawSchemeDocs = scheme?.required_documents?.length ? scheme.required_documents : scheme?.documents;
+  const docList = rawSchemeDocs?.length
+    ? rawSchemeDocs.map((d, i) => {
         const label =
-          isEws && /caste certificate/i.test(d)
+          isEws && /^caste certificate$/i.test(d.trim())
             ? "EWS Income & Asset Certificate (Tehsildar/SDM, valid FY)"
-            : !isEws && /caste certificate/i.test(d)
-              ? "SC Caste Certificate (State-notified)"
-              : d;
-        return { id: `doc_${i}`, label, hint: "Required for bank verification" };
+            : d;
+        return { id: `doc_${i}`, label, hint: "Required for scheme/bank verification" };
       })
     : defaultDocs;
 

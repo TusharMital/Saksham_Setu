@@ -31,6 +31,107 @@ class SchemeListView(APIView):
         return Response({"demo": True, "schemes": LoanSchemeSerializer(qs, many=True).data})
 
 
+def _default_scheme_amount(scheme):
+    min_loan = float(scheme.min_loan) if scheme.min_loan is not None else 0.0
+    max_loan = float(scheme.max_loan) if scheme.max_loan is not None else None
+    base = 500000.0
+    if max_loan is not None and max_loan > 0:
+        base = min(base, max_loan)
+    if min_loan > base:
+        base = min_loan
+    return max(10000.0, base)
+
+
+def _build_yearly_schedule(monthly_schedule, moratorium_months):
+    years = {}
+    for row in monthly_schedule:
+        yr = (row["month"] - 1) // 12 + 1
+        if yr not in years:
+            years[yr] = {
+                "year": yr,
+                "principal_paid": 0.0,
+                "interest_paid": 0.0,
+                "total_paid": 0.0,
+                "ending_balance": float(row["balance"]),
+                "moratorium_months": 0,
+            }
+        bucket = years[yr]
+        bucket["principal_paid"] += float(row["principal"])
+        bucket["interest_paid"] += float(row["interest"])
+        bucket["total_paid"] += float(row["emi"])
+        bucket["ending_balance"] = float(row["balance"])
+        if row["month"] <= moratorium_months:
+            bucket["moratorium_months"] += 1
+
+    out = []
+    for yr in sorted(years):
+        b = years[yr]
+        out.append(
+            {
+                "year": b["year"],
+                "principal_paid": round(b["principal_paid"], 2),
+                "interest_paid": round(b["interest_paid"], 2),
+                "total_paid": round(b["total_paid"], 2),
+                "ending_balance": round(b["ending_balance"], 2),
+                "moratorium_months": b["moratorium_months"],
+                "is_moratorium_year": b["moratorium_months"] > 0,
+            }
+        )
+    return out
+
+
+class SchemeDetailView(APIView):
+    def get(self, request, code):
+        scheme = LoanScheme.objects.filter(code__iexact=code.strip()).first()
+        if not scheme:
+            return Response(
+                {"detail": f"Scheme '{code}' not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        raw_amount = request.query_params.get("amount")
+        amount = None
+        if raw_amount not in (None, ""):
+            try:
+                parsed = float(raw_amount)
+                if parsed > 0:
+                    amount = parsed
+            except (TypeError, ValueError):
+                return Response(
+                    {"detail": "Query parameter 'amount' must be a positive number."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        if amount is None:
+            amount = _default_scheme_amount(scheme)
+
+        tenure = int(scheme.tenure_months or 60)
+        moratorium = min(int(scheme.moratorium_months or 0), max(0, tenure - 1))
+        emi_out = calculate_emi(amount, float(scheme.interest_rate or 0), tenure, moratorium)
+        yearly_schedule = _build_yearly_schedule(emi_out["schedule"], moratorium)
+
+        data = LoanSchemeSerializer(scheme).data
+        return Response(
+            {
+                **data,
+                "emi_amount": emi_out["principal"],
+                "monthly_emi": emi_out["monthly_emi"],
+                "total_interest": emi_out["total_interest"],
+                "total_payable": emi_out["total_payable"],
+                "yearly_schedule": yearly_schedule,
+                "emi": {
+                    "principal": emi_out["principal"],
+                    "annual_rate": emi_out["annual_rate"],
+                    "tenure_months": emi_out["tenure_months"],
+                    "moratorium_months": emi_out["moratorium_months"],
+                    "monthly_emi": emi_out["monthly_emi"],
+                    "total_interest": emi_out["total_interest"],
+                    "total_payable": emi_out["total_payable"],
+                    "yearly_schedule": yearly_schedule,
+                },
+            }
+        )
+
+
 class RecommendView(APIView):
     def post(self, request):
         data = validate_applicant(request.data)

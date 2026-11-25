@@ -18,6 +18,10 @@ async function request(path, options = {}) {
 export const api = {
   recommend: (body) => request("/recommend/", { method: "POST", body: JSON.stringify(body) }),
   schemes: () => request("/schemes/"),
+  schemeDetail: (code, amount) => {
+    const q = amount ? `?amount=${encodeURIComponent(amount)}` : "";
+    return request(`/schemes/${encodeURIComponent(code)}/${q}`);
+  },
   branches: (params) => {
     const q = new URLSearchParams(params).toString();
     return request(`/branches/?${q}`);

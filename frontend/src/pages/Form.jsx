@@ -394,7 +394,7 @@ export default function Form() {
                   help={f("caste_category_help")}
                   value={form.caste_category}
                   onChange={(v) => updateForm({ caste_category: v })}
-                  options={[selectPlaceholder, ...["SC", "ST", "OBC", "EWS", "General"].map((s) => ({ value: s, label: s }))]}
+                  options={[selectPlaceholder, ...["SC", "ST", "OBC", "EWS", "General", "Minority"].map((s) => ({ value: s, label: s }))]}
                   error={errors.caste_category}
                 />
                 <HelpField

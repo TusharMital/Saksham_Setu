@@ -5,6 +5,7 @@ from core import views
 urlpatterns = [
     path("recommend/", views.RecommendView.as_view()),
     path("schemes/", views.SchemeListView.as_view()),
+    path("schemes/<str:code>/", views.SchemeDetailView.as_view()),
     path("branches/", views.BranchListView.as_view()),
     path("emi/", views.EmiView.as_view()),
     path("applications/<str:ref>/", views.ApplicationDetailView.as_view()),

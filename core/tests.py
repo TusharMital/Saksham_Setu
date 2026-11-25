@@ -751,4 +751,103 @@ class LocationsAndPinLookupTests(TestCase):
         self.assertEqual(res_prefix.data["source"], "prefix_fallback")
 
 
+class AllIndiaSchemePortalTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        call_command("seed_data")
+
+    def test_all_55_plus_schemes_seed_cleanly(self):
+        from core.models import LoanScheme
+
+        count = LoanScheme.objects.count()
+        self.assertGreaterEqual(count, 55)
+        for code in ("MCF", "MSY", "TL", "NBCFDC_INDIVIDUAL", "NMDFC_SELF_EMPLOYMENT", "NSTFDC_TERM", "NSKFDC_NAMASTE", "PMMY", "PMEGP", "SUPI", "PMV", "BRUPY", "MLUPY", "CM_YUVA", "TN_AABCS", "GA_CMRY"):
+            scheme = LoanScheme.objects.filter(code=code).first()
+            self.assertIsNotNone(scheme, f"Missing scheme {code}")
+            self.assertIn(scheme.level, ("central", "state"))
+            self.assertTrue(len(scheme.available_channels) >= 1, f"{code} missing available_channels")
+            self.assertTrue(len(scheme.required_documents) >= 4, f"{code} missing required_documents")
+            self.assertTrue(len(scheme.important_notes) >= 2, f"{code} missing important_notes")
+
+    def test_rajasthan_sc_user_matches_nsfdc_central_rajasthan_and_rejects_other_states(self):
+        payload = {
+            "full_name": "Kiran Devi",
+            "mobile": "9876543210",
+            "state": "Rajasthan",
+            "district": "Sri Ganganagar",
+            "pin": "335001",
+            "caste_category": "SC",
+            "age": 30,
+            "annual_family_income": 300000,
+            "applicant_type": "individual",
+            "sector": "manufacturing",
+            "loan_amount": 300000,
+            "woman_led": True,
+        }
+        res = self.client.post("/api/recommend/", payload, format="json")
+        self.assertEqual(res.status_code, 200)
+        matched_codes = {s["code"] for s in res.data["matched"]}
+        rejected_map = {s["code"]: s for s in res.data["rejected"]}
+
+        # Matches NSFDC + Central + Rajasthan schemes
+        for expected in ("TL", "LVY", "GBS", "UNY", "PMMY", "PMEGP", "BRUPY", "MLUPY"):
+            self.assertIn(expected, matched_codes, f"Expected {expected} to match")
+
+        # Rejects other state schemes with detailed rejection_reasons
+        for other_state_code in ("CM_YUVA", "TN_AABCS", "BR_MUY", "MH_CMEGP", "GA_CMRY"):
+            self.assertIn(other_state_code, rejected_map)
+            reasons = rejected_map[other_state_code]["rejection_reasons"]
+            self.assertIsInstance(reasons, list)
+            self.assertTrue(len(reasons) >= 1)
+            self.assertTrue(any("Rajasthan" in r or "State mismatch" in r for r in reasons))
+
+    def test_up_ews_user_matches_central_and_up_and_rejects_sc_only_with_reasons(self):
+        payload = {
+            "full_name": "Rohit Sharma",
+            "mobile": "9876543211",
+            "state": "Uttar Pradesh",
+            "district": "Lucknow",
+            "pin": "226001",
+            "caste_category": "EWS",
+            "age": 28,
+            "annual_family_income": 350000,
+            "applicant_type": "individual",
+            "sector": "service",
+            "loan_amount": 400000,
+            "woman_led": False,
+        }
+        res = self.client.post("/api/recommend/", payload, format="json")
+        self.assertEqual(res.status_code, 200)
+        matched_codes = {s["code"] for s in res.data["matched"]}
+        rejected_map = {s["code"]: s for s in res.data["rejected"]}
+
+        for expected in ("PMMY", "PMEGP", "CM_YUVA", "UP_ODOP_MARGIN"):
+            self.assertIn(expected, matched_codes, f"Expected {expected} to match UP EWS user")
+
+        for sc_only_code in ("MCF", "MSY", "TL", "BRUPY"):
+            self.assertIn(sc_only_code, rejected_map)
+            reasons = rejected_map[sc_only_code]["rejection_reasons"]
+            self.assertIsInstance(reasons, list)
+            self.assertTrue(len(reasons) >= 1)
+            self.assertTrue(any("Category" in r or "SC" in r for r in reasons))
+
+    def test_scheme_detail_endpoint_pmmy_returns_enriched_details_and_emi_schedule(self):
+        res = self.client.get("/api/schemes/PMMY/?amount=500000")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.data["code"], "PMMY")
+        self.assertEqual(res.data["level"], "central")
+        self.assertEqual(res.data["available_channels"], ["jansamarth", "bank", "mfi"])
+        self.assertTrue(len(res.data["required_documents"]) >= 4)
+        self.assertTrue(len(res.data["important_notes"]) >= 2)
+        self.assertTrue(len(res.data["key_highlights"]) >= 3)
+        self.assertIn("monthly_emi", res.data)
+        self.assertIn("total_interest", res.data)
+        self.assertIn("total_payable", res.data)
+        self.assertIn("yearly_schedule", res.data)
+        self.assertGreater(res.data["monthly_emi"], 0)
+        self.assertEqual(len(res.data["yearly_schedule"]), 5)
+        self.assertAlmostEqual(res.data["yearly_schedule"][-1]["ending_balance"], 0.0, delta=5.0)
+
+
+
 

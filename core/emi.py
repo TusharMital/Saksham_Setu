@@ -8,11 +8,13 @@ def calculate_emi(principal, annual_rate, tenure_months, moratorium_months=0):
     n = max(1, n_total - moratorium)
     r = float(annual_rate) / 12.0 / 100.0
 
+    p_after_moratorium = p * ((1 + r) ** moratorium) if moratorium > 0 else p
+
     if r == 0:
-        emi = p / n
+        emi = p_after_moratorium / n
     else:
         factor = (1 + r) ** n
-        emi = p * r * factor / (factor - 1)
+        emi = p_after_moratorium * r * factor / (factor - 1)
 
     schedule = []
     balance = p
@@ -28,8 +30,12 @@ def calculate_emi(principal, annual_rate, tenure_months, moratorium_months=0):
             note = "Moratorium — interest added, no EMI"
         else:
             interest = balance * r
-            principal_paid = min(emi - interest, balance)
-            payment = emi
+            if month == n_total:
+                principal_paid = balance
+                payment = principal_paid + interest
+            else:
+                principal_paid = min(emi - interest, balance)
+                payment = emi
             total_interest += interest
             balance = max(0.0, balance - principal_paid)
             note = ""

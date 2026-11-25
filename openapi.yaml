@@ -18,10 +18,29 @@ paths:
           description: List of accepted (scored) and rejected schemes.
   /api/schemes/:
     get:
-      summary: Retrieve all loan schemes
+      summary: Retrieve all Central, State, and NSFDC loan schemes
       responses:
         '200':
-          description: All schemes in the system.
+          description: All schemes in the catalog.
+  /api/schemes/{code}/:
+    get:
+      summary: Retrieve full enriched metadata and EMI amortization breakdown for a scheme
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: amount
+          in: query
+          required: false
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Enriched scheme metadata, available_channels, documents, notes, and yearly EMI schedule.
+        '404':
+          description: Scheme not found.
   /api/branches/:
     get:
       summary: Retrieve ranked partner branches by location and scheme
