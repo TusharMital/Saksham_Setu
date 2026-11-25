@@ -381,7 +381,7 @@ export default function SchemeDetail() {
 
       {/* Visual SVG EMI Repayment Graph (Auto-calculated, NOT a calculator form) */}
       <section className="detail-emi-section">
-        <div className="detail-section-head">
+        <div className="detail-section-head detail-emi-head-row">
           <div>
             <span className="eyebrow">{t("detail.emiEyebrow")}</span>
             <h2>{t("detail.emiTitle")}</h2>
@@ -391,6 +391,14 @@ export default function SchemeDetail() {
                 : `Auto-calculated on indicative amount ₹${Number(emi.principal || 0).toLocaleString("en-IN")} at ${data.interest_rate}% p.a. over ${data.tenure_months} months (${data.moratorium_months}m moratorium).`}
             </p>
           </div>
+          <Link
+            to={`/calculator?scheme=${encodeURIComponent(data.code)}`}
+            className="btn btn-outline detail-calc-link"
+            onClick={() => setScheme(data)}
+          >
+            <Icon name="calc" size={17} />
+            <span>{t("detail.viewInCalc")}</span>
+          </Link>
         </div>
 
         <div className="detail-kpi-strip">
@@ -475,6 +483,15 @@ export default function SchemeDetail() {
             >
               <span>{t("detail.applyCta")}</span>
               <Icon name="arrow" size={18} />
+            </Link>
+            <Link
+              to={`/calculator?scheme=${encodeURIComponent(data.code)}`}
+              className="btn btn-outline full"
+              style={{ marginTop: "10px" }}
+              onClick={() => setScheme(data)}
+            >
+              <Icon name="calc" size={17} />
+              <span>{t("detail.viewInCalc")}</span>
             </Link>
           </div>
         </aside>

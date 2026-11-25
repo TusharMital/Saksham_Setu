@@ -498,3 +498,51 @@ What failed or was missing: None.
 Did it follow the rules? Yes.
 Next prompt it led to: P9 (Claude security review of multilingual Sarthi + Live Groq testing + Render deploy).
 Screenshot file names: `docs/05_Website_Screenshots/p6_form_clean_kasba_pin.png`
+
+---
+
+### P7a | Perplexity | Live Citation-Backed Scheme Research (AI-to-AI Handoff)
+Date: 2026-11-25
+Run by: Mousam (25bcon2411)
+Prompt (exact text): Research and return verified JSON metadata for Central Government credit-linked schemes (NBCFDC, NMDFC, NSTFDC, NSKFDC NAMASTE, PMMY, PMEGP, Stand-Up India, PM Vishwakarma, PM SVANidhi, CCME, CGTMSE, PM Surya Ghar, KCC, AIF, CGFSSD, DAY-NRLM, CRGFTLIH) and State Government flagship schemes (Rajasthan BRUPY/MLUPY, UP CM-YUVA/ODOP, Tamil Nadu AABCS/NEEDS, Bihar MUY, Maharashtra CMEGP, Gujarat VBY, MP MUKY, West Bengal BCC, Karnataka Udyogini, Telangana T-PRIDE, Odisha MKUY, Assam CMAAA) with official portal URLs, eligibility rules, and channel availability.
+Output summary (3 lines):
+- Gathered citation-backed scheme rules, ceilings, subsidy notes, document checklists, and official portal URLs across Central and State schemes.
+- Flagged scheme-specific caveats (such as Tarun Plus repeat-borrower rules, Stand-Up India window checks, and subsidy-vs-loan distinctions).
+- Handed off to Antigravity (P7b) and merged with additional Central/State flagships to build a 66-scheme catalog.
+What worked: Grounded every scheme record in official ministry/corporation guidelines and portal URLs.
+What failed or was missing: Returned inline markdown citation links that needed sanitizing into clean JSON in P7b.
+Did it follow the rules? Yes.
+Next prompt it led to: P7b (66-scheme portal upgrade, SVG EMI graph, split comparison, and rejected-scheme explanations).
+Screenshot file names: `docs/03_AI_Tools/p7a_perplexity_all_schemes.png`
+
+---
+
+### P7b | Antigravity | Full-Stack Portal Upgrade (66 Schemes, EMI Graph, Split Compare & Rejection Reasons)
+Date: 2026-11-25
+Run by: Tushar (25bcon2455) & Mousam (25bcon2411)
+Prompt (exact text): Upgrade Saksham Setu to an All-India Central + State Government Scheme Portal (66 schemes across NSFDC, National Corporations, Central Flagships/JanSamarth, and 26 State flagships); return multi-point plain-language rejection reasons for non-selected schemes; on `/results`, remove calculator/bank banners, keep `More Details` and `Compare` (up to 3 schemes in a split-window comparison) on main cards, and add an expandable Rejected Schemes section with detailed reasons + `More Details`; build `/scheme/:code` with an SVG EMI repayment graph and scheme-specific documents; filter `/apply` to only that scheme's available channels.
+Output summary (3 lines):
+- Expanded `data/schemes.json` and `LoanScheme` (`0002` migration) to 66 verified Central, State, and NSFDC schemes (`seed_data` loaded 66 schemes, 28 branches).
+- Built `SchemeDetail.jsx` (`/scheme/:code` with SVG Principal-vs-Interest & Yearly Balance graph), channel-filtered `ApplyPath.jsx`, 3-column split comparison, and multi-point rejection reasons in `Results.jsx`.
+- All 49/49 Django tests passed (`OK`), Vite production build succeeded, and `collectstatic` completed.
+What worked: End-to-end filtering across Central + State schemes, visual EMI repayment curves, side-by-side comparison, and clear rejection explanations.
+What failed or was missing: Newly added scheme descriptions, document checklists, and dynamic rejection reasons still display in English when a regional language is selected (queued for Bhumi's final translation & bug-fix pass after all features are added).
+Did it follow the rules? Yes.
+Next prompt it led to: Next feature addition, followed by Bhumi's full-site 23-language translation & polish pass (P8b) and Claude security review (P9).
+Screenshot file names: `docs/05_Website_Screenshots/p7_results_compare_dropdown_rejected.png`, `docs/05_Website_Screenshots/p7_scheme_detail_emi_graph.png`, `docs/05_Website_Screenshots/p7_scheme_compare_split.png`, `docs/05_Website_Screenshots/p7_apply_filtered_channel.png`
+
+---
+
+### P7c | Antigravity | Dual-Mode Full-Fledged Loan EMI Calculator Prompting
+Date: 2026-11-25
+Run by: Tushar (25bcon2455) & Mousam (25bcon2411)
+Prompt (exact text): Rebuild `/calculator` into a full-fledged dual-mode Loan EMI Calculator: (1) General Market Loan mode with 7 loan-type presets showing general bank & market interest rate ranges, Amazon-style fine-step sliders (`step=1000`) paired with live direct-typing numeric inputs for exact amounts/rates/tenures, interactive SVG Donut & Year-by-Year Balance/Amortization graphs, and yearly schedule table; (2) Locked Government Scheme mode (`/calculator?scheme=<code>` or scheme selector) that displays all official scheme terms, calculates savings vs. market bank loans, and disables/locks all sliders and inputs to the selected scheme's rules.
+Output summary (3 lines):
+- Rebuilt `Calculator.jsx` with 7 general market loan presets, Amazon-style paired range sliders (`step=1000`) + direct numeric input boxes, and Months/Years toggle.
+- Added interactive SVG Principal-vs-Interest Donut chart, Year-by-Year Principal/Interest/Balance graph with hover inspection, yearly amortization table, and Govt-vs-Market savings comparison.
+- Added strict Locked Government Scheme mode (`disabled` sliders/inputs when a scheme is selected) plus direct navigation from `SchemeDetail.jsx`; all tests, Vite build, and `collectstatic` passed.
+What worked: Smooth sliding + exact typing in Custom mode, clear visual lock when inspecting a government scheme, and instant SVG graph updates.
+What failed or was missing: None (new labels queued for Bhumi's final 23-language translation pass in P8b).
+Did it follow the rules? Yes.
+Next prompt it led to: Any final feature additions, followed by Bhumi's full-site 23-language translation & polish pass (P8b) and Claude security review (P9).
+Screenshot file names: `docs/05_Website_Screenshots/p7c_emi_calc_custom_slider_graph.png`, `docs/05_Website_Screenshots/p7c_emi_calc_scheme_locked.png`
