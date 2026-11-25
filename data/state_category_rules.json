@@ -1,0 +1,519 @@
+{
+  "version": "1.0.0",
+  "nsfdc_rules": {
+    "eligible_categories": ["SC"],
+    "max_annual_income": 500000,
+    "citation": "NSFDC Lending Policy & MoSJE Scheduled Castes Welfare Guidelines (Annual Family Income <= Rs 5,00,000)"
+  },
+  "ews_rules": {
+    "citation": "DoPT OM No. 36039/1/2019-Estt(Res) dated 31.01.2019 (103rd Constitutional Amendment)",
+    "max_annual_income": 800000,
+    "excluded_categories": ["SC", "ST", "OBC"],
+    "asset_limits": {
+      "agricultural_land_acres_max": 5,
+      "residential_flat_sqft_max": 1000,
+      "residential_plot_notified_sqyd_max": 100,
+      "residential_plot_non_notified_sqyd_max": 200
+    },
+    "issuing_authorities": [
+      "Tehsildar",
+      "Sub-Divisional Magistrate (SDM)",
+      "District Magistrate",
+      "Revenue Officer (not below the rank of Tehsildar)"
+    ],
+    "alternative_schemes": [
+      "PM MUDRA Yojana (PMMY)",
+      "PMEGP (Prime Minister's Employment Generation Programme)",
+      "Stand-Up India (for women entrepreneurs)"
+    ]
+  },
+  "sc_constitutional_rule": {
+    "citation": "Constitution (Scheduled Castes) Order, 1950 under Article 341 of the Constitution of India",
+    "interstate_migration_note": "Under Article 341, Scheduled Caste status is notified specifically in relation to a particular State or Union Territory. A certificate issued by another state requires domicile/Tehsildar verification in the loan state or central SCA routing."
+  },
+  "regional_variations": {
+    "dhobi": {
+      "aliases": ["dhoba", "washerman", "rajaka", "vannar"],
+      "states": {
+        "Rajasthan": "SC",
+        "Uttar Pradesh": "SC",
+        "Bihar": "SC",
+        "West Bengal": "SC",
+        "Madhya Pradesh": "SC",
+        "Delhi": "SC",
+        "Odisha": "SC",
+        "Assam": "SC",
+        "Gujarat": "OBC",
+        "Maharashtra": "OBC",
+        "Tamil Nadu": "OBC",
+        "Karnataka": "OBC",
+        "Andhra Pradesh": "OBC",
+        "Telangana": "OBC",
+        "Punjab": "OBC",
+        "Haryana": "OBC",
+        "Kerala": "OBC"
+      },
+      "note": "Dhobi is notified as SC in Rajasthan, UP, Bihar, WB, MP, Delhi, Odisha, and Assam, whereas it is classified under OBC/BC in Gujarat, Maharashtra, Tamil Nadu, Karnataka, AP, Telangana, Punjab, Haryana, and Kerala."
+    },
+    "lohar": {
+      "aliases": ["lohara", "lohra", "kamar"],
+      "states": {
+        "Bihar": "OBC",
+        "Jharkhand": "OBC",
+        "Uttar Pradesh": "OBC",
+        "Rajasthan": "OBC",
+        "Gujarat": "OBC",
+        "Maharashtra": "OBC",
+        "West Bengal": "OBC",
+        "Madhya Pradesh": "OBC"
+      },
+      "note": "Lohar is classified as OBC in most states (distinct from Lohara/Lohra ST in Jharkhand/Bihar); verify exact Presidential Order spelling."
+    },
+    "koli": {
+      "aliases": ["kori"],
+      "states": {
+        "Himachal Pradesh": "SC",
+        "Rajasthan": "SC",
+        "Uttarakhand": "SC",
+        "Delhi": "SC",
+        "Uttar Pradesh": "SC",
+        "Maharashtra": "ST",
+        "Gujarat": "OBC"
+      },
+      "note": "Koli is notified as SC in Rajasthan, Delhi, Himachal Pradesh, Uttarakhand, and UP (as Kori/Koli), whereas Mahadev Koli is ST in Maharashtra and Koli is OBC (SEBC) in Gujarat."
+    },
+    "teli": {
+      "aliases": ["sahu", "ganiga"],
+      "states": {
+        "Rajasthan": "OBC",
+        "Uttar Pradesh": "OBC",
+        "Maharashtra": "OBC",
+        "Gujarat": "OBC",
+        "Bihar": "OBC",
+        "West Bengal": "OBC",
+        "Madhya Pradesh": "OBC",
+        "Delhi": "OBC",
+        "Odisha": "OBC",
+        "Karnataka": "OBC"
+      },
+      "note": "Teli is classified under OBC across major states and is not notified as a Scheduled Caste."
+    },
+    "bairwa": {
+      "aliases": ["berwa"],
+      "states": {
+        "Rajasthan": "SC",
+        "Madhya Pradesh": "SC",
+        "Delhi": "SC"
+      },
+      "note": "Bairwa/Berwa is a notified Scheduled Caste in Rajasthan, Madhya Pradesh, and Delhi."
+    },
+    "meghwal": {
+      "aliases": ["meghval", "megh", "menghwar"],
+      "states": {
+        "Rajasthan": "SC",
+        "Gujarat": "SC",
+        "Madhya Pradesh": "SC",
+        "Maharashtra": "SC",
+        "Delhi": "SC",
+        "Punjab": "SC",
+        "Haryana": "SC"
+      },
+      "note": "Meghwal/Megh is notified as Scheduled Caste across Rajasthan, Gujarat, MP, Maharashtra, Delhi, Punjab, and Haryana."
+    },
+    "balai": {
+      "aliases": ["balahi"],
+      "states": {
+        "Rajasthan": "SC",
+        "Madhya Pradesh": "SC",
+        "Maharashtra": "SC",
+        "Delhi": "SC"
+      },
+      "note": "Balai/Balahi is a notified Scheduled Caste in Rajasthan, Madhya Pradesh, Maharashtra, and Delhi."
+    },
+    "mahar": {
+      "aliases": ["mehra", "taral", "dhegu megu"],
+      "states": {
+        "Maharashtra": "SC",
+        "Madhya Pradesh": "SC",
+        "Gujarat": "SC",
+        "Karnataka": "SC",
+        "Andhra Pradesh": "SC",
+        "Telangana": "SC"
+      },
+      "note": "Mahar is a notified Scheduled Caste in Maharashtra, MP, Gujarat, Karnataka, AP, and Telangana."
+    },
+    "mang": {
+      "aliases": ["matang", "madig"],
+      "states": {
+        "Maharashtra": "SC",
+        "Madhya Pradesh": "SC",
+        "Gujarat": "SC",
+        "Karnataka": "SC",
+        "Andhra Pradesh": "SC",
+        "Telangana": "SC"
+      },
+      "note": "Mang/Matang is a notified Scheduled Caste in Maharashtra, MP, Gujarat, Karnataka, AP, and Telangana."
+    },
+    "chambhar": {
+      "aliases": ["chamar", "bhambi", "mochi", "rohit"],
+      "states": {
+        "Maharashtra": "SC",
+        "Rajasthan": "SC",
+        "Uttar Pradesh": "SC",
+        "Gujarat": "SC",
+        "Bihar": "SC",
+        "Madhya Pradesh": "SC",
+        "Delhi": "SC",
+        "Punjab": "SC",
+        "Haryana": "SC",
+        "Karnataka": "SC",
+        "West Bengal": "SC",
+        "Odisha": "SC"
+      },
+      "note": "Chambhar/Chamar/Bhambi/Mochi is a notified Scheduled Caste across most states under Article 341."
+    },
+    "adi dravida": {
+      "aliases": ["adi dravidar"],
+      "states": {
+        "Tamil Nadu": "SC",
+        "Karnataka": "SC",
+        "Kerala": "SC",
+        "Andhra Pradesh": "SC",
+        "Telangana": "SC"
+      },
+      "note": "Adi Dravida is a notified Scheduled Caste in Tamil Nadu, Karnataka, Kerala, AP, and Telangana."
+    },
+    "pallar": {
+      "aliases": ["devendrakulathan", "devendrakula velalar"],
+      "states": {
+        "Tamil Nadu": "SC",
+        "Kerala": "SC"
+      },
+      "note": "Pallar/Devendrakulathan is a notified Scheduled Caste in Tamil Nadu and Kerala."
+    },
+    "paraiyar": {
+      "aliases": ["paraiyan", "sambavar"],
+      "states": {
+        "Tamil Nadu": "SC",
+        "Kerala": "SC",
+        "Karnataka": "SC"
+      },
+      "note": "Paraiyar/Paraiyan is a notified Scheduled Caste in Tamil Nadu, Kerala, and Karnataka."
+    },
+    "mala": {
+      "aliases": ["mala dasari", "mala jangam"],
+      "states": {
+        "Andhra Pradesh": "SC",
+        "Telangana": "SC",
+        "Karnataka": "SC",
+        "Maharashtra": "SC"
+      },
+      "note": "Mala is a notified Scheduled Caste in Andhra Pradesh, Telangana, Karnataka, and Maharashtra."
+    },
+    "madiga": {
+      "aliases": ["madigaru"],
+      "states": {
+        "Andhra Pradesh": "SC",
+        "Telangana": "SC",
+        "Karnataka": "SC",
+        "Maharashtra": "SC"
+      },
+      "note": "Madiga is a notified Scheduled Caste in Andhra Pradesh, Telangana, Karnataka, and Maharashtra."
+    },
+    "namasudra": {
+      "aliases": ["namashudra"],
+      "states": {
+        "West Bengal": "SC",
+        "Assam": "SC",
+        "Odisha": "SC"
+      },
+      "note": "Namasudra is a notified Scheduled Caste in West Bengal, Assam, and Odisha."
+    },
+    "rajbanshi": {
+      "aliases": ["rajbansi"],
+      "states": {
+        "West Bengal": "SC",
+        "Assam": "OBC",
+        "Bihar": "OBC"
+      },
+      "note": "Rajbanshi is notified as SC in West Bengal, whereas Koch-Rajbanshi is classified as OBC in Assam and Bihar."
+    },
+    "bagdi": {
+      "aliases": ["dule"],
+      "states": {
+        "West Bengal": "SC",
+        "Odisha": "SC"
+      },
+      "note": "Bagdi is a notified Scheduled Caste in West Bengal and Odisha."
+    },
+    "jatav": {
+      "aliases": ["jatava"],
+      "states": {
+        "Uttar Pradesh": "SC",
+        "Delhi": "SC",
+        "Rajasthan": "SC",
+        "Haryana": "SC",
+        "Madhya Pradesh": "SC"
+      },
+      "note": "Jatav is a notified Scheduled Caste in Uttar Pradesh, Delhi, Rajasthan, Haryana, and Madhya Pradesh."
+    },
+    "pasi": {
+      "aliases": ["passi"],
+      "states": {
+        "Uttar Pradesh": "SC",
+        "Bihar": "SC",
+        "Delhi": "SC",
+        "Madhya Pradesh": "SC",
+        "West Bengal": "SC",
+        "Punjab": "SC",
+        "Haryana": "SC"
+      },
+      "note": "Pasi is a notified Scheduled Caste in Uttar Pradesh, Bihar, Delhi, MP, WB, Punjab, and Haryana."
+    },
+    "kori": {
+      "aliases": ["koli"],
+      "states": {
+        "Uttar Pradesh": "SC",
+        "Delhi": "SC",
+        "Madhya Pradesh": "SC",
+        "Rajasthan": "SC"
+      },
+      "note": "Kori is a notified Scheduled Caste in Uttar Pradesh, Delhi, Madhya Pradesh, and Rajasthan."
+    },
+    "mazhabi": {
+      "aliases": ["mazhabi sikh", "mazhbi"],
+      "states": {
+        "Punjab": "SC",
+        "Haryana": "SC",
+        "Rajasthan": "SC",
+        "Delhi": "SC"
+      },
+      "note": "Mazhabi / Mazhabi Sikh is a notified Scheduled Caste in Punjab, Haryana, Rajasthan, and Delhi."
+    },
+    "ramdasia": {
+      "aliases": ["ramdasi", "ravidassia"],
+      "states": {
+        "Punjab": "SC",
+        "Haryana": "SC",
+        "Rajasthan": "SC",
+        "Delhi": "SC"
+      },
+      "note": "Ramdasia/Ravidassia is a notified Scheduled Caste in Punjab, Haryana, Rajasthan, and Delhi."
+    },
+    "ad dharmi": {
+      "aliases": ["adharmi"],
+      "states": {
+        "Punjab": "SC",
+        "Haryana": "SC",
+        "Himachal Pradesh": "SC",
+        "Delhi": "SC"
+      },
+      "note": "Ad Dharmi is a notified Scheduled Caste in Punjab, Haryana, Himachal Pradesh, and Delhi."
+    }
+  },
+  "states": {
+    "Rajasthan": {
+      "state_code": "RJ",
+      "sca_name": "Rajasthan Scheduled Castes & Scheduled Tribes Finance & Development Co-operative Corp. (ANUPEKSHA)",
+      "notified_sc": [
+        "Bairwa", "Meghwal", "Balai", "Dhobi", "Khatik", "Regar", "Chamar",
+        "Bhangi", "Valmiki", "Dhanak", "Koli", "Kori", "Mehtar", "Nayak",
+        "Bawaria", "Sansi", "Nat", "Jatav", "Mazhabi", "Ramdasia"
+      ],
+      "non_sc_notified": {
+        "Teli": "OBC",
+        "Lohar": "OBC"
+      }
+    },
+    "Uttar Pradesh": {
+      "state_code": "UP",
+      "sca_name": "Uttar Pradesh Scheduled Castes Finance and Development Corporation (UPSCFDC)",
+      "notified_sc": [
+        "Jatav", "Chamar", "Pasi", "Kori", "Dhobi", "Balmiki", "Valmiki",
+        "Khatik", "Dhanuk", "Beldar", "Musahar", "Shilpkar", "Baiswar", "Gond"
+      ],
+      "non_sc_notified": {
+        "Teli": "OBC",
+        "Lohar": "OBC"
+      }
+    },
+    "Maharashtra": {
+      "state_code": "MH",
+      "sca_name": "Mahatma Phule Backward Class Development Corporation (MPBCDC)",
+      "notified_sc": [
+        "Mahar", "Mang", "Matang", "Chambhar", "Bhambi", "Bhangi", "Dhor",
+        "Holar", "Khatik", "Mahyavanshi", "Meghwal", "Balai", "Mala", "Madiga"
+      ],
+      "non_sc_notified": {
+        "Dhobi": "OBC",
+        "Lohar": "OBC",
+        "Koli": "ST",
+        "Teli": "OBC"
+      }
+    },
+    "Tamil Nadu": {
+      "state_code": "TN",
+      "sca_name": "Tamil Nadu Adi Dravidar Housing & Development Corporation (TAHDCO)",
+      "notified_sc": [
+        "Adi Dravida", "Pallar", "Devendrakulathan", "Paraiyar",
+        "Arunthathiyar", "Chakkiliyan", "Madari", "Valluvan", "Kuravan", "Puthirai Vannan"
+      ],
+      "non_sc_notified": {
+        "Dhobi": "OBC",
+        "Vannar": "OBC",
+        "Teli": "OBC"
+      }
+    },
+    "Gujarat": {
+      "state_code": "GJ",
+      "sca_name": "Gujarat Scheduled Castes Development Corporation (GSCDC)",
+      "notified_sc": [
+        "Mahyavanshi", "Vankar", "Bhambi", "Rohit", "Chambhar", "Meghwal",
+        "Bhangi", "Shenva", "Nadia", "Turi", "Garoda", "Mahar", "Mang"
+      ],
+      "non_sc_notified": {
+        "Dhobi": "OBC",
+        "Lohar": "OBC",
+        "Koli": "OBC",
+        "Teli": "OBC"
+      }
+    },
+    "Bihar": {
+      "state_code": "BR",
+      "sca_name": "Bihar State Scheduled Caste Co-operative Development Corporation",
+      "notified_sc": [
+        "Chamar", "Mochi", "Dusadh", "Paswan", "Pasi", "Dhobi",
+        "Musahar", "Mehtar", "Bhuiya", "Dom", "Nat", "Chaupal"
+      ],
+      "non_sc_notified": {
+        "Teli": "OBC",
+        "Lohar": "OBC",
+        "Rajbanshi": "OBC"
+      }
+    },
+    "West Bengal": {
+      "state_code": "WB",
+      "sca_name": "West Bengal Scheduled Castes, Scheduled Tribes and Other Backward Classes Development & Finance Corp.",
+      "notified_sc": [
+        "Namasudra", "Rajbanshi", "Bagdi", "Bauri", "Chamar", "Muchi",
+        "Dhoba", "Dhobi", "Dom", "Hari", "Jalia Kaibartta", "Pod", "Poundra", "Pasi"
+      ],
+      "non_sc_notified": {
+        "Teli": "OBC",
+        "Lohar": "OBC"
+      }
+    },
+    "Punjab": {
+      "state_code": "PB",
+      "sca_name": "Punjab Scheduled Castes Land Development & Finance Corporation (PSCFC)",
+      "notified_sc": [
+        "Mazhabi", "Mazhabi Sikh", "Ramdasia", "Ad Dharmi", "Balmiki",
+        "Chamar", "Ravidassia", "Dhanak", "Kabirpanthi", "Julaha", "Meghwal", "Sansi", "Pasi"
+      ],
+      "non_sc_notified": {
+        "Dhobi": "OBC"
+      }
+    },
+    "Madhya Pradesh": {
+      "state_code": "MP",
+      "sca_name": "Madhya Pradesh State Cooperative Scheduled Caste Finance & Development Corp.",
+      "notified_sc": [
+        "Bairwa", "Meghwal", "Balai", "Chamar", "Ahirwar", "Dhobi",
+        "Kori", "Khatik", "Basor", "Mahar", "Mang", "Bhangi", "Mehtar", "Jatav", "Pasi"
+      ],
+      "non_sc_notified": {
+        "Teli": "OBC",
+        "Lohar": "OBC"
+      }
+    },
+    "Karnataka": {
+      "state_code": "KA",
+      "sca_name": "Dr. B.R. Ambedkar Development Corporation Ltd.",
+      "notified_sc": [
+        "Adi Karnataka", "Adi Dravida", "Banjara", "Lambani", "Bhovi",
+        "Holeya", "Madiga", "Mala", "Chamar", "Chambhar", "Samagara", "Mahar", "Mang", "Paraiyar"
+      ],
+      "non_sc_notified": {
+        "Dhobi": "OBC",
+        "Teli": "OBC"
+      }
+    },
+    "Andhra Pradesh": {
+      "state_code": "AP",
+      "sca_name": "Andhra Pradesh Scheduled Castes Cooperative Finance Corporation",
+      "notified_sc": [
+        "Mala", "Madiga", "Adi Andhra", "Adi Dravida", "Relli",
+        "Chachati", "Mala Dasari", "Mala Jangam", "Pambada", "Mahar", "Mang"
+      ],
+      "non_sc_notified": {
+        "Dhobi": "OBC"
+      }
+    },
+    "Telangana": {
+      "state_code": "TS",
+      "sca_name": "Telangana State Scheduled Castes Co-operative Development Corporation",
+      "notified_sc": [
+        "Mala", "Madiga", "Adi Andhra", "Adi Dravida", "Bindla",
+        "Byagara", "Chindu", "Netkani", "Mahar", "Mang"
+      ],
+      "non_sc_notified": {
+        "Dhobi": "OBC"
+      }
+    },
+    "Delhi": {
+      "state_code": "DL",
+      "sca_name": "Delhi Scheduled Castes, Scheduled Tribes, OBC, Minorities & Handicapped Financial & Development Corp. (DSFDC)",
+      "notified_sc": [
+        "Jatav", "Chamar", "Pasi", "Kori", "Koli", "Dhobi", "Balmiki",
+        "Khatik", "Bairwa", "Meghwal", "Balai", "Dhanak", "Julaha", "Mazhabi", "Ramdasia", "Ad Dharmi"
+      ],
+      "non_sc_notified": {
+        "Teli": "OBC"
+      }
+    },
+    "Haryana": {
+      "state_code": "HR",
+      "sca_name": "Haryana Scheduled Castes Finance and Development Corporation (HSCFDC)",
+      "notified_sc": [
+        "Chamar", "Jatav", "Balmiki", "Dhanak", "Khatik", "Bazigar",
+        "Ad Dharmi", "Meghwal", "Kabirpanthi", "Sansi", "Mazhabi", "Ramdasia", "Pasi"
+      ],
+      "non_sc_notified": {
+        "Dhobi": "OBC"
+      }
+    },
+    "Odisha": {
+      "state_code": "OR",
+      "sca_name": "Odisha Scheduled Castes & Scheduled Tribes Development Finance Cooperative Corporation (OSFDC)",
+      "notified_sc": [
+        "Pan", "Pano", "Dom", "Dhoba", "Dhobi", "Bauri", "Ganda",
+        "Kandra", "Gokha", "Chamar", "Mochi", "Namasudra", "Bagdi"
+      ],
+      "non_sc_notified": {
+        "Teli": "OBC"
+      }
+    },
+    "Kerala": {
+      "state_code": "KL",
+      "sca_name": "Kerala State Development Corporation for SC/ST (KSDC)",
+      "notified_sc": [
+        "Pulayan", "Cheruman", "Paraiyan", "Paraiyar", "Pallar",
+        "Kuravan", "Kanakkan", "Mannan", "Vannan", "Vetan", "Thandan", "Adi Dravida"
+      ],
+      "non_sc_notified": {
+        "Dhobi": "OBC"
+      }
+    },
+    "Assam": {
+      "state_code": "AS",
+      "sca_name": "Assam State Development Corporation for Scheduled Castes",
+      "notified_sc": [
+        "Namasudra", "Kaibartta", "Jalkeot", "Bania", "Bhuinmali",
+        "Dhobi", "Hira", "Lalbegi", "Mehtar", "Muchi", "Sutradhar", "Patni"
+      ],
+      "non_sc_notified": {
+        "Rajbanshi": "OBC"
+      }
+    }
+  }
+}

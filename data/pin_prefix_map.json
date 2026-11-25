@@ -1,0 +1,2170 @@
+{
+  "110": {
+    "district": "New Delhi",
+    "state": "Delhi"
+  },
+  "121": {
+    "district": "Faridabad",
+    "state": "Haryana"
+  },
+  "122": {
+    "district": "Gurugram",
+    "state": "Haryana"
+  },
+  "123": {
+    "district": "Gurugram",
+    "state": "Haryana"
+  },
+  "124": {
+    "district": "Rohtak",
+    "state": "Haryana"
+  },
+  "125": {
+    "district": "Hisar",
+    "state": "Haryana"
+  },
+  "126": {
+    "district": "Gurugram",
+    "state": "Haryana"
+  },
+  "127": {
+    "district": "Gurugram",
+    "state": "Haryana"
+  },
+  "128": {
+    "district": "Gurugram",
+    "state": "Haryana"
+  },
+  "129": {
+    "district": "Gurugram",
+    "state": "Haryana"
+  },
+  "130": {
+    "district": "Gurugram",
+    "state": "Haryana"
+  },
+  "131": {
+    "district": "Gurugram",
+    "state": "Haryana"
+  },
+  "132": {
+    "district": "Panipat",
+    "state": "Haryana"
+  },
+  "133": {
+    "district": "Gurugram",
+    "state": "Haryana"
+  },
+  "134": {
+    "district": "Ambala",
+    "state": "Haryana"
+  },
+  "135": {
+    "district": "Gurugram",
+    "state": "Haryana"
+  },
+  "136": {
+    "district": "Gurugram",
+    "state": "Haryana"
+  },
+  "140": {
+    "district": "Ludhiana",
+    "state": "Punjab"
+  },
+  "141": {
+    "district": "Ludhiana",
+    "state": "Punjab"
+  },
+  "142": {
+    "district": "Ludhiana",
+    "state": "Punjab"
+  },
+  "143": {
+    "district": "Amritsar",
+    "state": "Punjab"
+  },
+  "144": {
+    "district": "Jalandhar",
+    "state": "Punjab"
+  },
+  "145": {
+    "district": "Ludhiana",
+    "state": "Punjab"
+  },
+  "146": {
+    "district": "Ludhiana",
+    "state": "Punjab"
+  },
+  "147": {
+    "district": "Patiala",
+    "state": "Punjab"
+  },
+  "148": {
+    "district": "Ludhiana",
+    "state": "Punjab"
+  },
+  "149": {
+    "district": "Ludhiana",
+    "state": "Punjab"
+  },
+  "150": {
+    "district": "Ludhiana",
+    "state": "Punjab"
+  },
+  "151": {
+    "district": "Ludhiana",
+    "state": "Punjab"
+  },
+  "152": {
+    "district": "Ludhiana",
+    "state": "Punjab"
+  },
+  "153": {
+    "district": "Ludhiana",
+    "state": "Punjab"
+  },
+  "154": {
+    "district": "Ludhiana",
+    "state": "Punjab"
+  },
+  "155": {
+    "district": "Ludhiana",
+    "state": "Punjab"
+  },
+  "156": {
+    "district": "Ludhiana",
+    "state": "Punjab"
+  },
+  "157": {
+    "district": "Ludhiana",
+    "state": "Punjab"
+  },
+  "158": {
+    "district": "Ludhiana",
+    "state": "Punjab"
+  },
+  "159": {
+    "district": "Ludhiana",
+    "state": "Punjab"
+  },
+  "160": {
+    "district": "Chandigarh",
+    "state": "Chandigarh"
+  },
+  "171": {
+    "district": "Shimla",
+    "state": "Himachal Pradesh"
+  },
+  "172": {
+    "district": "Shimla",
+    "state": "Himachal Pradesh"
+  },
+  "173": {
+    "district": "Shimla",
+    "state": "Himachal Pradesh"
+  },
+  "174": {
+    "district": "Shimla",
+    "state": "Himachal Pradesh"
+  },
+  "175": {
+    "district": "Shimla",
+    "state": "Himachal Pradesh"
+  },
+  "176": {
+    "district": "Shimla",
+    "state": "Himachal Pradesh"
+  },
+  "177": {
+    "district": "Shimla",
+    "state": "Himachal Pradesh"
+  },
+  "180": {
+    "district": "Jammu",
+    "state": "Jammu and Kashmir"
+  },
+  "181": {
+    "district": "Jammu",
+    "state": "Jammu and Kashmir"
+  },
+  "182": {
+    "district": "Jammu",
+    "state": "Jammu and Kashmir"
+  },
+  "183": {
+    "district": "Jammu",
+    "state": "Jammu and Kashmir"
+  },
+  "184": {
+    "district": "Jammu",
+    "state": "Jammu and Kashmir"
+  },
+  "185": {
+    "district": "Jammu",
+    "state": "Jammu and Kashmir"
+  },
+  "186": {
+    "district": "Jammu",
+    "state": "Jammu and Kashmir"
+  },
+  "187": {
+    "district": "Jammu",
+    "state": "Jammu and Kashmir"
+  },
+  "188": {
+    "district": "Jammu",
+    "state": "Jammu and Kashmir"
+  },
+  "189": {
+    "district": "Jammu",
+    "state": "Jammu and Kashmir"
+  },
+  "190": {
+    "district": "Jammu",
+    "state": "Jammu and Kashmir"
+  },
+  "191": {
+    "district": "Jammu",
+    "state": "Jammu and Kashmir"
+  },
+  "192": {
+    "district": "Jammu",
+    "state": "Jammu and Kashmir"
+  },
+  "193": {
+    "district": "Jammu",
+    "state": "Jammu and Kashmir"
+  },
+  "194": {
+    "district": "Leh",
+    "state": "Ladakh"
+  },
+  "201": {
+    "district": "Ghaziabad",
+    "state": "Uttar Pradesh"
+  },
+  "202": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "203": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "204": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "205": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "206": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "207": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "208": {
+    "district": "Kanpur Nagar",
+    "state": "Uttar Pradesh"
+  },
+  "209": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "210": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "211": {
+    "district": "Prayagraj",
+    "state": "Uttar Pradesh"
+  },
+  "212": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "213": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "214": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "215": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "216": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "217": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "218": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "219": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "220": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "221": {
+    "district": "Varanasi",
+    "state": "Uttar Pradesh"
+  },
+  "222": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "223": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "224": {
+    "district": "Ayodhya",
+    "state": "Uttar Pradesh"
+  },
+  "225": {
+    "district": "Barabanki",
+    "state": "Uttar Pradesh"
+  },
+  "226": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "227": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "228": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "229": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "230": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "231": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "232": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "233": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "234": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "235": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "236": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "237": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "238": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "239": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "240": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "241": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "242": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "243": {
+    "district": "Lucknow",
+    "state": "Uttar Pradesh"
+  },
+  "244": {
+    "district": "Moradabad",
+    "state": "Uttar Pradesh"
+  },
+  "245": {
+    "district": "Hapur",
+    "state": "Uttar Pradesh"
+  },
+  "246": {
+    "district": "Dehradun",
+    "state": "Uttarakhand"
+  },
+  "247": {
+    "district": "Saharanpur",
+    "state": "Uttar Pradesh"
+  },
+  "248": {
+    "district": "Dehradun",
+    "state": "Uttarakhand"
+  },
+  "249": {
+    "district": "Dehradun",
+    "state": "Uttarakhand"
+  },
+  "250": {
+    "district": "Meerut",
+    "state": "Uttar Pradesh"
+  },
+  "251": {
+    "district": "Meerut",
+    "state": "Uttar Pradesh"
+  },
+  "252": {
+    "district": "Meerut",
+    "state": "Uttar Pradesh"
+  },
+  "253": {
+    "district": "Meerut",
+    "state": "Uttar Pradesh"
+  },
+  "254": {
+    "district": "Meerut",
+    "state": "Uttar Pradesh"
+  },
+  "255": {
+    "district": "Meerut",
+    "state": "Uttar Pradesh"
+  },
+  "256": {
+    "district": "Meerut",
+    "state": "Uttar Pradesh"
+  },
+  "257": {
+    "district": "Meerut",
+    "state": "Uttar Pradesh"
+  },
+  "258": {
+    "district": "Meerut",
+    "state": "Uttar Pradesh"
+  },
+  "259": {
+    "district": "Meerut",
+    "state": "Uttar Pradesh"
+  },
+  "260": {
+    "district": "Meerut",
+    "state": "Uttar Pradesh"
+  },
+  "261": {
+    "district": "Meerut",
+    "state": "Uttar Pradesh"
+  },
+  "262": {
+    "district": "Nainital",
+    "state": "Uttarakhand"
+  },
+  "263": {
+    "district": "Nainital",
+    "state": "Uttarakhand"
+  },
+  "271": {
+    "district": "Varanasi",
+    "state": "Uttar Pradesh"
+  },
+  "272": {
+    "district": "Varanasi",
+    "state": "Uttar Pradesh"
+  },
+  "273": {
+    "district": "Gorakhpur",
+    "state": "Uttar Pradesh"
+  },
+  "274": {
+    "district": "Varanasi",
+    "state": "Uttar Pradesh"
+  },
+  "275": {
+    "district": "Varanasi",
+    "state": "Uttar Pradesh"
+  },
+  "276": {
+    "district": "Varanasi",
+    "state": "Uttar Pradesh"
+  },
+  "277": {
+    "district": "Varanasi",
+    "state": "Uttar Pradesh"
+  },
+  "278": {
+    "district": "Varanasi",
+    "state": "Uttar Pradesh"
+  },
+  "279": {
+    "district": "Varanasi",
+    "state": "Uttar Pradesh"
+  },
+  "280": {
+    "district": "Varanasi",
+    "state": "Uttar Pradesh"
+  },
+  "281": {
+    "district": "Varanasi",
+    "state": "Uttar Pradesh"
+  },
+  "282": {
+    "district": "Agra",
+    "state": "Uttar Pradesh"
+  },
+  "283": {
+    "district": "Varanasi",
+    "state": "Uttar Pradesh"
+  },
+  "284": {
+    "district": "Varanasi",
+    "state": "Uttar Pradesh"
+  },
+  "285": {
+    "district": "Varanasi",
+    "state": "Uttar Pradesh"
+  },
+  "301": {
+    "district": "Alwar",
+    "state": "Rajasthan"
+  },
+  "302": {
+    "district": "Jaipur",
+    "state": "Rajasthan"
+  },
+  "303": {
+    "district": "Jaipur",
+    "state": "Rajasthan"
+  },
+  "304": {
+    "district": "Jaipur",
+    "state": "Rajasthan"
+  },
+  "305": {
+    "district": "Ajmer",
+    "state": "Rajasthan"
+  },
+  "306": {
+    "district": "Pali",
+    "state": "Rajasthan"
+  },
+  "307": {
+    "district": "Ajmer",
+    "state": "Rajasthan"
+  },
+  "311": {
+    "district": "Bhilwara",
+    "state": "Rajasthan"
+  },
+  "312": {
+    "district": "Chittorgarh",
+    "state": "Rajasthan"
+  },
+  "313": {
+    "district": "Udaipur",
+    "state": "Rajasthan"
+  },
+  "314": {
+    "district": "Udaipur",
+    "state": "Rajasthan"
+  },
+  "321": {
+    "district": "Bharatpur",
+    "state": "Rajasthan"
+  },
+  "322": {
+    "district": "Sawai Madhopur",
+    "state": "Rajasthan"
+  },
+  "323": {
+    "district": "Kota",
+    "state": "Rajasthan"
+  },
+  "324": {
+    "district": "Kota",
+    "state": "Rajasthan"
+  },
+  "325": {
+    "district": "Kota",
+    "state": "Rajasthan"
+  },
+  "326": {
+    "district": "Kota",
+    "state": "Rajasthan"
+  },
+  "327": {
+    "district": "Kota",
+    "state": "Rajasthan"
+  },
+  "328": {
+    "district": "Kota",
+    "state": "Rajasthan"
+  },
+  "331": {
+    "district": "Bikaner",
+    "state": "Rajasthan"
+  },
+  "332": {
+    "district": "Sikar",
+    "state": "Rajasthan"
+  },
+  "333": {
+    "district": "Jhunjhunu",
+    "state": "Rajasthan"
+  },
+  "334": {
+    "district": "Bikaner",
+    "state": "Rajasthan"
+  },
+  "335": {
+    "district": "Sri Ganganagar",
+    "state": "Rajasthan"
+  },
+  "341": {
+    "district": "Nagaur",
+    "state": "Rajasthan"
+  },
+  "342": {
+    "district": "Jodhpur",
+    "state": "Rajasthan"
+  },
+  "343": {
+    "district": "Jalore",
+    "state": "Rajasthan"
+  },
+  "344": {
+    "district": "Barmer",
+    "state": "Rajasthan"
+  },
+  "345": {
+    "district": "Jaisalmer",
+    "state": "Rajasthan"
+  },
+  "360": {
+    "district": "Rajkot",
+    "state": "Gujarat"
+  },
+  "361": {
+    "district": "Jamnagar",
+    "state": "Gujarat"
+  },
+  "362": {
+    "district": "Junagadh",
+    "state": "Gujarat"
+  },
+  "363": {
+    "district": "Rajkot",
+    "state": "Gujarat"
+  },
+  "364": {
+    "district": "Bhavnagar",
+    "state": "Gujarat"
+  },
+  "365": {
+    "district": "Rajkot",
+    "state": "Gujarat"
+  },
+  "370": {
+    "district": "Kutch",
+    "state": "Gujarat"
+  },
+  "380": {
+    "district": "Ahmedabad",
+    "state": "Gujarat"
+  },
+  "381": {
+    "district": "Ahmedabad",
+    "state": "Gujarat"
+  },
+  "382": {
+    "district": "Gandhinagar",
+    "state": "Gujarat"
+  },
+  "383": {
+    "district": "Ahmedabad",
+    "state": "Gujarat"
+  },
+  "384": {
+    "district": "Mehsana",
+    "state": "Gujarat"
+  },
+  "385": {
+    "district": "Banaskantha",
+    "state": "Gujarat"
+  },
+  "386": {
+    "district": "Ahmedabad",
+    "state": "Gujarat"
+  },
+  "387": {
+    "district": "Ahmedabad",
+    "state": "Gujarat"
+  },
+  "388": {
+    "district": "Anand",
+    "state": "Gujarat"
+  },
+  "389": {
+    "district": "Ahmedabad",
+    "state": "Gujarat"
+  },
+  "390": {
+    "district": "Vadodara",
+    "state": "Gujarat"
+  },
+  "391": {
+    "district": "Vadodara",
+    "state": "Gujarat"
+  },
+  "392": {
+    "district": "Vadodara",
+    "state": "Gujarat"
+  },
+  "393": {
+    "district": "Vadodara",
+    "state": "Gujarat"
+  },
+  "394": {
+    "district": "Vadodara",
+    "state": "Gujarat"
+  },
+  "395": {
+    "district": "Surat",
+    "state": "Gujarat"
+  },
+  "396": {
+    "district": "Daman",
+    "state": "Dadra and Nagar Haveli and Daman and Diu"
+  },
+  "400": {
+    "district": "Mumbai City",
+    "state": "Maharashtra"
+  },
+  "401": {
+    "district": "Mumbai City",
+    "state": "Maharashtra"
+  },
+  "402": {
+    "district": "Mumbai City",
+    "state": "Maharashtra"
+  },
+  "403": {
+    "district": "North Goa",
+    "state": "Goa"
+  },
+  "410": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "411": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "412": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "413": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "414": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "415": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "416": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "417": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "418": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "419": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "420": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "421": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "422": {
+    "district": "Nashik",
+    "state": "Maharashtra"
+  },
+  "423": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "424": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "425": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "426": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "427": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "428": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "429": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "430": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "431": {
+    "district": "Chhatrapati Sambhajinagar",
+    "state": "Maharashtra"
+  },
+  "432": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "433": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "434": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "435": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "436": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "437": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "438": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "439": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "440": {
+    "district": "Nagpur",
+    "state": "Maharashtra"
+  },
+  "441": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "442": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "443": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "444": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "445": {
+    "district": "Pune",
+    "state": "Maharashtra"
+  },
+  "450": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "451": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "452": {
+    "district": "Indore",
+    "state": "Madhya Pradesh"
+  },
+  "453": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "454": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "455": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "456": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "457": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "458": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "459": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "460": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "461": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "462": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "463": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "464": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "465": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "466": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "467": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "468": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "469": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "470": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "471": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "472": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "473": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "474": {
+    "district": "Gwalior",
+    "state": "Madhya Pradesh"
+  },
+  "475": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "476": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "477": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "478": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "479": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "480": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "481": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "482": {
+    "district": "Jabalpur",
+    "state": "Madhya Pradesh"
+  },
+  "483": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "484": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "485": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "486": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "487": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "488": {
+    "district": "Bhopal",
+    "state": "Madhya Pradesh"
+  },
+  "490": {
+    "district": "Raipur",
+    "state": "Chhattisgarh"
+  },
+  "491": {
+    "district": "Raipur",
+    "state": "Chhattisgarh"
+  },
+  "492": {
+    "district": "Raipur",
+    "state": "Chhattisgarh"
+  },
+  "493": {
+    "district": "Raipur",
+    "state": "Chhattisgarh"
+  },
+  "494": {
+    "district": "Raipur",
+    "state": "Chhattisgarh"
+  },
+  "495": {
+    "district": "Raipur",
+    "state": "Chhattisgarh"
+  },
+  "496": {
+    "district": "Raipur",
+    "state": "Chhattisgarh"
+  },
+  "497": {
+    "district": "Raipur",
+    "state": "Chhattisgarh"
+  },
+  "500": {
+    "district": "Hyderabad",
+    "state": "Telangana"
+  },
+  "501": {
+    "district": "Hyderabad",
+    "state": "Telangana"
+  },
+  "502": {
+    "district": "Hyderabad",
+    "state": "Telangana"
+  },
+  "503": {
+    "district": "Hyderabad",
+    "state": "Telangana"
+  },
+  "504": {
+    "district": "Hyderabad",
+    "state": "Telangana"
+  },
+  "505": {
+    "district": "Hyderabad",
+    "state": "Telangana"
+  },
+  "506": {
+    "district": "Hyderabad",
+    "state": "Telangana"
+  },
+  "507": {
+    "district": "Hyderabad",
+    "state": "Telangana"
+  },
+  "508": {
+    "district": "Hyderabad",
+    "state": "Telangana"
+  },
+  "509": {
+    "district": "Hyderabad",
+    "state": "Telangana"
+  },
+  "515": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "516": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "517": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "518": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "519": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "520": {
+    "district": "NTR",
+    "state": "Andhra Pradesh"
+  },
+  "521": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "522": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "523": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "524": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "525": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "526": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "527": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "528": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "529": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "530": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "531": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "532": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "533": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "534": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "535": {
+    "district": "Visakhapatnam",
+    "state": "Andhra Pradesh"
+  },
+  "560": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "561": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "562": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "563": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "564": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "565": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "566": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "567": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "568": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "569": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "570": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "571": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "572": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "573": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "574": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "575": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "576": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "577": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "578": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "579": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "580": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "581": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "582": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "583": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "584": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "585": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "586": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "587": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "588": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "589": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "590": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "591": {
+    "district": "Bengaluru Urban",
+    "state": "Karnataka"
+  },
+  "600": {
+    "district": "Chennai",
+    "state": "Tamil Nadu"
+  },
+  "601": {
+    "district": "Chennai",
+    "state": "Tamil Nadu"
+  },
+  "602": {
+    "district": "Chennai",
+    "state": "Tamil Nadu"
+  },
+  "603": {
+    "district": "Chennai",
+    "state": "Tamil Nadu"
+  },
+  "604": {
+    "district": "Chennai",
+    "state": "Tamil Nadu"
+  },
+  "605": {
+    "district": "Puducherry",
+    "state": "Puducherry"
+  },
+  "606": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "607": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "608": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "609": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "610": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "611": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "612": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "613": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "614": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "615": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "616": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "617": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "618": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "619": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "620": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "621": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "622": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "623": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "624": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "625": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "626": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "627": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "628": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "629": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "630": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "631": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "632": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "633": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "634": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "635": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "636": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "637": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "638": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "639": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "640": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "641": {
+    "district": "Coimbatore",
+    "state": "Tamil Nadu"
+  },
+  "642": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "643": {
+    "district": "Madurai",
+    "state": "Tamil Nadu"
+  },
+  "670": {
+    "district": "Thrissur",
+    "state": "Kerala"
+  },
+  "671": {
+    "district": "Thrissur",
+    "state": "Kerala"
+  },
+  "672": {
+    "district": "Thrissur",
+    "state": "Kerala"
+  },
+  "673": {
+    "district": "Thrissur",
+    "state": "Kerala"
+  },
+  "674": {
+    "district": "Thrissur",
+    "state": "Kerala"
+  },
+  "675": {
+    "district": "Thrissur",
+    "state": "Kerala"
+  },
+  "676": {
+    "district": "Thrissur",
+    "state": "Kerala"
+  },
+  "677": {
+    "district": "Thrissur",
+    "state": "Kerala"
+  },
+  "678": {
+    "district": "Thrissur",
+    "state": "Kerala"
+  },
+  "679": {
+    "district": "Thrissur",
+    "state": "Kerala"
+  },
+  "680": {
+    "district": "Thrissur",
+    "state": "Kerala"
+  },
+  "681": {
+    "district": "Thrissur",
+    "state": "Kerala"
+  },
+  "682": {
+    "district": "Ernakulam",
+    "state": "Kerala"
+  },
+  "683": {
+    "district": "Thiruvananthapuram",
+    "state": "Kerala"
+  },
+  "684": {
+    "district": "Thiruvananthapuram",
+    "state": "Kerala"
+  },
+  "685": {
+    "district": "Thiruvananthapuram",
+    "state": "Kerala"
+  },
+  "686": {
+    "district": "Kottayam",
+    "state": "Kerala"
+  },
+  "687": {
+    "district": "Thiruvananthapuram",
+    "state": "Kerala"
+  },
+  "688": {
+    "district": "Thiruvananthapuram",
+    "state": "Kerala"
+  },
+  "689": {
+    "district": "Thiruvananthapuram",
+    "state": "Kerala"
+  },
+  "690": {
+    "district": "Thiruvananthapuram",
+    "state": "Kerala"
+  },
+  "691": {
+    "district": "Thiruvananthapuram",
+    "state": "Kerala"
+  },
+  "692": {
+    "district": "Thiruvananthapuram",
+    "state": "Kerala"
+  },
+  "693": {
+    "district": "Thiruvananthapuram",
+    "state": "Kerala"
+  },
+  "694": {
+    "district": "Thiruvananthapuram",
+    "state": "Kerala"
+  },
+  "695": {
+    "district": "Thiruvananthapuram",
+    "state": "Kerala"
+  },
+  "700": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "701": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "702": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "703": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "704": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "705": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "706": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "707": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "708": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "709": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "710": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "711": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "712": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "713": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "714": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "715": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "716": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "717": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "718": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "719": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "720": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "721": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "722": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "723": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "724": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "725": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "726": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "727": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "728": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "729": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "730": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "731": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "732": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "733": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "734": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "735": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "736": {
+    "district": "Kolkata",
+    "state": "West Bengal"
+  },
+  "737": {
+    "district": "Gangtok",
+    "state": "Sikkim"
+  },
+  "741": {
+    "district": "North 24 Parganas",
+    "state": "West Bengal"
+  },
+  "742": {
+    "district": "North 24 Parganas",
+    "state": "West Bengal"
+  },
+  "743": {
+    "district": "North 24 Parganas",
+    "state": "West Bengal"
+  },
+  "744": {
+    "district": "South Andaman",
+    "state": "Andaman and Nicobar Islands"
+  },
+  "751": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "752": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "753": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "754": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "755": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "756": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "757": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "758": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "759": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "760": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "761": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "762": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "763": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "764": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "765": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "766": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "767": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "768": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "769": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "770": {
+    "district": "Khordha",
+    "state": "Odisha"
+  },
+  "781": {
+    "district": "Kamrup Metropolitan",
+    "state": "Assam"
+  },
+  "782": {
+    "district": "Kamrup Metropolitan",
+    "state": "Assam"
+  },
+  "783": {
+    "district": "Kamrup Metropolitan",
+    "state": "Assam"
+  },
+  "784": {
+    "district": "Kamrup Metropolitan",
+    "state": "Assam"
+  },
+  "785": {
+    "district": "Kamrup Metropolitan",
+    "state": "Assam"
+  },
+  "786": {
+    "district": "Kamrup Metropolitan",
+    "state": "Assam"
+  },
+  "787": {
+    "district": "Kamrup Metropolitan",
+    "state": "Assam"
+  },
+  "788": {
+    "district": "Kamrup Metropolitan",
+    "state": "Assam"
+  },
+  "790": {
+    "district": "Papum Pare",
+    "state": "Arunachal Pradesh"
+  },
+  "791": {
+    "district": "Papum Pare",
+    "state": "Arunachal Pradesh"
+  },
+  "792": {
+    "district": "Papum Pare",
+    "state": "Arunachal Pradesh"
+  },
+  "793": {
+    "district": "East Khasi Hills",
+    "state": "Meghalaya"
+  },
+  "794": {
+    "district": "East Khasi Hills",
+    "state": "Meghalaya"
+  },
+  "795": {
+    "district": "Imphal West",
+    "state": "Manipur"
+  },
+  "796": {
+    "district": "Aizawl",
+    "state": "Mizoram"
+  },
+  "797": {
+    "district": "Kohima",
+    "state": "Nagaland"
+  },
+  "798": {
+    "district": "Kohima",
+    "state": "Nagaland"
+  },
+  "799": {
+    "district": "West Tripura",
+    "state": "Tripura"
+  },
+  "800": {
+    "district": "Patna",
+    "state": "Bihar"
+  },
+  "801": {
+    "district": "Patna",
+    "state": "Bihar"
+  },
+  "802": {
+    "district": "Patna",
+    "state": "Bihar"
+  },
+  "803": {
+    "district": "Patna",
+    "state": "Bihar"
+  },
+  "804": {
+    "district": "Patna",
+    "state": "Bihar"
+  },
+  "805": {
+    "district": "Patna",
+    "state": "Bihar"
+  },
+  "806": {
+    "district": "Patna",
+    "state": "Bihar"
+  },
+  "807": {
+    "district": "Patna",
+    "state": "Bihar"
+  },
+  "808": {
+    "district": "Patna",
+    "state": "Bihar"
+  },
+  "809": {
+    "district": "Patna",
+    "state": "Bihar"
+  },
+  "810": {
+    "district": "Patna",
+    "state": "Bihar"
+  },
+  "811": {
+    "district": "Patna",
+    "state": "Bihar"
+  },
+  "812": {
+    "district": "Patna",
+    "state": "Bihar"
+  },
+  "813": {
+    "district": "Patna",
+    "state": "Bihar"
+  },
+  "814": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "815": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "816": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "817": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "818": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "819": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "820": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "821": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "822": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "823": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "824": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "825": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "826": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "827": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "828": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "829": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "830": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "831": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "832": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "833": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "834": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "835": {
+    "district": "Ranchi",
+    "state": "Jharkhand"
+  },
+  "841": {
+    "district": "Muzaffarpur",
+    "state": "Bihar"
+  },
+  "842": {
+    "district": "Muzaffarpur",
+    "state": "Bihar"
+  },
+  "843": {
+    "district": "Muzaffarpur",
+    "state": "Bihar"
+  },
+  "844": {
+    "district": "Muzaffarpur",
+    "state": "Bihar"
+  },
+  "845": {
+    "district": "Muzaffarpur",
+    "state": "Bihar"
+  },
+  "846": {
+    "district": "Muzaffarpur",
+    "state": "Bihar"
+  },
+  "847": {
+    "district": "Muzaffarpur",
+    "state": "Bihar"
+  },
+  "848": {
+    "district": "Muzaffarpur",
+    "state": "Bihar"
+  },
+  "849": {
+    "district": "Muzaffarpur",
+    "state": "Bihar"
+  },
+  "850": {
+    "district": "Muzaffarpur",
+    "state": "Bihar"
+  },
+  "851": {
+    "district": "Muzaffarpur",
+    "state": "Bihar"
+  },
+  "852": {
+    "district": "Muzaffarpur",
+    "state": "Bihar"
+  },
+  "853": {
+    "district": "Muzaffarpur",
+    "state": "Bihar"
+  },
+  "854": {
+    "district": "Muzaffarpur",
+    "state": "Bihar"
+  },
+  "855": {
+    "district": "Muzaffarpur",
+    "state": "Bihar"
+  }
+}

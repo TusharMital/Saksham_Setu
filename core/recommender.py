@@ -58,6 +58,14 @@ def _fmt_inr(amount):
 
 def layer1_reason(applicant, scheme):
     """Return (accepted: bool, one-line reason)."""
+    caste_cat = str(applicant.get("caste_category") or "").strip().upper()
+    if caste_cat == "EWS":
+        return (
+            False,
+            f"Rejected: {scheme['name']} is an NSFDC scheme exclusively for Scheduled Caste (SC) applicants. "
+            "As an EWS applicant (DoPT OM 2019), consider PM MUDRA Yojana or PMEGP.",
+        )
+
     states = [str(s).strip().lower() for s in _list(scheme.get("states_supported"))]
     app_state = str(applicant.get("state") or "").strip().lower()
     if states and "all" not in states and app_state not in states:

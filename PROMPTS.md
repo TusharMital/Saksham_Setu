@@ -288,7 +288,7 @@ and wait for me to say "continue".
 - docs/04_Prompt_Improvements/p0_usage_limit.png
 
 
-
+---
 
 ### P0b | Antigravity | Reverse prompting, chain prompting, response evaluation
 **Date:** 21 Nov 2026
@@ -323,6 +323,7 @@ and wait for me to say "continue".
 
 **Screenshots:** docs/02_Initial_Prompt/p0b_handover_prompt.png, docs/03_AI_Tools/p0b_antigravity_audit_*.png
 
+---
 
 ### P0c (Step 1) | Antigravity | Constraint-based & Step-by-step Prompting
 Date: 2026-11-21
@@ -338,6 +339,8 @@ Did it follow the rules? Yes (did not touch `.env` or protected docs; stopped af
 Next prompt it led to: Confirmation to proceed to Step 2 (`seed_data`).
 Screenshot file names: `docs/03_AI_Tools/p0c_step1_migrations.png`, `docs/03_AI_Tools/p0c_step1_tests.png`
 
+---
+
 ### P0c (Steps 2–5) | Antigravity | Chain & Constraint-based Prompting
 Date: 2026-11-21
 Run by: Tushar (25bcon2455)
@@ -352,6 +355,7 @@ Did it follow the rules? Yes.
 Next prompt it led to: Step 6 local end-to-end walkthrough and live browser testing.
 Screenshot file names: `docs/03_AI_Tools/p0c_steps2to5_build.png`, `docs/03_AI_Tools/p0c_steps2to5_tests.png`
 
+--- 
 
 ### P4 | Bolt.new, Figma & Antigravity | Role-based & Multi-Tool UI/UX Prompting
 Date: 2026-11-21
@@ -366,3 +370,131 @@ What failed or was missing: Found 3 real UI bugs during local walkthrough: (1) C
 Did it follow the rules? Yes (modified `frontend/` only; `.env` and protected docs untouched).
 Next prompt it led to: P8a (fixing the 3 real UI/map bugs found in walkthrough).
 Screenshot file names: `docs/04_Prompt_Improvements/ui_before.png`, `docs/03_AI_Tools/bolt_ui_output_1.png` to `_8.png`, `docs/03_AI_Tools/figma_ui_output.png` to `_5.png`
+
+---
+
+### P4a | Bolt.new + Figma + Antigravity | Multi-Tool UI/UX Redesign Prompting
+Date: 2026-11-21
+Run by: Bhumi (25bcon2360) & Tushar (25bcon2455)
+Prompt (exact text): Redesign the Saksham Setu interface by generating modern GovTech landing, scheme card, and eligibility form concepts in Bolt.new and Figma, then combine the strongest layout, typography, saffron-and-navy palette, and interactive UX components into the React 18 + Vite frontend (`frontend/`) without breaking existing API bindings.
+Output summary (3 lines):
+- Created responsive GovTech visual layouts and component prototypes using Bolt.new and Figma.
+- Integrated the unified design system, interactive form steps, scheme result cards, and responsive navbar into `frontend/` via Antigravity (`7a27ec8`).
+- Rebuilt Vite bundle, ran `collectstatic`, and logged screenshots (`c6cbcbf`).
+What worked: Clean, high-contrast civic aesthetic tailored for mobile and desktop users.
+What failed or was missing: Needed a dedicated accessibility voice toggle (added in P4b) and minor fixes for `/locator` map tiles, `/results` badge overflow, and `/apply` header clearance (fixed in P5c + P8a).
+Did it follow the rules? Yes.
+Next prompt it led to: P4b (global Hover-to-Speak accessibility feature).
+Screenshot file names: `docs/03_AI_Tools/p4_bolt_ui.png`, `docs/03_AI_Tools/p4_figma_ui.png`, `docs/05_Website_Screenshots/home_upgraded.png`
+
+---
+
+### P4b | Antigravity | Feature-Scoped Accessibility Prompting
+Date: 2026-11-22
+Run by: Tushar (25bcon2455)
+Prompt (exact text): Add a global Hover-to-Speak voice guidance toggle in the navbar for visually impaired users and clean up the landing banner.
+Output summary (3 lines):
+- Added global Hover-to-Speak toggle in `Layout.jsx` backed by `speech.js` (`aecde84`).
+- Cleaned up landing page banner styling and verified responsive layout.
+- Rebuilt frontend and committed code + screenshot (`6bd3db6`).
+What worked: Hovering interactive elements reads labels aloud cleanly.
+What failed or was missing: Initially limited to English/Hindi voices; upgraded to 23 languages in P5c.
+Did it follow the rules? Yes.
+Next prompt it led to: P4c (demo data cleanup).
+Screenshot file names: `docs/05_Website_Screenshots/hover_to_speak_accessibility.png`
+
+---
+
+### P4c | Antigravity | Constraint-Based Cleanup Prompting
+Date: 2026-11-25
+Run by: Tushar (25bcon2455)
+Prompt (exact text): Remove all pre-fed user/application demo data (`SS-2026-10001` to `10004`), form defaults, and top demo banner while keeping only the reference catalog (`LoanScheme`, `Branch`, PIN lookup) and ensuring newly submitted applications generate trackable `SS-2026-XXXXX` IDs.
+Output summary (3 lines):
+- Updated `seed_data.py` (`--reset`), `views.py` (atomic `ApplicationCreateView`), and `tests.py` (27/27 tests passing).
+- Cleared default profile values in `state.jsx`/`Form.jsx`, removed sample chips in `Tracker.jsx`, and replaced the top demo strip with a subtle footer disclaimer.
+- Rebuilt frontend, ran `collectstatic`, and pushed (`3f0853d`).
+What worked: Clean blank-slate user flow; real submissions persist and track immediately.
+What failed or was missing: None.
+Did it follow the rules? Yes.
+Next prompt it led to: P5a (ChatGPT 22-Indian-language architecture review).
+Screenshot file names: `docs/05_Website_Screenshots/clean_user_flow.png`
+
+---
+
+### P5a | ChatGPT | Reverse Prompting & Architecture Critique (AI-to-AI Handoff)
+Date: 2026-11-25
+Run by: Mousam (25bcon2411)
+Prompt (exact text): Act as a Senior Full-Stack Architect specializing in Indian GovTech accessibility (WCAG), multilingual web apps (Django 5 + React 18 Vite), and voice interfaces. Before writing code for all 22 Scheduled Languages of India + English (23 total), 2-way Sarthi voice, and Hover-to-Speak: (1) identify the 4 biggest real-world pitfalls on Windows/Android browsers, (2) ask 3 clarifying questions, and (3) provide a split Django/React blueprint with caching and fallbacks.
+Output summary (3 lines):
+- Identified 4 critical pitfalls: browser speech gaps for regional languages, translation API limits/costs, broken `{placeholder}` variables, and RTL CSS/bidirectional text issues (`ur`, `ks`, `sd`).
+- Locked 3 architectural decisions: Hybrid browser-first voice with graceful text fallback (no wrong-language voice), separate `script`/`direction` metadata in a central registry, and pre-validated static JSON bundles with HTTP caching.
+- Produced the backend/frontend blueprint handed off directly to Antigravity for P5b and P5c.
+What worked: Prevented runtime Groq translation latency and broken regional TTS fallbacks.
+What failed or was missing: Required automated validation of all 23 bundles via a Python validator.
+Did it follow the rules? Yes.
+Next prompt it led to: P5b (23-language backend implementation).
+Screenshot file names: `docs/03_AI_Tools/p5_chatgpt_22lang_spec.png`
+
+---
+
+### P5b | Antigravity | Spec-Driven Backend Implementation
+Date: 2026-11-25
+Run by: Tushar (25bcon2455)
+Prompt (exact text): Implement the backend half of the ChatGPT-reviewed 23-language architecture inside `core/` only: centralized `SUPPORTED_LANGUAGES` registry (`core/languages.py`), `{placeholder}` validator (`core/i18n_validator.py`), 23 static JSON bundles (`core/translations/`), cached `/api/i18n/languages/` & `/api/i18n/<lang>/` endpoints with `Cache-Control`/`ETag`, prompt-injection-safe multilingual Sarthi chatbot, and tests.
+Output summary (3 lines):
+- Created `core/languages.py`, `core/i18n_validator.py`, and all 23 validated JSON translation bundles in `core/translations/`.
+- Added cached `/api/i18n/languages/` and `/api/i18n/<lang>/` endpoints plus strict `lang` allowlist validation in `core/chatbot.py`.
+- All 35/35 Django tests passed (`OK`) and pushed (`ecfff28`).
+What worked: Strict `lang` validation blocks prompt injection; `ETag` + `304` caching keeps Render lightweight.
+What failed or was missing: None.
+Did it follow the rules? Yes (`core/` only).
+Next prompt it led to: P5c + P8a (frontend 23-language picker, 2-way voice, and UI/map bug fixes).
+Screenshot file names: `docs/04_Testing/p5b_backend_35_tests_pass.png`
+
+---
+
+### P5c + P8a | Antigravity | Batched Frontend Feature + Bug-Fix Prompting
+Date: 2026-11-25
+Run by: Mousam (25bcon2411)
+Prompt (exact text): Implement the frontend half of the 23-language architecture + 2-way Sarthi voice + upgraded Hover-to-Speak controller + 3 UI/map bug fixes inside `frontend/` only: searchable native-script picker with RTL (`ur`, `ks`, `sd`) and `<bdi>`, strict voice-locale matching (never English fallback for non-English scripts), Sarthi Mic STT + Auto-Speak/Replay, Esri map tiles + SVG pins on `/locator`, unclipped `BEST FOR YOU` badge on `/results`, and navbar clearance on `/apply`.
+Output summary (3 lines):
+- Built searchable 23-language native picker in `Layout.jsx` + `i18n.jsx` with `[dir="rtl"]` CSS and `<bdi>` numeric wrappers.
+- Upgraded `speech.js` (independent TTS/STT capability detection, hover/focus/tap + Stop button) and added Mic + Auto-Speak/Replay to `Sarthi.jsx`.
+- Fixed `/locator` Esri tiles & SVG pins, `/results` card overflow, and `/apply` header padding; 35/35 tests passed.
+What worked: Instant language switching without losing form state; Esri map removes `API KEY REQUIRED` watermark.
+What failed or was missing: Found `/form` UX bugs (floating side help box + per-field mic/speaker icons + missing rural PIN/district coverage) fixed in P6a/P6b.
+Did it follow the rules? Yes (`frontend/` only).
+Next prompt it led to: P6a (Form UX fixes + Government-Rule State Category & EWS Verification Engine).
+Screenshot file names: `docs/05_Website_Screenshots/multilingual_rtl.png`, `docs/05_Website_Screenshots/locator_map_fixed.png`
+
+---
+
+### P6a | Antigravity | Domain-Rule Engine + Form UX Prompting
+Date: 2026-11-25
+Run by: Tushar (25bcon2455)
+Prompt (exact text): Fix `/form` UX bugs (click-only `?` help popover, remove duplicate speaker buttons) and build a deterministic Government-Rule State Category & EWS Document Verification Algorithm (`data/state_category_rules.json`, `core/category_verifier.py`, `POST /api/verify-category/`) covering MoSJE Article 341 regional caste differences (e.g., Dhobi SC in Rajasthan vs OBC in Gujarat), inter-state certificate migration warnings, and DoPT 2019 EWS criteria.
+Output summary (3 lines):
+- Built `data/state_category_rules.json`, `core/category_verifier.py`, and `POST /api/verify-category/` plus EWS handling in `recommender.py` and `Documents.jsx`.
+- Updated `Form.jsx`, `HelpField.jsx`, and all 23 translation bundles with Category/Certificate/Sub-Caste verification UI.
+- All 40/40 Django tests passed (`OK`).
+What worked: Accurately flags regional caste variations, inter-state SC mismatches, and DoPT EWS income/asset rules.
+What failed or was missing: Browser testing showed the right-side floating help panel and per-field mic icons still appeared, and rural/tier-2 PIN codes like `335001` failed to auto-select State & District.
+Did it follow the rules? Partially (needed follow-up P6b).
+Next prompt it led to: P6b (All-India PIN auto-selection + complete district list + final form icon cleanup).
+Screenshot file names: `docs/05_Website_Screenshots/p6_state_category_ews_verify.png`
+
+---
+
+### P6b | Antigravity | Error-Correction Prompting (All-India PIN Auto-Select & Form Cleanup)
+Date: 2026-11-25
+Run by: Tushar (25bcon2455) & Bhumi (25bcon2360)
+Prompt (exact text): Fix Indian PIN code auto-detection (`335001` Sri Ganganagar and all rural kasbas/villages) via cached India Post API with User-Agent + 3-digit PIN prefix offline fallback (`data/pin_prefix_map.json`) and complete All-India districts (`data/india_districts.json`); atomically auto-select both State and District in `Form.jsx` without resetting district; remove the floating right-side yellow help box and all per-field mic/speaker icons.
+Output summary (3 lines):
+- Upgraded `/api/pin-lookup/<pin>/` with proper User-Agent, India Post API parsing, district alias normalization, and 3-digit PIN prefix fallback so valid Indian PINs never falsely return "no post office found".
+- Added complete 28-State + 8-UT districts dataset (`data/india_districts.json`) and atomic `state` + `district` auto-selection in `Form.jsx`.
+- Removed the right-side floating help box and per-field mic icons, leaving only click-to-toggle `?` inline bubbles; all tests pass.
+What worked: Typing `335001` instantly auto-selects `Rajasthan` → `Sri Ganganagar` with Post Office confirmation; form UI is uncluttered.
+What failed or was missing: None.
+Did it follow the rules? Yes.
+Next prompt it led to: P9 (Claude security review of multilingual Sarthi + Live Groq testing + Render deploy).
+Screenshot file names: `docs/05_Website_Screenshots/p6_form_clean_kasba_pin.png`

@@ -156,7 +156,21 @@
     "whyAskThis": "ہم یہ کیوں پوچھتے ہیں؟",
     "whyAskThisDesc": "ان زمروں کے لیے کچھ اسکیمیں کم شرح سود، زیادہ سبسڈی یا ترجیح دیتی ہیں۔",
     "selectOption": "-- منتخب کریں --",
-    "selectStateFirst": "-- پہلے ریاست منتخب کریں --"
+    "selectStateFirst": "-- پہلے ریاست منتخب کریں --",
+    "certificate_type": "Document / Certificate Provided",
+    "certificate_type_help": "Select the category certificate you hold so we can verify state and scheme rules.",
+    "cert_sc": "SC Caste Certificate",
+    "cert_ews": "EWS Income & Asset Certificate",
+    "cert_st": "ST Caste Certificate",
+    "cert_obc": "OBC-NCL Certificate",
+    "cert_none": "Not Available Yet",
+    "certificate_state": "Certificate Issuing State",
+    "certificate_state_help": "State/UT whose Tehsildar or SDM issued your caste or EWS certificate.",
+    "sub_caste": "Community / Sub-Caste (Optional — for State-wise Check)",
+    "sub_caste_help": "Checks Article 341 state-wise SC notification (some communities differ across states).",
+    "ews_assets_confirm": "Confirm DoPT EWS Asset Limits (< 5 acres agri land, < 1,000 sq.ft flat, plot within municipal limits)",
+    "verifyBtn": "Verify Category & Document for Selected State",
+    "verifying": "Verifying..."
   },
   "results": {
     "title": "آپ {count} اسکیموں کے لیے اہل ہیں",

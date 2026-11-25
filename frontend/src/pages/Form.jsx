@@ -1,53 +1,159 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HelpField from "../components/HelpField.jsx";
 import Icon from "../components/Icon.jsx";
 import { api } from "../api.js";
 import { useAppState } from "../state.jsx";
 import { useI18n } from "../i18n.jsx";
-import { speak, startMic } from "../speech.js";
 
-const STATES = [
-  "Andhra Pradesh", "Assam", "Bihar", "Chhattisgarh", "Delhi", "Goa", "Gujarat", "Haryana",
-  "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra",
-  "Odisha", "Punjab", "Rajasthan", "Tamil Nadu", "Telangana", "Uttar Pradesh", "Uttarakhand",
-  "West Bengal",
+const FALLBACK_STATES = [
+  "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar",
+  "Chandigarh", "Chhattisgarh", "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Goa",
+  "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka",
+  "Kerala", "Ladakh", "Lakshadweep", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya",
+  "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab", "Rajasthan", "Sikkim",
+  "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal",
 ];
 
-const DISTRICTS = {
-  Rajasthan: ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Ajmer"],
-  "Uttar Pradesh": ["Lucknow", "Varanasi", "Kanpur", "Agra", "Barabanki"],
-  "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Kanchipuram", "Chengalpattu"],
-  Punjab: ["Amritsar", "Ludhiana", "Patiala"],
-  Karnataka: ["Bengaluru", "Mysuru"],
-  Maharashtra: ["Mumbai", "Pune", "Nagpur"],
-  "West Bengal": ["Kolkata", "Howrah"],
-  Kerala: ["Thrissur", "Ernakulam", "Thiruvananthapuram"],
+const DISTRICT_ALIASES = {
+  ganganagar: "Sri Ganganagar",
+  sriganganagar: "Sri Ganganagar",
+  bangalore: "Bengaluru Urban",
+  bengaluru: "Bengaluru Urban",
+  gurgaon: "Gurugram",
+  allahabad: "Prayagraj",
+  faizabad: "Ayodhya",
+  ahmednagar: "Ahilyanagar",
+  osmanabad: "Dharashiv",
+  ahmadabad: "Ahmedabad",
+  kachchh: "Kutch",
+  pondicherry: "Puducherry",
 };
 
+function resolveDistrictOption(stateName, rawDistrict, statesMap) {
+  const cleaned = String(rawDistrict || "").trim();
+  if (!cleaned) return "";
+  const list = statesMap[stateName] || [];
+  const low = cleaned.toLowerCase();
+  const exact = list.find((d) => d.toLowerCase() === low);
+  if (exact) return exact;
+  const alias = DISTRICT_ALIASES[low];
+  if (alias) {
+    const matchedAlias = list.find((d) => d.toLowerCase() === alias.toLowerCase());
+    if (matchedAlias) return matchedAlias;
+    return alias;
+  }
+  return cleaned;
+}
+
 export default function Form() {
-  const { t, speakLang } = useI18n();
+  const { t } = useI18n();
   const { form, updateForm, setResult } = useAppState();
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [busy, setBusy] = useState(false);
-  const [helpPanelOpen, setHelpPanelOpen] = useState(true);
-  const [activeHelp, setActiveHelp] = useState({
-    name: "annual_family_income",
-    label: t("form.annual_family_income"),
-    help: t("form.annual_family_income_help"),
-    example: t("form.exampleIncome"),
-  });
+  const [verifyBusy, setVerifyBusy] = useState(false);
+  const [verifyResult, setVerifyResult] = useState(null);
+  const [verifyError, setVerifyError] = useState("");
+  const [statesMap, setStatesMap] = useState({});
+  const [pinBusy, setPinBusy] = useState(false);
+  const [pinInfo, setPinInfo] = useState(null);
+  const [selectedPostOffice, setSelectedPostOffice] = useState("");
+  const [pinNote, setPinNote] = useState("");
+  const pinReqRef = useRef(0);
+  const lastPinFetchedRef = useRef("");
   const navigate = useNavigate();
 
   const f = (key, vars) => t(`form.${key}`, vars);
   const selectPlaceholder = { value: "", label: f("selectOption") };
-  const districts = form.state
-    ? [
-        selectPlaceholder,
-        ...(DISTRICTS[form.state] || ["Other"]).map((d) => ({ value: d, label: d })),
-      ]
-    : [{ value: "", label: f("selectStateFirst") }];
+
+  // Fetch all 28 States + 8 UTs and their districts from backend
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .districts()
+      .then((res) => {
+        if (!cancelled && res?.states && typeof res.states === "object") {
+          setStatesMap(res.states);
+        }
+      })
+      .catch(() => {
+        /* keep fallback state names */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const stateNames = Object.keys(statesMap).length
+    ? Object.keys(statesMap).sort((a, b) => a.localeCompare(b))
+    : FALLBACK_STATES;
+
+  const districts = (() => {
+    if (!form.state) return [{ value: "", label: f("selectStateFirst") }];
+    const base = [...(statesMap[form.state] || [])];
+    const hasDistrict =
+      form.district && base.some((d) => d.toLowerCase() === String(form.district).toLowerCase());
+    if (form.district && form.district !== "Other" && !hasDistrict) {
+      base.unshift(form.district);
+    }
+    const opts = base.map((d) => ({ value: d, label: d }));
+    if (!base.includes("Other")) {
+      opts.push({ value: "Other", label: "Other" });
+    }
+    return [selectPlaceholder, ...opts];
+  })();
+
+  // Auto-lookup 6-digit Indian PIN code (India Post API + local/prefix fallback)
+  useEffect(() => {
+    const cleanPin = String(form.pin || "").trim();
+    if (!/^[1-9]\d{5}$/.test(cleanPin)) {
+      lastPinFetchedRef.current = "";
+      setPinInfo(null);
+      setSelectedPostOffice("");
+      setPinNote("");
+      return;
+    }
+    if (lastPinFetchedRef.current === cleanPin) return;
+
+    const timer = setTimeout(() => {
+      const reqId = ++pinReqRef.current;
+      lastPinFetchedRef.current = cleanPin;
+      setPinBusy(true);
+      setPinNote("");
+
+      api
+        .pinLookup(cleanPin)
+        .then((res) => {
+          if (reqId !== pinReqRef.current) return;
+          setPinInfo(res);
+          setSelectedPostOffice(res.post_offices?.[0] || "");
+          const targetState = res.state || "";
+          const targetDistrict = resolveDistrictOption(targetState, res.district, statesMap);
+          const patch = {};
+          if (targetState) patch.state = targetState;
+          if (targetDistrict) patch.district = targetDistrict;
+          if (Object.keys(patch).length > 0) {
+            updateForm(patch);
+          }
+        })
+        .catch((err) => {
+          if (reqId !== pinReqRef.current) return;
+          lastPinFetchedRef.current = "";
+          setPinInfo(null);
+          setSelectedPostOffice("");
+          setPinNote(err.body?.detail || "Could not auto-detect this PIN; please select State & District manually.");
+        })
+        .finally(() => {
+          if (reqId === pinReqRef.current) {
+            setPinBusy(false);
+          }
+        });
+    }, 150);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.pin, statesMap]);
 
   const validate = () => {
     const e = {};
@@ -56,7 +162,7 @@ export default function Form() {
       if (!/^[6-9]\d{9}$/.test(String(form.mobile || ""))) e.mobile = f("mobile_error");
       if (!form.state) e.state = f("required");
       if (!form.district) e.district = f("required");
-      if (!/^\d{6}$/.test(String(form.pin || ""))) e.pin = f("pin_error");
+      if (!/^[1-9]\d{5}$/.test(String(form.pin || ""))) e.pin = f("pin_error");
       if (!form.caste_category) e.caste_category = f("required");
       const age = Number(form.age);
       if (!age || age < 18 || age > 75) e.age = f("age_error");
@@ -100,38 +206,47 @@ export default function Form() {
     }
   };
 
-  const handleFieldFocus = (fieldMeta) => {
-    setActiveHelp(fieldMeta);
-    if (!helpPanelOpen) setHelpPanelOpen(true);
+  const runCategoryVerify = async () => {
+    if (!form.state || !form.caste_category) return;
+    setVerifyBusy(true);
+    setVerifyError("");
+    try {
+      const res = await api.verifyCategory({
+        loan_state: form.state,
+        certificate_state: form.certificate_state || form.state,
+        category: form.caste_category,
+        certificate_type: form.certificate_type || "none",
+        sub_caste: form.sub_caste || "",
+        annual_income: form.annual_family_income === "" ? null : Number(form.annual_family_income),
+        ews_assets_compliant:
+          form.caste_category === "EWS" || form.certificate_type === "ews_cert"
+            ? !!form.ews_assets_compliant
+            : true,
+      });
+      setVerifyResult(res);
+    } catch (err) {
+      setVerifyError(err.body?.detail || err.message || "Could not verify category.");
+    } finally {
+      setVerifyBusy(false);
+    }
   };
 
-  const handleHelpSpeak = () => {
-    if (!activeHelp) return;
-    speak(
-      `${activeHelp.label}. ${activeHelp.help || ""} ${
-        activeHelp.example ? `Example: ${activeHelp.example}` : ""
-      }`,
-      speakLang
-    );
-  };
-
-  const handleHelpMic = () => {
-    if (!activeHelp) return;
-    startMic((text) => {
-      if (text) {
-        if (
-          activeHelp.name === "annual_family_income" ||
-          activeHelp.name === "loan_amount" ||
-          activeHelp.name === "age"
-        ) {
-          const cleaned = text.replace(/[^\d.]/g, "");
-          if (cleaned) updateForm({ [activeHelp.name]: cleaned });
-        } else {
-          updateForm({ [activeHelp.name]: text });
-        }
-      }
-    }, speakLang);
-  };
+  useEffect(() => {
+    if (form.state && form.caste_category && form.certificate_type) {
+      runCategoryVerify();
+    } else {
+      setVerifyResult(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    form.state,
+    form.caste_category,
+    form.certificate_type,
+    form.certificate_state,
+    form.sub_caste,
+    form.annual_family_income,
+    form.ews_assets_compliant,
+  ]);
 
   return (
     <div className="page-shell">
@@ -173,7 +288,7 @@ export default function Form() {
         ))}
       </nav>
 
-      {/* 2-Column Layout: Form Card on Left + Dedicated Yellow Help Panel on Right */}
+      {/* Clean Centered Form Card */}
       <div className="form-layout">
         <section className="form-card">
           {/* Step 1: Personal & Income */}
@@ -195,7 +310,6 @@ export default function Form() {
                   placeholder="As on Aadhaar card / आधार कार्ड अनुसार"
                   value={form.full_name}
                   onChange={(v) => updateForm({ full_name: v })}
-                  onFocus={handleFieldFocus}
                   error={errors.full_name}
                 />
                 <HelpField
@@ -205,17 +319,64 @@ export default function Form() {
                   placeholder="10-digit mobile number"
                   value={form.mobile}
                   onChange={(v) => updateForm({ mobile: v })}
-                  onFocus={handleFieldFocus}
                   error={errors.mobile}
                 />
+                <div>
+                  <HelpField
+                    name="pin"
+                    label={f("pin")}
+                    help={f("pin_help")}
+                    placeholder="6-digit postal PIN (e.g. 302001)"
+                    value={form.pin}
+                    onChange={(v) => updateForm({ pin: v })}
+                    error={errors.pin}
+                  />
+                  {pinBusy && <p className="pin-lookup-hint">Looking up PIN code...</p>}
+                  {!pinBusy && pinNote && <p className="pin-lookup-hint">{pinNote}</p>}
+                  {!pinBusy && pinInfo && (
+                    <div className="pin-match-badge" role="status">
+                      <div className="pin-match-row">
+                        <Icon name="checkCircle" size={15} />
+                        <span>
+                          <strong>
+                            {selectedPostOffice || pinInfo.post_offices?.[0] || pinInfo.district}
+                          </strong>
+                          {pinInfo.block && pinInfo.block !== pinInfo.district
+                            ? `, ${pinInfo.block}`
+                            : ""}
+                          {pinInfo.district ? `, ${pinInfo.district}` : ""}
+                          {pinInfo.state ? ` (${pinInfo.state})` : ""}
+                        </span>
+                      </div>
+                      {pinInfo.post_offices?.length > 1 && (
+                        <div className="pin-match-row">
+                          <label htmlFor="pin-po-select" style={{ fontSize: "12px", fontWeight: 600 }}>
+                            Kasba / Post Office:
+                          </label>
+                          <select
+                            id="pin-po-select"
+                            className="pin-po-select"
+                            value={selectedPostOffice}
+                            onChange={(e) => setSelectedPostOffice(e.target.value)}
+                          >
+                            {pinInfo.post_offices.map((po) => (
+                              <option key={po} value={po}>
+                                {po}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
                 <HelpField
                   name="state"
                   label={f("state")}
                   help={f("state_help")}
                   value={form.state}
                   onChange={(v) => updateForm({ state: v, district: "" })}
-                  onFocus={handleFieldFocus}
-                  options={[selectPlaceholder, ...STATES.map((s) => ({ value: s, label: s }))]}
+                  options={[selectPlaceholder, ...stateNames.map((s) => ({ value: s, label: s }))]}
                   error={errors.state}
                 />
                 <HelpField
@@ -224,19 +385,8 @@ export default function Form() {
                   help={f("district_help")}
                   value={form.district}
                   onChange={(v) => updateForm({ district: v })}
-                  onFocus={handleFieldFocus}
                   options={districts}
                   error={errors.district}
-                />
-                <HelpField
-                  name="pin"
-                  label={f("pin")}
-                  help={f("pin_help")}
-                  placeholder="6-digit postal PIN"
-                  value={form.pin}
-                  onChange={(v) => updateForm({ pin: v })}
-                  onFocus={handleFieldFocus}
-                  error={errors.pin}
                 />
                 <HelpField
                   name="caste_category"
@@ -244,8 +394,7 @@ export default function Form() {
                   help={f("caste_category_help")}
                   value={form.caste_category}
                   onChange={(v) => updateForm({ caste_category: v })}
-                  onFocus={handleFieldFocus}
-                  options={[selectPlaceholder, ...["SC", "ST", "OBC", "Other"].map((s) => ({ value: s, label: s }))]}
+                  options={[selectPlaceholder, ...["SC", "ST", "OBC", "EWS", "General"].map((s) => ({ value: s, label: s }))]}
                   error={errors.caste_category}
                 />
                 <HelpField
@@ -256,7 +405,6 @@ export default function Form() {
                   placeholder="e.g. 28"
                   value={form.age}
                   onChange={(v) => updateForm({ age: v })}
-                  onFocus={handleFieldFocus}
                   error={errors.age}
                 />
                 <HelpField
@@ -269,9 +417,133 @@ export default function Form() {
                   example={f("exampleIncome")}
                   value={form.annual_family_income}
                   onChange={(v) => updateForm({ annual_family_income: v })}
-                  onFocus={handleFieldFocus}
                   error={errors.annual_family_income}
                 />
+                <HelpField
+                  name="certificate_type"
+                  label={f("certificate_type")}
+                  help={f("certificate_type_help")}
+                  value={form.certificate_type}
+                  onChange={(v) => updateForm({ certificate_type: v })}
+                  options={[
+                    selectPlaceholder,
+                    { value: "sc_cert", label: f("cert_sc") },
+                    { value: "ews_cert", label: f("cert_ews") },
+                    { value: "st_cert", label: f("cert_st") },
+                    { value: "obc_cert", label: f("cert_obc") },
+                    { value: "none", label: f("cert_none") },
+                  ]}
+                />
+                <HelpField
+                  name="certificate_state"
+                  label={f("certificate_state")}
+                  help={f("certificate_state_help")}
+                  value={form.certificate_state}
+                  onChange={(v) => updateForm({ certificate_state: v })}
+                  options={[selectPlaceholder, ...stateNames.map((s) => ({ value: s, label: s }))]}
+                />
+                <div style={{ gridColumn: "1 / -1" }}>
+                  <HelpField
+                    name="sub_caste"
+                    label={f("sub_caste")}
+                    help={f("sub_caste_help")}
+                    placeholder="e.g., Meghwal, Dhobi, Mahar, Jatav"
+                    value={form.sub_caste}
+                    onChange={(v) => updateForm({ sub_caste: v })}
+                  />
+                </div>
+              </div>
+
+              {(form.caste_category === "EWS" || form.certificate_type === "ews_cert") && (
+                <div className="ews-assets-check">
+                  <label className="check-option">
+                    <input
+                      type="checkbox"
+                      checked={!!form.ews_assets_compliant}
+                      onChange={(e) => updateForm({ ews_assets_compliant: e.target.checked })}
+                    />
+                    <span>
+                      <i className="check-box-icon">
+                        <Icon name="check" size={16} />
+                      </i>
+                      <strong>{f("ews_assets_confirm")}</strong>
+                    </span>
+                  </label>
+                </div>
+              )}
+
+              <div className="category-verify-box">
+                <div className="verify-actions-row">
+                  <button
+                    type="button"
+                    className="btn btn-outline"
+                    onClick={runCategoryVerify}
+                    disabled={verifyBusy || !form.state || !form.caste_category}
+                  >
+                    <Icon name="checkCircle" size={17} />
+                    <span>{verifyBusy ? f("verifying") : f("verifyBtn")}</span>
+                  </button>
+                </div>
+
+                {verifyError && (
+                  <div className="error-banner">
+                    <Icon name="alert" size={18} />
+                    <p>{verifyError}</p>
+                  </div>
+                )}
+
+                {verifyResult && (
+                  <div
+                    className={`verify-result-card ${
+                      verifyResult.status === "verified_sc" ||
+                      verifyResult.status === "ews_verified_non_nsfdc" ||
+                      verifyResult.status === "verified_non_nsfdc"
+                        ? "good"
+                        : verifyResult.status === "state_mismatch_warning" ||
+                            verifyResult.status === "document_missing"
+                          ? "warn"
+                          : "bad"
+                    }`}
+                    role="status"
+                  >
+                    <div className="verify-result-head">
+                      <strong>
+                        {verifyResult.status === "verified_sc"
+                          ? "Verified SC"
+                          : verifyResult.status === "state_mismatch_warning"
+                            ? "State Mismatch Warning"
+                            : verifyResult.status === "not_notified_in_state"
+                              ? "Not Notified in State"
+                              : verifyResult.status === "ews_verified_non_nsfdc"
+                                ? "EWS Verified — Non-NSFDC"
+                                : verifyResult.status === "ews_ineligible"
+                                  ? "EWS Ineligible"
+                                  : verifyResult.status === "document_category_mismatch"
+                                    ? "Document / Category Mismatch"
+                                    : verifyResult.status === "document_missing"
+                                      ? "Certificate Required"
+                                      : "Category Verified (Non-NSFDC)"}
+                      </strong>
+                      <span
+                        className={`status-tag ${
+                          verifyResult.valid
+                            ? "good"
+                            : verifyResult.status === "state_mismatch_warning" ||
+                                verifyResult.status === "document_missing"
+                              ? "amber"
+                              : "bad"
+                        }`}
+                      >
+                        {verifyResult.nsfdc_eligible ? "NSFDC ELIGIBLE" : verifyResult.ews_eligible ? "EWS ELIGIBLE" : "CHECK RULE"}
+                      </span>
+                    </div>
+                    <p>{verifyResult.message}</p>
+                    <small className="verify-citation">Rule: {verifyResult.citation}</small>
+                    <p className="verify-next-step">
+                      <strong>Next step:</strong> {verifyResult.next_step}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -294,7 +566,6 @@ export default function Form() {
                   help={f("applicant_type_help")}
                   value={form.applicant_type}
                   onChange={(v) => updateForm({ applicant_type: v })}
-                  onFocus={handleFieldFocus}
                   options={[
                     selectPlaceholder,
                     { value: "individual", label: f("individual") },
@@ -308,7 +579,6 @@ export default function Form() {
                   help={f("sector_help")}
                   value={form.sector}
                   onChange={(v) => updateForm({ sector: v })}
-                  onFocus={handleFieldFocus}
                   options={[
                     selectPlaceholder,
                     ...["agriculture", "manufacturing", "trade", "service", "transport", "education"].map((s) => ({
@@ -326,7 +596,6 @@ export default function Form() {
                     placeholder="Brief description of enterprise / व्यवसाय का संक्षिप्त विवरण..."
                     value={form.project_description}
                     onChange={(v) => updateForm({ project_description: v })}
-                    onFocus={handleFieldFocus}
                     textarea
                     error={errors.project_description}
                   />
@@ -341,7 +610,6 @@ export default function Form() {
                   example={f("exampleLoan")}
                   value={form.loan_amount}
                   onChange={(v) => updateForm({ loan_amount: v })}
-                  onFocus={handleFieldFocus}
                   error={errors.loan_amount}
                 />
                 <HelpField
@@ -353,7 +621,6 @@ export default function Form() {
                   placeholder="e.g. 1000000"
                   value={form.project_cost}
                   onChange={(v) => updateForm({ project_cost: v })}
-                  onFocus={handleFieldFocus}
                 />
               </div>
             </div>
@@ -372,19 +639,15 @@ export default function Form() {
 
               <div className="check-grid">
                 {[
-                  { key: "woman_led", label: f("woman_led"), help: f("woman_led_help") },
-                  { key: "disability", label: f("disability"), help: f("disability_help") },
-                  { key: "sanitation_worker", label: f("sanitation_worker"), help: f("sanitation_worker_help") },
-                  { key: "skill_certificate", label: f("skill_certificate"), help: f("skill_certificate_help") },
-                  { key: "shg_jlg_member", label: f("shg_jlg_member"), help: f("shg_jlg_member_help") },
-                  { key: "jan_dhan", label: f("jan_dhan"), help: f("jan_dhan_help") },
-                  { key: "existing_govt_loan", label: f("existing_govt_loan"), help: f("existing_govt_loan_help") },
+                  { key: "woman_led", label: f("woman_led") },
+                  { key: "disability", label: f("disability") },
+                  { key: "sanitation_worker", label: f("sanitation_worker") },
+                  { key: "skill_certificate", label: f("skill_certificate") },
+                  { key: "shg_jlg_member", label: f("shg_jlg_member") },
+                  { key: "jan_dhan", label: f("jan_dhan") },
+                  { key: "existing_govt_loan", label: f("existing_govt_loan") },
                 ].map((item) => (
-                  <label
-                    key={item.key}
-                    className="check-option"
-                    onFocus={() => handleFieldFocus({ name: item.key, label: item.label, help: item.help })}
-                  >
+                  <label key={item.key} className="check-option">
                     <input
                       type="checkbox"
                       checked={!!form[item.key]}
@@ -443,54 +706,6 @@ export default function Form() {
             </button>
           </div>
         </section>
-
-        {/* Dedicated Yellow "Help for this question" Side Panel */}
-        <aside className={`help-card ${helpPanelOpen ? "" : "collapsed"}`}>
-          <button
-            type="button"
-            className="help-toggle-btn"
-            onClick={() => setHelpPanelOpen(!helpPanelOpen)}
-            aria-label={helpPanelOpen ? "Collapse help" : "Expand help"}
-          >
-            <Icon name={helpPanelOpen ? "close" : "help"} size={18} />
-          </button>
-
-          {helpPanelOpen && (
-            <div className="help-card-content animate-fade-in">
-              <div className="help-title">
-                <span className="help-icon-circle">
-                  <Icon name="help" size={20} />
-                </span>
-                <div>
-                  <small>{f("helpSideTitle")}</small>
-                  <strong>{activeHelp?.label || f("annual_family_income")}</strong>
-                </div>
-              </div>
-
-              <p className="help-explanation">
-                {activeHelp?.help || f("annual_family_income_help")}
-              </p>
-
-              {activeHelp?.example && (
-                <div className="example-box">
-                  <small>{f("helpExample")}</small>
-                  <p>{activeHelp.example}</p>
-                </div>
-              )}
-
-              <div className="help-actions">
-                <button type="button" onClick={handleHelpSpeak}>
-                  <Icon name="speaker" size={16} />
-                  <span>{f("listen")}</span>
-                </button>
-                <button type="button" onClick={handleHelpMic}>
-                  <Icon name="mic" size={16} />
-                  <span>{f("mic")}</span>
-                </button>
-              </div>
-            </div>
-          )}
-        </aside>
       </div>
     </div>
   );

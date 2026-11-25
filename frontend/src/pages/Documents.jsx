@@ -12,9 +12,22 @@ export default function Documents() {
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
 
+  const isEws = form.caste_category === "EWS" || form.certificate_type === "ews_cert";
+  const categoryDoc = isEws
+    ? {
+        id: "ews_cert",
+        label: "EWS Income & Asset Certificate (Tehsildar/SDM, valid FY)",
+        hint: "Issued by Tehsildar/SDM/DM under DoPT OM 2019",
+      }
+    : {
+        id: "caste",
+        label: "SC Caste Certificate (State-notified)",
+        hint: "Issued by competent revenue authority under Article 341",
+      };
+
   const defaultDocs = [
     { id: "aadhaar", label: "Aadhaar card / Identity Proof", hint: "Original + 1 self-attested photocopy" },
-    { id: "caste", label: "SC Caste certificate", hint: "Issued by competent revenue authority" },
+    categoryDoc,
     { id: "income", label: "Income certificate / declaration", hint: "Last financial year / ITR or Tehsildar certificate" },
     { id: "statement", label: "Last 6 months bank statement", hint: "Showing active transaction turnover" },
     { id: "report", label: "Detailed business project report", hint: "Pre-filled template available for download" },
@@ -22,7 +35,15 @@ export default function Documents() {
   ];
 
   const docList = scheme?.documents?.length
-    ? scheme.documents.map((d, i) => ({ id: `doc_${i}`, label: d, hint: "Required for bank verification" }))
+    ? scheme.documents.map((d, i) => {
+        const label =
+          isEws && /caste certificate/i.test(d)
+            ? "EWS Income & Asset Certificate (Tehsildar/SDM, valid FY)"
+            : !isEws && /caste certificate/i.test(d)
+              ? "SC Caste Certificate (State-notified)"
+              : d;
+        return { id: `doc_${i}`, label, hint: "Required for bank verification" };
+      })
     : defaultDocs;
 
   const [checkedMap, setCheckedMap] = useState({});

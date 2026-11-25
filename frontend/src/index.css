@@ -1177,10 +1177,8 @@ a {
 }
 
 .form-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 330px;
-  align-items: start;
-  gap: 24px;
+  max-width: 880px;
+  margin: 0 auto;
 }
 
 .form-card {
@@ -1326,7 +1324,8 @@ a {
   place-items: center;
   transition: all 0.15s ease;
 }
-.tool-btn:hover {
+.tool-btn:hover,
+.tool-btn.active {
   color: var(--saffron);
   background: var(--saffron-light);
 }
@@ -1342,33 +1341,135 @@ a {
 }
 
 .field-bubble {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: #ffffff;
-  border: 1px solid var(--amber-border);
+  position: relative;
+  background: #fffbeb;
+  border: 1.5px solid var(--amber-border);
   border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-md);
-  padding: 12px;
-  z-index: 10;
+  box-shadow: var(--shadow-sm);
+  padding: 12px 14px;
+  z-index: 2;
   font-size: 13px;
   color: var(--navy);
-  margin-top: 4px;
+  margin-top: 6px;
+}
+.bubble-example {
+  display: block;
+  margin-top: 6px;
+  color: var(--slate);
+  font-size: 12px;
 }
 .bubble-actions {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-top: 8px;
   padding-top: 6px;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--amber-border);
 }
 .bubble-actions button {
   border: 0;
   background: transparent;
-  color: var(--saffron);
+  color: var(--saffron-dark);
   font-size: 12px;
   font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.category-verify-box {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ews-assets-check {
+  margin-top: 4px;
+}
+
+.verify-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.verify-result-card {
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  border: 1.5px solid var(--line);
+  background: var(--soft);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.verify-result-card.good {
+  background: var(--green-soft);
+  border-color: var(--green-border);
+}
+.verify-result-card.warn {
+  background: var(--amber-soft);
+  border-color: var(--amber-border);
+}
+.verify-result-card.bad {
+  background: var(--red-soft);
+  border-color: var(--red-border);
+}
+.verify-result-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.verify-result-head strong {
+  font-size: 14px;
+  color: var(--navy);
+}
+.verify-citation {
+  font-size: 12px;
+  color: var(--slate);
+  font-weight: 600;
+}
+.verify-next-step {
+  font-size: 13px;
+  color: var(--navy);
+}
+
+.pin-match-badge {
+  margin-top: 6px;
+  background: var(--green-soft);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--forest-dark);
+}
+.pin-match-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pin-po-select {
+  border: 1px solid var(--green-border);
+  background: #ffffff;
+  color: var(--navy);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.pin-lookup-hint {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
 }
 
 /* Step 3 Checkbox Grid */

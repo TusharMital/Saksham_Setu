@@ -28,6 +28,9 @@ export const api = {
   pdfUrl: (ref) => `${BASE}/applications/${encodeURIComponent(ref)}/pdf/`,
   chat: (body) => request("/chat/", { method: "POST", body: JSON.stringify(body) }),
   pin: (pin) => request(`/pin-lookup/?pin=${encodeURIComponent(pin)}`),
+  pinLookup: (pin) => request(`/pin-lookup/${encodeURIComponent(pin)}/`),
+  districts: () => request("/locations/districts/"),
+  verifyCategory: (body) => request("/verify-category/", { method: "POST", body: JSON.stringify(body) }),
   languages: () => request("/i18n/languages/"),
   i18nBundle: (code) => request(`/i18n/${encodeURIComponent(code)}/`),
 };

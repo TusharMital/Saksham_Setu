@@ -7,6 +7,7 @@ from django.core.management import call_command
 from django.test import SimpleTestCase, TestCase, override_settings
 from rest_framework.test import APIClient
 
+from core.category_verifier import verify_category_and_document
 from core.emi import calculate_emi
 from core.geo import haversine_km, rank_branches
 from core.i18n_validator import extract_placeholders, sanitize_bundle_with_fallback, validate_bundle
@@ -149,6 +150,15 @@ class RecommenderTests(SimpleTestCase):
         mcf = next(x for x in result["accepted"] + result["rejected"] if x["code"] == "MCF")
         self.assertFalse(mcf["accepted"])
         self.assertIn("Goa", mcf["reason"])
+
+    def test_ews_applicant_rejected_from_nsfdc_with_explanation(self):
+        app = woman_rajasthan()
+        app["caste_category"] = "EWS"
+        result = recommend(app, SCHEMES)
+        self.assertEqual(result["accepted"], [])
+        self.assertTrue(len(result["rejected"]) > 0)
+        self.assertIn("EWS", result["rejected"][0]["reason"])
+        self.assertIn("PM MUDRA", result["rejected"][0]["reason"])
 
 
 class EmiTests(SimpleTestCase):
@@ -526,5 +536,219 @@ class I18nApiAndValidatorTests(TestCase):
         self.assertEqual(repaired["a"], "Hello {name}")
         self.assertEqual(repaired["b"], "सही")
         self.assertEqual(fallbacks, ["a"])
+
+
+class CategoryVerifierTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+    def test_dhobi_sc_in_rajasthan_verified_vs_gujarat_obc(self):
+        rj = verify_category_and_document(
+            {
+                "loan_state": "Rajasthan",
+                "certificate_state": "Rajasthan",
+                "category": "SC",
+                "certificate_type": "sc_cert",
+                "sub_caste": "Dhobi",
+                "annual_income": 300000,
+            }
+        )
+        self.assertEqual(rj["status"], "verified_sc")
+        self.assertTrue(rj["valid"])
+        self.assertTrue(rj["in_claimed_category"])
+        self.assertTrue(rj["nsfdc_eligible"])
+
+        gj = verify_category_and_document(
+            {
+                "loan_state": "Gujarat",
+                "certificate_state": "Gujarat",
+                "category": "SC",
+                "certificate_type": "sc_cert",
+                "sub_caste": "Dhobi",
+                "annual_income": 300000,
+            }
+        )
+        self.assertEqual(gj["status"], "not_notified_in_state")
+        self.assertFalse(gj["valid"])
+        self.assertFalse(gj["in_claimed_category"])
+        self.assertFalse(gj["nsfdc_eligible"])
+        self.assertEqual(gj["state_category"], "OBC")
+        self.assertIn("OBC", gj["message"])
+        self.assertIn("Article 341", gj["citation"])
+
+    def test_interstate_certificate_mismatch_warning(self):
+        res = verify_category_and_document(
+            {
+                "loan_state": "Rajasthan",
+                "certificate_state": "Uttar Pradesh",
+                "category": "SC",
+                "certificate_type": "sc_cert",
+                "sub_caste": "Jatav",
+                "annual_income": 250000,
+            }
+        )
+        self.assertEqual(res["status"], "state_mismatch_warning")
+        self.assertFalse(res["nsfdc_eligible"])
+        self.assertIn("Article 341", res["citation"])
+
+    def test_ews_valid_and_invalid_income(self):
+        ok = verify_category_and_document(
+            {
+                "loan_state": "Rajasthan",
+                "certificate_state": "Rajasthan",
+                "category": "EWS",
+                "certificate_type": "ews_cert",
+                "annual_income": 450000,
+                "ews_assets_compliant": True,
+            }
+        )
+        self.assertEqual(ok["status"], "ews_verified_non_nsfdc")
+        self.assertTrue(ok["valid"])
+        self.assertTrue(ok["ews_eligible"])
+        self.assertFalse(ok["nsfdc_eligible"])
+
+        bad = verify_category_and_document(
+            {
+                "loan_state": "Rajasthan",
+                "certificate_state": "Rajasthan",
+                "category": "EWS",
+                "certificate_type": "ews_cert",
+                "annual_income": 900000,
+                "ews_assets_compliant": True,
+            }
+        )
+        self.assertEqual(bad["status"], "ews_ineligible")
+        self.assertFalse(bad["valid"])
+        self.assertFalse(bad["ews_eligible"])
+        self.assertFalse(bad["nsfdc_eligible"])
+
+    def test_document_category_mismatch_api(self):
+        res = self.client.post(
+            "/api/verify-category/",
+            {
+                "loan_state": "Rajasthan",
+                "certificate_state": "Rajasthan",
+                "category": "SC",
+                "certificate_type": "ews_cert",
+                "annual_income": 300000,
+            },
+            format="json",
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.data["status"], "document_category_mismatch")
+        self.assertFalse(res.data["valid"])
+        self.assertFalse(res.data["in_claimed_category"])
+        self.assertFalse(res.data["nsfdc_eligible"])
+
+
+class LocationsAndPinLookupTests(TestCase):
+    def setUp(self):
+        cache.clear()
+        self.client = APIClient()
+
+    def test_districts_endpoint_returns_all_28_states_and_8_uts(self):
+        res = self.client.get("/api/locations/districts/")
+        self.assertEqual(res.status_code, 200)
+        states = res.data["states"]
+        self.assertEqual(len(states), 36)
+        self.assertGreaterEqual(len(states["Gujarat"]), 30)
+        self.assertGreaterEqual(len(states["Rajasthan"]), 30)
+        self.assertIn("Delhi", states)
+        self.assertIn("Ladakh", states)
+
+    @patch("core.geo.requests.get", side_effect=Exception("offline"))
+    def test_pin_lookup_302001_graceful_local_fallback(self, _mock_get):
+        # Using RequestException subclass so fallback triggers cleanly
+        import requests as req_lib
+
+        _mock_get.side_effect = req_lib.Timeout("timed out")
+        res = self.client.get("/api/pin-lookup/302001/")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.data["pin"], "302001")
+        self.assertEqual(res.data["state"], "Rajasthan")
+        self.assertEqual(res.data["district"], "Jaipur")
+        self.assertEqual(res.data["block"], "Jaipur")
+        self.assertTrue(len(res.data["post_offices"]) >= 1)
+        self.assertEqual(res.data["source"], "local_cache")
+
+    @patch("core.geo.requests.get")
+    def test_pin_lookup_india_post_rural_kasba_and_state_normalization(self, mock_get):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.json.return_value = [
+            {
+                "Status": "Success",
+                "PostOffice": [
+                    {"Name": "Bassi B.O", "Block": "Bassi", "District": "Jaipur", "State": "Rajasthan"},
+                    {"Name": "Toonga S.O", "Block": "Bassi", "District": "Jaipur", "State": "Rajasthan"},
+                ],
+            }
+        ]
+        mock_get.return_value = mock_resp
+
+        res = self.client.get("/api/pin-lookup/303301/")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.data["source"], "india_post")
+        self.assertEqual(res.data["state"], "Rajasthan")
+        self.assertEqual(res.data["district"], "Jaipur")
+        self.assertEqual(res.data["block"], "Bassi")
+        self.assertEqual(res.data["post_offices"], ["Bassi B.O", "Toonga S.O"])
+
+        # Verify NCT of Delhi -> Delhi normalization
+        mock_resp.json.return_value = [
+            {
+                "Status": "Success",
+                "PostOffice": [
+                    {"Name": "Najafgarh", "Block": "Najafgarh", "District": "South West Delhi", "State": "NCT of Delhi"},
+                ],
+            }
+        ]
+        res_dl = self.client.get("/api/pin-lookup/110043/")
+        self.assertEqual(res_dl.status_code, 200)
+        self.assertEqual(res_dl.data["state"], "Delhi")
+        self.assertEqual(res_dl.data["district"], "South West Delhi")
+
+    def test_pin_lookup_invalid_pin_returns_400(self):
+        res = self.client.get("/api/pin-lookup/012345/")
+        self.assertEqual(res.status_code, 400)
+
+    @patch("core.geo.requests.get")
+    def test_pin_lookup_335001_live_alias_and_offline_fallback(self, mock_get):
+        import requests as req_lib
+
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.json.return_value = [
+            {
+                "Status": "Success",
+                "PostOffice": [
+                    {"Name": "Sri Ganganagar H.O", "Block": "NA", "District": "Ganganagar", "State": "Rajasthan"},
+                ],
+            }
+        ]
+        mock_get.return_value = mock_resp
+
+        res_live = self.client.get("/api/pin-lookup/335001/")
+        self.assertEqual(res_live.status_code, 200)
+        self.assertEqual(res_live.data["state"], "Rajasthan")
+        self.assertIn("Ganganagar", res_live.data["district"])
+        self.assertEqual(res_live.data["district"], "Sri Ganganagar")
+
+        # Now clear cache and simulate offline external API
+        cache.clear()
+        mock_get.side_effect = req_lib.ConnectionError("offline")
+        res_offline = self.client.get("/api/pin-lookup/335001/")
+        self.assertEqual(res_offline.status_code, 200)
+        self.assertEqual(res_offline.data["state"], "Rajasthan")
+        self.assertIn("Ganganagar", res_offline.data["district"])
+        self.assertEqual(res_offline.data["source"], "local_cache")
+
+        # And a rural 335xxx PIN not in pin_lookup.json resolves via pin_prefix_map.json
+        res_prefix = self.client.get("/api/pin-lookup/335804/")
+        self.assertEqual(res_prefix.status_code, 200)
+        self.assertEqual(res_prefix.data["state"], "Rajasthan")
+        self.assertIn("Ganganagar", res_prefix.data["district"])
+        self.assertEqual(res_prefix.data["source"], "prefix_fallback")
+
 
 

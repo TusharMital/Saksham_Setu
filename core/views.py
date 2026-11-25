@@ -9,9 +9,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.category_verifier import verify_category_and_document
 from core.chatbot import chat_completion
 from core.emi import calculate_emi
-from core.geo import coords_from_pin, rank_branches
+from core.geo import coords_from_pin, load_india_districts, lookup_pin_details, rank_branches
 from core.i18n_validator import sanitize_bundle_with_fallback
 from core.languages import get_language_meta, list_supported_languages
 from core.models import Application, Branch, LoanScheme
@@ -207,16 +208,44 @@ class I18nBundleView(APIView):
         return resp
 
 
+class VerifyCategoryView(APIView):
+    def post(self, request):
+        result = verify_category_and_document(request.data or {})
+        return Response(result, status=status.HTTP_200_OK)
+
+
 class PinLookupView(APIView):
     def get(self, request):
         pin = request.query_params.get("pin", "")
         lat, lng, place = coords_from_pin(pin)
         if lat is None:
             return Response(
-                {"detail": "This PIN is not in our demo table. Allow location or pick a nearby city."},
+                {"detail": "This PIN is not in our lookup table. Allow location or pick a nearby city."},
                 status=status.HTTP_404_NOT_FOUND,
             )
         return Response({"lat": lat, "lng": lng, "place": place, "demo": True})
+
+
+class PinLookupDetailView(APIView):
+    def get(self, request, pin):
+        try:
+            details = lookup_pin_details(pin)
+        except ValueError as exc:
+            return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        if not details:
+            return Response(
+                {"detail": f"No post office details found for PIN {pin}."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        return Response(details, status=status.HTTP_200_OK)
+
+
+class DistrictsListView(APIView):
+    def get(self, request):
+        data = load_india_districts()
+        resp = Response(data, status=status.HTTP_200_OK)
+        resp["Cache-Control"] = "public, max-age=86400"
+        return resp
 
 
 def _next_ref():
