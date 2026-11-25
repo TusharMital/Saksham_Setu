@@ -1,7 +1,6 @@
 {
   "appName": "Saksham Setu",
   "appNameHi": "साक्षम सेतु",
-  "demoNotice": "This portal is a prototype for guidance only. No real application is submitted.",
   "langEn": "English",
   "langHi": "हिन्दी",
   "nav": {
@@ -155,7 +154,9 @@
     "exampleLoan": "For a ₹10,00,000 unit, you might invest ₹1,00,000 and borrow ₹9,00,000.",
     "progressSaved": "Your progress is saved",
     "whyAskThis": "Why do we ask this?",
-    "whyAskThisDesc": "Some schemes offer lower rates, larger subsidies, or priority processing for these categories."
+    "whyAskThisDesc": "Some schemes offer lower rates, larger subsidies, or priority processing for these categories.",
+    "selectOption": "-- Select --",
+    "selectStateFirst": "-- Select state first --"
   },
   "results": {
     "title": "You’re eligible for {count} schemes",
@@ -283,22 +284,19 @@
     "celebrateTitle": "All documents collected! 🎉",
     "celebrateMsg": "You have all required documents ready. Download your pre-filled project report and visit the branch!",
     "readyBadge": "Ready to Download",
-    "visitBranchNow": "Branch Visit Ready"
+    "visitBranchNow": "Branch Visit Ready",
+    "needProfile": "Please fill out your profile on the Find Scheme page first before saving an application."
   },
   "track": {
     "title": "Know exactly where your application stands",
-    "subtitle": "Enter your reference number for the latest update and next action.",
-    "placeholder": "Enter reference number, e.g. SS-2026-10001",
+    "subtitle": "Enter the reference number you received after submitting your application.",
+    "placeholder": "Enter your reference number (e.g. SS-2026-10001)",
     "go": "Track Status",
+    "emptyError": "Please enter your application reference number.",
+    "notFound": "No application found for {ref}. Check the reference number and try again.",
     "pending": "Action Needed",
     "rejected": "Rejection Diagnostics",
     "fix": "What to fix next",
-    "samples": "Try a sample reference number or select a quick demo button below.",
-    "quickTitle": "Quick Test Applications:",
-    "sampleApproved": "Approved (SS-2026-10001)",
-    "sampleRefused": "Refused & Remediation (SS-2026-10002)",
-    "sampleDocs": "Doc Verification (SS-2026-10003)",
-    "sampleField": "Field Verification (SS-2026-10004)",
     "whereStands": "Application progress",
     "actionNeeded": "ACTION NEEDED",
     "daysSince": "days since submission",
@@ -319,6 +317,7 @@
     "note": "AI guidance • Always verify with the bank before applying"
   },
   "footer": {
-    "rights": "Saksham Setu is a GovTech initiative prototype. Unified Concessional Credit Gateway."
+    "rights": "Saksham Setu — Unified Concessional Credit Gateway.",
+    "disclaimer": "NSFDC scheme details are for guidance; partner bank fund-quota & NPA indicators use prototype reference data."
   }
 }

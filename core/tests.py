@@ -1,3 +1,4 @@
+from django.core.management import call_command
 from django.test import SimpleTestCase, TestCase
 from rest_framework.test import APIClient
 
@@ -252,18 +253,6 @@ class ApiIntegrationTests(TestCase):
             npa_percent=3.2,
             status="Active",
         )
-        self.app = Application.objects.create(
-            ref_no="SS-2026-10001",
-            applicant_name="Sunita Meghwal",
-            scheme_code="MSY",
-            partner="ANUPEKSHA (Rajasthan SCA)",
-            stage="Decision",
-            status="approved",
-            pending_document="",
-            rejection_reason="",
-            fix_suggestion="",
-            payload={"loan_amount": 80000, "state": "Rajasthan", "mobile": "9876543210"},
-        )
 
     def test_schemes_list(self):
         res = self.client.get("/api/schemes/")
@@ -316,22 +305,50 @@ class ApiIntegrationTests(TestCase):
         res = self.client.post("/api/emi/", bad_payload, format="json")
         self.assertEqual(res.status_code, 400)
 
-    def test_application_create(self):
+    def test_application_create_and_immediate_track(self):
         payload = {
             "applicant_name": "Radha Rani",
             "scheme_code": "MSY",
             "partner": "ANUPEKSHA (Rajasthan SCA)",
             "mobile": "9876543210",
+            "loan_amount": 75000,
         }
         res = self.client.post("/api/applications/", payload, format="json")
         self.assertEqual(res.status_code, 201)
         self.assertIn("ref_no", res.data)
+        ref_no = res.data["ref_no"]
+        self.assertTrue(ref_no.startswith("SS-2026-"))
         self.assertEqual(res.data["applicant_name"], "Radha Rani")
 
+        track_res = self.client.get(f"/api/applications/{ref_no}/")
+        self.assertEqual(track_res.status_code, 200)
+        self.assertEqual(track_res.data["application"]["ref_no"], ref_no)
+        self.assertEqual(track_res.data["application"]["applicant_name"], "Radha Rani")
+        self.assertEqual(len(track_res.data["timeline"]), 4)
+        self.assertEqual(track_res.data["timeline"][0]["state"], "current")
+
+    def test_application_create_missing_fields_returns_400(self):
+        res = self.client.post("/api/applications/", {"applicant_name": "   "}, format="json")
+        self.assertEqual(res.status_code, 400)
+
     def test_application_detail_found(self):
-        res = self.client.get("/api/applications/SS-2026-10001/")
+        from core.models import Application
+
+        app = Application.objects.create(
+            ref_no="SS-2026-90001",
+            applicant_name="Meena Kumari",
+            scheme_code="MSY",
+            partner="ANUPEKSHA (Rajasthan SCA)",
+            stage="Decision",
+            status="approved",
+            pending_document="",
+            rejection_reason="",
+            fix_suggestion="",
+            payload={"loan_amount": 80000, "state": "Rajasthan", "mobile": "9876543210"},
+        )
+        res = self.client.get(f"/api/applications/{app.ref_no}/")
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(res.data["application"]["applicant_name"], "Sunita Meghwal")
+        self.assertEqual(res.data["application"]["applicant_name"], "Meena Kumari")
         self.assertEqual(len(res.data["timeline"]), 4)
 
     def test_application_detail_not_found(self):
@@ -339,10 +356,46 @@ class ApiIntegrationTests(TestCase):
         self.assertEqual(res.status_code, 404)
 
     def test_application_pdf_download(self):
-        res = self.client.get("/api/applications/SS-2026-10001/pdf/")
+        from core.models import Application
+
+        app = Application.objects.create(
+            ref_no="SS-2026-90002",
+            applicant_name="Meena Kumari",
+            scheme_code="MSY",
+            partner="ANUPEKSHA (Rajasthan SCA)",
+            stage="Submitted",
+            status="in_progress",
+            payload={"loan_amount": 80000, "state": "Rajasthan", "mobile": "9876543210"},
+        )
+        res = self.client.get(f"/api/applications/{app.ref_no}/pdf/")
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res["Content-Type"], "application/pdf")
         self.assertTrue(res.content.startswith(b"%PDF"))
+
+    def test_seed_data_seeds_catalog_only_and_reset_clears_samples(self):
+        from core.models import Application, Branch, LoanScheme
+
+        Application.objects.create(
+            ref_no="SS-2026-10001",
+            applicant_name="Seeded Sample",
+            scheme_code="MSY",
+            partner="Test Partner",
+        )
+        user_app = Application.objects.create(
+            ref_no="SS-2026-90123",
+            applicant_name="Real User",
+            scheme_code="MSY",
+            partner="Test Partner",
+        )
+
+        call_command("seed_data")
+        self.assertGreater(LoanScheme.objects.count(), 0)
+        self.assertGreater(Branch.objects.count(), 0)
+        self.assertFalse(Application.objects.filter(ref_no="SS-2026-10002").exists())
+
+        call_command("seed_data", reset=True)
+        self.assertFalse(Application.objects.filter(ref_no="SS-2026-10001").exists())
+        self.assertTrue(Application.objects.filter(ref_no=user_app.ref_no).exists())
 
     def test_pin_lookup_found(self):
         res = self.client.get("/api/pin-lookup/?pin=302001")

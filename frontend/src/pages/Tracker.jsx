@@ -1,25 +1,24 @@
 import { useState, useEffect } from "react";
 import Icon from "../components/Icon.jsx";
 import { api } from "../api.js";
+import { useAppState } from "../state.jsx";
 import { useI18n } from "../i18n.jsx";
-
-const SAMPLES = [
-  { ref: "SS-2026-10001", labelKey: "sampleApproved" },
-  { ref: "SS-2026-10002", labelKey: "sampleRefused" },
-  { ref: "SS-2026-10003", labelKey: "sampleDocs" },
-  { ref: "SS-2026-10004", labelKey: "sampleField" },
-];
 
 export default function Tracker() {
   const { t } = useI18n();
-  const [ref, setRef] = useState("SS-2026-10001");
+  const { refNo } = useAppState();
+  const [ref, setRef] = useState(refNo || "");
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
   const fetchStatus = async (targetRef) => {
-    const code = (targetRef || ref).trim();
-    if (!code) return;
+    const code = (targetRef ?? ref).trim();
+    if (!code) {
+      setData(null);
+      setError(t("track.emptyError"));
+      return;
+    }
     setBusy(true);
     try {
       const res = await api.application(code);
@@ -27,16 +26,23 @@ export default function Tracker() {
       setError("");
     } catch (e) {
       setData(null);
-      setError(e.body?.detail || e.message || "Application not found.");
+      setError(e.body?.detail || t("track.notFound", { ref: code }));
     } finally {
       setBusy(false);
     }
   };
 
   useEffect(() => {
-    fetchStatus("SS-2026-10001");
+    if (refNo) {
+      fetchStatus(refNo);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [refNo]);
+
+  const loanAmount = data?.application?.loan_amount ?? data?.application?.payload?.loan_amount;
+  const daysSince = data?.application?.created_at
+    ? Math.max(0, Math.floor((Date.now() - new Date(data.application.created_at).getTime()) / 86400000))
+    : 0;
 
   return (
     <div className="page-shell">
@@ -45,27 +51,6 @@ export default function Tracker() {
         <span className="eyebrow">APPLICATION TRACKER</span>
         <h1>{t("track.title")}</h1>
         <p>{t("track.subtitle")}</p>
-      </div>
-
-      {/* Quick Test Demo Chips */}
-      <div className="quick-demos-box">
-        <span className="quick-title-label">{t("track.quickTitle")}</span>
-        <div className="quick-buttons-row">
-          {SAMPLES.map((s) => (
-            <button
-              key={s.ref}
-              type="button"
-              className={`demo-pill-btn ${ref === s.ref ? "active" : ""}`}
-              onClick={() => {
-                setRef(s.ref);
-                fetchStatus(s.ref);
-              }}
-            >
-              <strong>{t(`track.${s.labelKey}`)}</strong>
-              <small>{s.ref}</small>
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Search Input Bar */}
@@ -118,7 +103,8 @@ export default function Tracker() {
               <small>APPLICATION</small>
               <strong>{data.application.applicant_name}</strong>
               <span>
-                {data.application.scheme_code} • ₹{Number(data.application.loan_amount || 1000000).toLocaleString("en-IN")}
+                {data.application.scheme_code}
+                {loanAmount ? ` • ₹${Number(loanAmount).toLocaleString("en-IN")}` : ""}
               </span>
             </div>
 
@@ -143,7 +129,7 @@ export default function Tracker() {
                 <p>Stage-by-stage status tracked live</p>
               </div>
               <span className="days-counter">
-                <strong>6</strong> {t("track.daysSince")}
+                <strong>{daysSince}</strong> {t("track.daysSince")}
               </span>
             </div>
 

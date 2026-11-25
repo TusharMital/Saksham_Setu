@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -67,25 +68,26 @@ class EmiView(APIView):
 class ApplicationCreateView(APIView):
     def post(self, request):
         data = request.data
-        name = data.get("applicant_name") or data.get("full_name")
-        scheme_code = data.get("scheme_code")
-        partner = data.get("partner") or "To be chosen"
+        name = str(data.get("applicant_name") or data.get("full_name") or "").strip()
+        scheme_code = str(data.get("scheme_code") or "").strip()
+        partner = str(data.get("partner") or "").strip() or "To be chosen"
         if not name or not scheme_code:
             return Response(
                 {"detail": "Applicant name and scheme code are required."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        ref = data.get("ref_no") or _next_ref()
-        app = Application.objects.create(
-            ref_no=ref,
-            applicant_name=name,
-            scheme_code=scheme_code,
-            partner=partner,
-            stage="Submitted",
-            status="in_progress",
-            pending_document="Identity and caste certificate",
-            payload=data,
-        )
+        with transaction.atomic():
+            ref = str(data.get("ref_no") or "").strip() or _next_ref()
+            app = Application.objects.create(
+                ref_no=ref,
+                applicant_name=name,
+                scheme_code=scheme_code,
+                partner=partner,
+                stage="Submitted",
+                status="in_progress",
+                pending_document="Identity and caste certificate",
+                payload=data,
+            )
         return Response(ApplicationSerializer(app).data, status=status.HTTP_201_CREATED)
 
 
@@ -155,6 +157,11 @@ class PinLookupView(APIView):
 
 
 def _next_ref():
-    last = Application.objects.order_by("-id").first()
-    n = (last.id if last else 0) + 1
-    return f"SS-2026-{10000 + n}"
+    existing_nums = []
+    for ref in Application.objects.values_list("ref_no", flat=True):
+        if ref.startswith("SS-2026-"):
+            tail = ref[len("SS-2026-"):]
+            if tail.isdigit():
+                existing_nums.append(int(tail))
+    next_num = max(existing_nums, default=10000) + 1
+    return f"SS-2026-{next_num}"

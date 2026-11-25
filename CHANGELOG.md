@@ -2,6 +2,15 @@
 
 All notable changes to the Saksham Setu project will be documented in this file.
 
+## [Unreleased] - 2026-11-25
+### Changed
+- Removed pre-seeded sample `Application` records (`SS-2026-10001` to `SS-2026-10004`) from `core/management/commands/seed_data.py` and added `--reset` flag to clear previously seeded sample applications while keeping `LoanScheme` and `Branch` catalog seeding.
+- Updated `ApplicationCreateView` in `core/views.py` to generate unique `SS-2026-XXXXX` reference numbers safely inside a database transaction.
+- Updated `core/tests.py` to create temporary test `Application` records inside test methods and verify immediate tracking and `seed_data` behavior.
+- Cleaned `/track` (`Tracker.jsx`) by removing clickable demo chips and sample auto-load, and computing real loan amount and days since submission.
+- Reset `frontend/src/state.jsx` and `Form.jsx` defaults so new users start with blank form fields and explicit dropdown selections.
+- Removed the top `DEMO DATA` banner from `Layout.jsx` and added a subtle one-line footer disclaimer in `en.json` and `hi.json`.
+
 ## [Steps 2-5] - 2026-11-21
 ### Added
 - Seeded database (`seed_data`): 9 schemes, 28 partner branches, and 4 sample tracking applications.

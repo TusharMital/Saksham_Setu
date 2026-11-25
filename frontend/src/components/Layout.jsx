@@ -162,15 +162,6 @@ export default function Layout({ children }) {
         {t("nav.skip")}
       </a>
 
-      {/* Top Demo Data Strip with gentle amber pulse */}
-      <aside className="demo-strip" role="status" aria-label="Prototype Notice">
-        <span className="demo-badge">
-          <i className="demo-dot" />
-          DEMO DATA
-        </span>
-        <p>{t("demoNotice")}</p>
-      </aside>
-
       {/* Single-Row White Header */}
       <header className="header">
         <div className="header-inner">
@@ -278,6 +269,7 @@ export default function Layout({ children }) {
           </div>
 
           <p className="footer-note">{t("footer.rights")}</p>
+          <p className="footer-disclaimer">{t("footer.disclaimer")}</p>
         </div>
       </footer>
 

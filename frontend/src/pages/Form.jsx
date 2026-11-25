@@ -41,14 +41,23 @@ export default function Form() {
   const navigate = useNavigate();
 
   const f = (key, vars) => t(`form.${key}`, vars);
-  const districts = (DISTRICTS[form.state] || ["Other"]).map((d) => ({ value: d, label: d }));
+  const selectPlaceholder = { value: "", label: f("selectOption") };
+  const districts = form.state
+    ? [
+        selectPlaceholder,
+        ...(DISTRICTS[form.state] || ["Other"]).map((d) => ({ value: d, label: d })),
+      ]
+    : [{ value: "", label: f("selectStateFirst") }];
 
   const validate = () => {
     const e = {};
     if (step === 1) {
       if (!form.full_name?.trim()) e.full_name = f("required");
       if (!/^[6-9]\d{9}$/.test(String(form.mobile || ""))) e.mobile = f("mobile_error");
+      if (!form.state) e.state = f("required");
+      if (!form.district) e.district = f("required");
       if (!/^\d{6}$/.test(String(form.pin || ""))) e.pin = f("pin_error");
+      if (!form.caste_category) e.caste_category = f("required");
       const age = Number(form.age);
       if (!age || age < 18 || age > 75) e.age = f("age_error");
       if (form.annual_family_income === "" || Number(form.annual_family_income) < 0) {
@@ -56,6 +65,8 @@ export default function Form() {
       }
     }
     if (step === 2) {
+      if (!form.applicant_type) e.applicant_type = f("required");
+      if (!form.sector) e.sector = f("required");
       if (!form.loan_amount || Number(form.loan_amount) <= 0) e.loan_amount = f("required");
       if (!form.project_description?.trim()) e.project_description = f("required");
     }
@@ -202,9 +213,10 @@ export default function Form() {
                   label={f("state")}
                   help={f("state_help")}
                   value={form.state}
-                  onChange={(v) => updateForm({ state: v, district: (DISTRICTS[v] || ["Other"])[0] })}
+                  onChange={(v) => updateForm({ state: v, district: "" })}
                   onFocus={handleFieldFocus}
-                  options={STATES.map((s) => ({ value: s, label: s }))}
+                  options={[selectPlaceholder, ...STATES.map((s) => ({ value: s, label: s }))]}
+                  error={errors.state}
                 />
                 <HelpField
                   name="district"
@@ -214,6 +226,7 @@ export default function Form() {
                   onChange={(v) => updateForm({ district: v })}
                   onFocus={handleFieldFocus}
                   options={districts}
+                  error={errors.district}
                 />
                 <HelpField
                   name="pin"
@@ -232,7 +245,8 @@ export default function Form() {
                   value={form.caste_category}
                   onChange={(v) => updateForm({ caste_category: v })}
                   onFocus={handleFieldFocus}
-                  options={["SC", "ST", "OBC", "Other"].map((s) => ({ value: s, label: s }))}
+                  options={[selectPlaceholder, ...["SC", "ST", "OBC", "Other"].map((s) => ({ value: s, label: s }))]}
+                  error={errors.caste_category}
                 />
                 <HelpField
                   name="age"
@@ -282,9 +296,11 @@ export default function Form() {
                   onChange={(v) => updateForm({ applicant_type: v })}
                   onFocus={handleFieldFocus}
                   options={[
+                    selectPlaceholder,
                     { value: "individual", label: f("individual") },
                     { value: "shg", label: f("shg") },
                   ]}
+                  error={errors.applicant_type}
                 />
                 <HelpField
                   name="sector"
@@ -293,10 +309,14 @@ export default function Form() {
                   value={form.sector}
                   onChange={(v) => updateForm({ sector: v })}
                   onFocus={handleFieldFocus}
-                  options={["agriculture", "manufacturing", "trade", "service", "transport", "education"].map((s) => ({
-                    value: s,
-                    label: f(s),
-                  }))}
+                  options={[
+                    selectPlaceholder,
+                    ...["agriculture", "manufacturing", "trade", "service", "transport", "education"].map((s) => ({
+                      value: s,
+                      label: f(s),
+                    })),
+                  ]}
+                  error={errors.sector}
                 />
                 <div style={{ gridColumn: "1 / -1" }}>
                   <HelpField

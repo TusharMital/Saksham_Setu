@@ -25,10 +25,7 @@ export default function Documents() {
     ? scheme.documents.map((d, i) => ({ id: `doc_${i}`, label: d, hint: "Required for bank verification" }))
     : defaultDocs;
 
-  const [checkedMap, setCheckedMap] = useState({
-    [docList[0]?.id || "aadhaar"]: true,
-    [docList[1]?.id || "caste"]: true,
-  });
+  const [checkedMap, setCheckedMap] = useState({});
 
   const toggleDoc = (id) => {
     setCheckedMap((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -39,17 +36,23 @@ export default function Documents() {
   const pct = Math.round((doneCount / (docList.length || 1)) * 100);
 
   const saveApplication = async () => {
+    if (!form.full_name?.trim()) {
+      setMsg(t("docs.needProfile"));
+      return;
+    }
     setBusy(true);
     try {
       const data = await api.createApplication({
         ...form,
-        applicant_name: form.full_name || "Applicant",
-        scheme_code: scheme?.code || "Stand-Up India / Term Loan",
-        partner: branch?.name || "State Bank of India - Jaipur Main",
+        applicant_name: form.full_name.trim(),
+        scheme_code: scheme?.code || "General",
+        partner: branch?.name || "To be chosen",
         partner_details: { IFSC: ifsc, Udyam: udyam },
         checklist: docList.map((d) => d.label),
-        partner_block: branch ? `${branch.name}, ${branch.address}, ${branch.phone}` : "Partner Bank Branch",
-        emi_summary: `Amount ₹${Number(form.loan_amount || 500000).toLocaleString("en-IN")} at ${scheme?.interest_rate || 6.5}%`,
+        partner_block: branch ? `${branch.name}, ${branch.address}, ${branch.phone}` : "To be chosen",
+        emi_summary: form.loan_amount
+          ? `Amount ₹${Number(form.loan_amount).toLocaleString("en-IN")} at ${scheme?.interest_rate || 6.5}%`
+          : "See calculator",
       });
       setRefNo(data.ref_no);
       setMsg(`${t("docs.save")}: ${data.ref_no}`);

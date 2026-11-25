@@ -26,7 +26,7 @@ export default function Locator() {
   const { t } = useI18n();
   const { form, scheme, setBranch } = useAppState();
   const [center, setCenter] = useState([26.9124, 75.7873]);
-  const [pin, setPin] = useState(form.pin || "302001");
+  const [pin, setPin] = useState(form.pin || "");
   const [branches, setBranches] = useState([]);
   const [selectedBranch, setSelectedBranch] = useState(null);
   const [error, setError] = useState("");
