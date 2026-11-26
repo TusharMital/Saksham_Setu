@@ -742,7 +742,12 @@
     "errRate": "Too many questions in a short time. Please wait a little and try again.",
     "errAuth": "Chat is not set up on this server yet. Ask a staff member to add the Groq key.",
     "errNetwork": "Network problem. Please check your connection and try again.",
-    "errBad": "I could not read the helper's reply. Please try again."
+    "errBad": "I could not read the helper's reply. Please try again.",
+    "errUnavailable": "संभाषणम् अद्यकालं अलभ्यम्।",
+    "guardUnknown": "मम सत्यापित-योजना-अभिलेखेषु तत्संक्षिप्तं विवरणं न विद्यते। कृपया योजना-विवरण-पृष्ठं पश्यतु अथवा आधिकारिक-सहकारी-बैंकं वा पोर्टलं वा सत्यापयतु।",
+    "guardOfftopic": "अहं केवलं सरकारी-ऋण-योजनासु, पात्रतायाम्, EMI/सिद्धि-मूलतत्त्वेषु, तथा साक्षम-सेतुः कथं क्रियते इत्यस्य विषये सहाय्यं कर्तुं शक्नोमि।",
+    "guardUnverified": "मम आधिकारिक-योजना-अभिलेखेषु तानि सटीक-अङ्कान् सत्यापयितुं न शक्यते। कृपया योजना-विवरण-पृष्ठं पश्यतु अथवा सहकारी-बैंकं सत्यापयतु।",
+    "guardDisclaimer": "टिप्पणी: संदर्भ-प्रोटोटाइप-डेटा — अन्तिम-शर्तान् आधिकारिक-सहकारी-बैंकं वा पोर्टलं वा सत्यापयितुं सदा आवश्यकम्।"
   },
   "footer": {
     "rights": "सक्षमसेतुः — एकीकृतसुलभऋणद्वारम्।",

@@ -742,7 +742,12 @@
     "errRate": "Too many questions in a short time. Please wait a little and try again.",
     "errAuth": "Chat is not set up on this server yet. Ask a staff member to add the Groq key.",
     "errNetwork": "Network problem. Please check your connection and try again.",
-    "errBad": "I could not read the helper's reply. Please try again."
+    "errBad": "I could not read the helper's reply. Please try again.",
+    "errUnavailable": "ચેટ તાત્કાલિક રીતે ઉપલબ્ધ નથી.",
+    "guardUnknown": "મારી પાસે પ્રમાણિત યોજના રેકોર્ડમાં તે ચોક્કસ વિગત નથી. કૃપા કરીને યોજના વિગત પૃષ્ઠ તપાસો અથવા અધિકૃત ભાગીદાર બેંક અથવા પોર્ટલ સાથે પુષ્ટિ કરો.",
+    "guardOfftopic": "હું માત્ર સરકારની લોન યોજનાઓ, પાત્રતા, EMI/સબસિડી મૂળભૂત બાબતો, અને સક્ષમ સેતુ કેવી રીતે કાર્ય કરે છે તેમાં મદદ કરી શકું છું.",
+    "guardUnverified": "હું તે ચોક્કસ આંકડાઓને અધિકૃત યોજના રેકોર્ડ સામે પુષ્ટિ કરી શક્યો નથી. કૃપા કરીને યોજના વિગત પૃષ્ઠ તપાસો અથવા ભાગીદાર બેંક સાથે પુષ્ટિ કરો.",
+    "guardDisclaimer": "નોંધ: સંદર્ભ પ્રોટોટાઇપ ડેટા — હંમેશા અંતિમ શરતોને અધિકૃત ભાગીદાર બેંક અથવા પોર્ટલ સાથે પુષ્ટિ કરો."
   },
   "footer": {
     "rights": "સક્ષમ સેતુ — એકીકૃત રાહત ધિરાણ પોર્ટલ.",

@@ -742,7 +742,12 @@
     "errRate": "Too many questions in a short time. Please wait a little and try again.",
     "errAuth": "Chat is not set up on this server yet. Ask a staff member to add the Groq key.",
     "errNetwork": "Network problem. Please check your connection and try again.",
-    "errBad": "I could not read the helper's reply. Please try again."
+    "errBad": "I could not read the helper's reply. Please try again.",
+    "errUnavailable": "ਚੈਟ ਅਸਮੇਂ ਲਈ ਉਪਲਬਧ ਨਹੀਂ ਹੈ।",
+    "guardUnknown": "ਸਾਡੇ ਕੋਲ ਪ੍ਰਮਾਣਿਤ ਸਕੀਮ ਰਿਕਾਰਡਾਂ ਵਿੱਚ ਉਹ ਸਹੀ ਜਾਣਕਾਰੀ ਨਹੀਂ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਸਕੀਮ ਵੇਰਵੇ ਪੰਨੇ ਦੀ ਜਾਂਚ ਕਰੋ ਜਾਂ ਅਧਿਕਾਰਤ ਸਹਿਯੋਗੀ ਬੈਂਕ ਜਾਂ ਪੋਰਟਲ ਨਾਲ ਪੁਸ਼ਟੀ ਕਰੋ।",
+    "guardOfftopic": "ਮੈਂ ਸਿਰਫ਼ ਸਰਕਾਰੀ ਲੋਨ ਸਕੀਮਾਂ, ਯੋਗਤਾ, EMI/ਸਬਸਿਡੀ ਦੇ ਮੁੱਢਲੇ ਨਿਯਮਾਂ ਅਤੇ ਸਕਸ਼ਮ ਸੇਤੂ ਕਿਵੇਂ ਕੰਮ ਕਰਦਾ ਹੈ, ਇਸ ਬਾਰੇ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ।",
+    "guardUnverified": "ਮੈਂ ਉਹਨਾਂ ਸਹੀ ਅੰਕੜਿਆਂ ਦੀ ਪ੍ਰਮਾਣਿਤ ਸਕੀਮ ਰਿਕਾਰਡਾਂ ਨਾਲ ਪੁਸ਼ਟੀ ਨਹੀਂ ਕਰ ਸਕਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਸਕੀਮ ਵੇਰਵੇ ਪੰਨੇ ਦੀ ਜਾਂਚ ਕਰੋ ਜਾਂ ਸਹਿਯੋਗੀ ਬੈਂਕ ਨਾਲ ਪੁਸ਼ਟੀ ਕਰੋ।",
+    "guardDisclaimer": "ਨੋਟ: ਹਵਾਲੇ ਵਜੋਂ ਪ੍ਰੋਟੋਟਾਈਪ ਡਾਟਾ — ਅੰਤਿਮ ਸ਼ਰਤਾਂ ਦੀ ਹਮੇਸ਼ਾ ਅਧਿਕਾਰਤ ਸਹਿਯੋਗੀ ਬੈਂਕ ਜਾਂ ਪੋਰਟਲ ਨਾਲ ਪੁਸ਼ਟੀ ਕਰੋ।"
   },
   "footer": {
     "rights": "ਸਕਸ਼ਮ ਸੇਤੂ — ਏਕੀਕ੍ਰਿਤ ਰਿਆਇਤੀ ਕਰਜ਼ਾ ਪੋਰਟਲ।",

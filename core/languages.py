@@ -227,3 +227,28 @@ def get_language_meta(code: str) -> dict[str, Any]:
 def list_supported_languages() -> list[dict[str, Any]]:
     """Return metadata dictionaries for all 23 supported languages."""
     return [get_language_meta(code) for code in SUPPORTED_LANGUAGES]
+
+
+SCRIPT_RANGES: dict[str, tuple[tuple[int, int], ...]] = {
+    "Deva": ((0x0900, 0x097F), (0xA8E0, 0xA8FF), (0x1CD0, 0x1CFF)),
+    "Beng": ((0x0980, 0x09FF),),
+    "Guru": ((0x0A00, 0x0A7F),),
+    "Gujr": ((0x0A80, 0x0AFF),),
+    "Orya": ((0x0B00, 0x0B7F),),
+    "Taml": ((0x0B80, 0x0BFF),),
+    "Telu": ((0x0C00, 0x0C7F),),
+    "Knda": ((0x0C80, 0x0CFF),),
+    "Mlym": ((0x0D00, 0x0D7F),),
+    "Arab": ((0x0600, 0x06FF), (0x0750, 0x077F), (0x08A0, 0x08FF), (0xFB50, 0xFDFF), (0xFE70, 0xFEFF)),
+    "Mtei": ((0xABC0, 0xABFF), (0xAAE0, 0xAAFF)),
+    "Olck": ((0x1C50, 0x1C7F),),
+}
+
+
+def is_script_char(ch: str, script: str) -> bool:
+    """Return True if character `ch` falls within the Unicode block(s) for `script`."""
+    ranges = SCRIPT_RANGES.get(script)
+    if not ranges or not ch:
+        return False
+    cp = ord(ch)
+    return any(lo <= cp <= hi for lo, hi in ranges)

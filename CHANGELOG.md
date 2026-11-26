@@ -2,6 +2,46 @@
 
 All notable changes to the Saksham Setu project will be documented in this file.
 
+## [Sarthi Security, DB Grounding & Guard Hardening (P9 & P9b)] - 2026-11-26
+### Security & Changed
+- Hardened `ChatView.post` and `VerifyCategoryView.post` (`core/views.py`) with dict body type-guarding, added `ipaddress`-validated `client_ip(request)` with `TRUSTED_PROXY_COUNT`, and added non-string `message`/`lang` type-guards in `core/chatbot.py`.
+- Added crash-proof HMAC-signed assistant history (`_sig_ok` UTF-8 encoding + `django.core.signing.Signer(salt="sarthi-history")` + `hmac.compare_digest`), returning `reply_sig` and forwarding it from `frontend/src/components/Sarthi.jsx` while safely dropping unsigned, tampered, non-ASCII, or lone-surrogate history turns.
+- Switched `core/chatbot.py` grounding to query `LoanScheme.objects.all()` with 300s `cache.get_or_set` caching, `"no income cap"` formatting for zero/null ceilings, `tenure_months`/`moratorium_months`/`subsidy_percent`/`finance_percent` metadata, and fail-closed `HTTP 503` when scheme records are unavailable.
+- Added `<schemes>` prompt hardening, `_SENT_RE` (`[[UNKNOWN]]`/`[[OFFTOPIC]]`) detection, `_END_RE` sentence-boundary trimming on `finish_reason == "length"` (preserving decimals like `4.0%`), URL stripping, `> 10` Indic/ASCII number verification, `_script_ok` Unicode script check (`core/languages.py`), localized guard/disclaimer bundles across all 23 languages, fail-safe atomic `_rate_limited(ip)`, and `HTTP 503` mapping + warning/error logging on upstream errors without disclosing vendor/key or `model`.
+
+## [Full 23-Language i18n Extraction, Automated Groq Translator & RTL/Voice Polish] - 2026-11-26
+### Added
+- Created `core/management/commands/translate_all_content.py` (`python manage.py translate_all_content`) reading `GROQ_API_KEY` from `.env` with two resumable passes (`--pass ui` and `--pass schemes`), per-model HTTP 429 rate-limit rotation/cooldown, `validate_bundle` / `sanitize_bundle_with_fallback` validation, incremental saving into `data/scheme_translations_cache.json`, and automatic `hi.json` sync to `frontend/src/locales/hi.json`.
+- Extracted remaining hardcoded English UI labels, placeholders, aria-labels, tooltips, SVG chart labels, Sarthi 3-question advisor strings, and speech guidance messages across `Layout.jsx`, `Landing.jsx`, `AllSchemes.jsx`, `Form.jsx`, `HelpField.jsx`, `Results.jsx`, `SchemeDetail.jsx`, `Calculator.jsx`, `ApplyPath.jsx`, `BranchLocator.jsx`, `SchemeCompareBarAndModal.jsx`, `Sarthi.jsx`, `schemeHelpers.js`, and `speech.js`, syncing all 907 keys into `core/translations/en.json` and `frontend/src/locales/en.json`.
+- Wired `useTranslatedSchemes` inside `InstitutionDetailsModal` in `BranchLocator.jsx` so cross-referenced `provided_schemes` render in the active language alongside `AllSchemes.jsx`, `Results.jsx`, `SchemeDetail.jsx`, `Calculator.jsx`, and `ApplyPath.jsx`.
+- Localized remaining backend strings in `core/recommender.py` (`rejectedPrefix`, `acceptedSummary`), `core/category_verifier.py` (`interstateMigrationNote`, `altAgency*`), `core/geo.py` / `core/bank_locator.py` (default institution labels/fallbacks), and `core/chatbot.py` (23-language localized error messages), and enhanced RTL rules in `frontend/src/index.css`.
+- Added tests in `core/tests.py` covering interstate Hindi category verification, non-Hindi chatbot error localization, and `GroqPool` HTTP 429 retry/placeholder handling; updated `openapi.yaml`.
+- Executed `translate_all_content` via Groq (`hi`, `ur`, `ne`, `ta`, `bn` UI bundles 100% translated with 0 fallbacks, plus 66/66 Hindi schemes cached; remaining languages throttled by Groq free-tier `1,000 OTPM` / `200,000 TPD` organization quotas).
+
+## [All Schemes Catalog Browser (/schemes)] - 2026-11-26
+### Added
+- Created `frontend/src/pages/AllSchemes.jsx` (`/schemes` route in `frontend/src/App.jsx`) providing a comprehensive 66-scheme catalog browser with live search, 8 portal sort options (`Default`, `Name A–Z / Z–A`, `Interest Rate High/Low`, `Max Loan High/Low`, `Repayment Tenure Longest`), live result counter, removable active filter chips, and `Reset All Filters`.
+- Added rich multi-faceted filters in `AllSchemes.jsx` (Government Level, State/UT + exclusive-to-state toggle, multi-select Target Category/Group + `Women Only`, Sector/Loan Purpose, Application Channel) and Amazon-style paired slider + numeric input custom range controls (Desired Loan Amount, Max Interest Rate, Annual Family Income).
+- Extracted `frontend/src/components/SchemeCompareBarAndModal.jsx` and `frontend/src/utils/schemeHelpers.js` so `AllSchemes.jsx` and `Results.jsx` share identical `More Details` (`/scheme/<code>`), sticky Compare Bar (up to 3 schemes), and Split-Window Side-by-Side Comparison UX.
+- Added `"All Schemes"` (`/schemes`) to the top navigation bar (next to `Home` and `Find Scheme`) and footer links in `frontend/src/components/Layout.jsx`.
+- Added `subsidy_note` alias on `LoanSchemeSerializer` (`core/serializers.py`) and optional server-side filtering/sorting support on `GET /api/schemes/` (`core/views.py`), plus `AllSchemesCatalogTests` in `core/tests.py` and updated `openapi.yaml`.
+- Added `nav.allSchemes` and `allSchemes.*` i18n keys across `frontend/src/locales/en.json`, `hi.json`, and all 23 `core/translations/*.json` bundles.
+
+## [Removed Standalone Track Page & Links] - 2026-11-26
+### Removed
+- Deleted `frontend/src/pages/Tracker.jsx` and removed the `/track` route from `frontend/src/App.jsx`.
+- Removed `"Track"` from the top navigation bar and footer links in `frontend/src/components/Layout.jsx`, leaving `Home`, `Find Scheme`, and `EMI Calculator`.
+- Removed `"Save Application & Get Tracking ID"` / `/track` links from `frontend/src/pages/ApplyPath.jsx`, keeping official portal links, `"Find Partner Banks & Official Portals for This Scheme"` (`/locator?scheme=<code>`), `"View in Locked EMI Calculator"` (`/calculator?scheme=<code>`), and `"Required Documents Checklist"` (`/scheme/<code>`).
+- Updated `core/chatbot.py` system prompt so Sarthi AI directs users to official portals/branches for live status and never references `/track` or `/documents`.
+- Cleaned up `nav.track`, `landing.trackCta`, `paths.saveAndTrack`, `paths.needProfileForTrack`, and `track.*` keys across `frontend/src/locales/en.json`, `hi.json`, and all 23 `core/translations/*.json` bundles.
+
+## [Removed Redundant Standalone Documents Page] - 2026-11-26
+### Removed
+- Deleted `frontend/src/pages/Documents.jsx` and removed `/documents` from `Layout.jsx` navbar and footer links (leaving `Home`, `Find Scheme`, `EMI Calculator`, and `Track`).
+- Updated `frontend/src/App.jsx` to remove the `Documents` import and redirect `/documents` to `/results`.
+- Repointed document checklist buttons on `frontend/src/pages/ApplyPath.jsx` to `/scheme/<code>` (since scheme-specific document checklists live on `/scheme/:code` and `/locator`).
+- Cleaned up `nav.documents` and `docs.*` locale keys across `frontend/src/locales/en.json`, `hi.json`, and all 23 `core/translations/*.json` bundles.
+
 ## [Scheme-Driven Application Paths Navigation] - 2026-11-26
 ### Changed
 - Removed `"Application Paths"` (`/apply`) from the top navigation bar and footer in `frontend/src/components/Layout.jsx`, keeping `Home`, `Find Scheme`, `EMI Calculator`, `Documents`, and `Track`.

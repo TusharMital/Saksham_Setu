@@ -742,7 +742,12 @@
     "errRate": "Too many questions in a short time. Please wait a little and try again.",
     "errAuth": "Chat is not set up on this server yet. Ask a staff member to add the Groq key.",
     "errNetwork": "Network problem. Please check your connection and try again.",
-    "errBad": "I could not read the helper's reply. Please try again."
+    "errBad": "I could not read the helper's reply. Please try again.",
+    "errUnavailable": "चैट अस्थायी रूप सँ उपलब्ध नहि अछि।",
+    "guardUnknown": "हमरा पास ओहि विशेष विवरणक सत्यापित रेकॉर्ड नहि अछि। कृपया योजना विवरण पृष्ठ जाँचू अथवा आधिकारिक साझेदार बैंक अथवा पोर्टल सँ पुष्टि करू।",
+    "guardOfftopic": "हम केवल सरकारक ऋण योजना, पात्रता, EMI/सब्सिडी मूलभूत जानकारी, आ साक्षम सेतु काजक बारे मे सहायता कऽ सकै छी।",
+    "guardUnverified": "हम ओहि विशेष आंकड़ाक आधिकारिक योजना रेकॉर्ड सँ पुष्टि नहि कऽ सकलहुँ। कृपया योजना विवरण पृष्ठ जाँचू अथवा साझेदार बैंक सँ पुष्टि करू।",
+    "guardDisclaimer": "नोट: संदर्भ प्रोटोटाइप डेटा — अंतिम शर्त सभक आधिकारिक साझेदार बैंक अथवा पोर्टल सँ सदैव पुष्टि करू।"
   },
   "footer": {
     "rights": "सक्षम सेतु — एकीकृत रियायती ऋण पोर्टल।",

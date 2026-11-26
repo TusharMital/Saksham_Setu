@@ -15,7 +15,7 @@ from core.bank_locator import (
     reverse_geocode_coords,
 )
 from core.category_verifier import verify_category_and_document
-from core.chatbot import chat_completion, resolve_language
+from core.chatbot import chat_completion, client_ip, resolve_language
 from core.dynamic_translator import translate_schemes
 from core.emi import calculate_emi
 from core.geo import coords_from_pin, load_india_districts, lookup_pin_details, rank_branches
@@ -522,12 +522,12 @@ class ApplicationPdfView(APIView):
 
 class ChatView(APIView):
     def post(self, request):
-        message = request.data.get("message") or request.data.get("query") or ""
-        history = request.data.get("history") or []
-        language = request.data.get("lang") or request.data.get("language") or "en"
-        ip = request.META.get("REMOTE_ADDR", "unknown")
-        body, code = chat_completion(message, history, language, client_ip=ip)
-        return Response(body, status=code)
+        body = request.data if isinstance(request.data, dict) else {}
+        message = body.get("message") or body.get("query") or ""
+        history = body.get("history") or []
+        language = body.get("lang") or body.get("language") or "en"
+        resp_body, code = chat_completion(message, history, language, client_ip=client_ip(request))
+        return Response(resp_body, status=code)
 
 
 TRANSLATIONS_DIR = Path(__file__).resolve().parent / "translations"
@@ -610,7 +610,7 @@ class TranslateSchemesView(APIView):
 
 class VerifyCategoryView(APIView):
     def post(self, request):
-        body = request.data or {}
+        body = request.data if isinstance(request.data, dict) else {}
         lang_meta = resolve_language(
             body.get("lang")
             or body.get("language")

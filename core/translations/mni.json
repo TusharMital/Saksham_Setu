@@ -742,7 +742,12 @@
     "errRate": "Too many questions in a short time. Please wait a little and try again.",
     "errAuth": "Chat is not set up on this server yet. Ask a staff member to add the Groq key.",
     "errNetwork": "Network problem. Please check your connection and try again.",
-    "errBad": "I could not read the helper's reply. Please try again."
+    "errBad": "I could not read the helper's reply. Please try again.",
+    "errUnavailable": "ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ",
+    "guardUnknown": "ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ",
+    "guardOfftopic": "ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ",
+    "guardUnverified": "ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ",
+    "guardDisclaimer": "ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ ꯑꯃꯤꯗꯤꯟ"
   },
   "footer": {
     "rights": "ꯁꯛꯁꯝ ꯁꯦꯇꯨ — ꯄꯨꯟꯁꯤꯜꯂꯕꯥ ꯔꯤꯌꯥꯌꯠ ꯂꯣꯟ ꯄꯣꯔꯇꯦꯜ꯫",

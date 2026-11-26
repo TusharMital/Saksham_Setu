@@ -742,7 +742,12 @@
     "errRate": "Too many questions in a short time. Please wait a little and try again.",
     "errAuth": "Chat is not set up on this server yet. Ask a staff member to add the Groq key.",
     "errNetwork": "Network problem. Please check your connection and try again.",
-    "errBad": "I could not read the helper's reply. Please try again."
+    "errBad": "I could not read the helper's reply. Please try again.",
+    "errUnavailable": "चैट अस्थायी रूप से उपलब्ध नहीं है।",
+    "guardUnknown": "मोर पास ओइखो बिसेस विवरण नाय। कृपया योजना विवरण पृष्ठ जाँचू या आधिकारिक साझेदार बैंक या पोर्टल से पुष्टि करू।",
+    "guardOfftopic": "मोर मदद केवल सरकारी ऋण योजनाबा, पात्रता, ईएमआई/सब्सिडी मूल बातें, और शाकशाम सेतु कइसे काम करै, तक सीमित बा।",
+    "guardUnverified": "मोर पास ओइखो सटीक आंकड़ा आधिकारिक योजना रिकॉर्ड में सत्यापित नाय। कृपया योजना विवरण पृष्ठ जाँचू या साझेदार बैंक से पुष्टि करू।",
+    "guardDisclaimer": "नोट: संदर्भ प्रोटोटाइप डेटा — हमेशा अंतिम शर्तें आधिकारिक साझेदार बैंक या पोर्टल से सत्यापित करब।"
   },
   "footer": {
     "rights": "सक्षम सेतु — खौसेयाव बिथांखि आरो रियाहती दाहार पोर्टल।",

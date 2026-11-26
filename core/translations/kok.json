@@ -742,7 +742,12 @@
     "errRate": "Too many questions in a short time. Please wait a little and try again.",
     "errAuth": "Chat is not set up on this server yet. Ask a staff member to add the Groq key.",
     "errNetwork": "Network problem. Please check your connection and try again.",
-    "errBad": "I could not read the helper's reply. Please try again."
+    "errBad": "I could not read the helper's reply. Please try again.",
+    "errUnavailable": "चॅट तात्पुरती उपलब्ध न्हय.",
+    "guardUnknown": "माका तपासिल्या योजना रेकॉर्डांत ती अचूक माहिती न्हय. कृपया योजना तपशील पान तपासात किंवा अधिकृत भागीदार बँक वा पोर्टलाकडून पुष्टी करात.",
+    "guardOfftopic": "हांव फकत सरकारी कर्ज योजना, पात्रता, EMI/सबसिडी मूलभूत माहिती, आणि सक्शम सेतु कशा प्रकारे काम करता, ह्यांबद्दल मदत करूं शकता.",
+    "guardUnverified": "ह्या अचूक आकड्यांची अधिकृत योजना रेकॉर्डांशी पडताळणी करपाक मी शकलो ना. कृपया योजना तपशील पान तपासात किंवा भागीदार बँकेकडून पुष्टी करात.",
+    "guardDisclaimer": "नोंद: संदर्भ प्रोटोटाइप डेटा — नेहमी अंतिम अटी अधिकृत भागीदार बँक वा पोर्टलाकडून तपासात."
   },
   "footer": {
     "rights": "सक्षम सेतू — एकत्रीत सवलत रीण पोर्टल.",

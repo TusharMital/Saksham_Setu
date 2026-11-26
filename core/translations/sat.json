@@ -742,7 +742,12 @@
     "errRate": "Too many questions in a short time. Please wait a little and try again.",
     "errAuth": "Chat is not set up on this server yet. Ask a staff member to add the Groq key.",
     "errNetwork": "Network problem. Please check your connection and try again.",
-    "errBad": "I could not read the helper's reply. Please try again."
+    "errBad": "I could not read the helper's reply. Please try again.",
+    "errUnavailable": "Chat is temporarily unavailable.",
+    "guardUnknown": "I don't have that exact detail in the verified scheme records. Please check the scheme details page or confirm with the official partner bank or portal.",
+    "guardOfftopic": "I can only help with government loan schemes, eligibility, EMI/subsidy basics, and how Saksham Setu works.",
+    "guardUnverified": "I could not verify those exact figures against the official scheme records. Please check the scheme details page or confirm with the partner bank.",
+    "guardDisclaimer": "Note: Reference prototype data — always verify final terms with the official partner bank or portal."
   },
   "footer": {
     "rights": "ᱥᱚᱠᱷᱚᱢ ᱥᱮᱛᱩ — ᱡᱩᱢᱤᱫᱽ ᱨᱤᱭᱟᱹᱛᱤ ᱨᱤᱱ ᱯᱳᱨᱴᱟᱞ᱾",

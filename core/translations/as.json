@@ -742,7 +742,12 @@
     "errRate": "Too many questions in a short time. Please wait a little and try again.",
     "errAuth": "Chat is not set up on this server yet. Ask a staff member to add the Groq key.",
     "errNetwork": "Network problem. Please check your connection and try again.",
-    "errBad": "I could not read the helper's reply. Please try again."
+    "errBad": "I could not read the helper's reply. Please try again.",
+    "errUnavailable": "চাট সাময়িকভাৱে উপলব্ধ নহয়।",
+    "guardUnknown": "মই প্ৰমাণিত পৰিকল্পনা ৰেকৰ্ডত সেই নিৰ্দিষ্ট বিৱৰণী নাপাওি। অনুগ্ৰহ কৰি পৰিকল্পনা বিৱৰণী পৃষ্ঠা পৰীক্ষা কৰক বা অফিচিয়েল পৰ্টনেৰ বেংক বা পৰ্টেলৰ সৈতে নিশ্চিত কৰক।",
+    "guardOfftopic": "মই কেৱল চৰকাৰী ঋণ পৰিকল্পনা, যোগ্যতা, EMI/সাবচিডিৰ মৌলিক তথ্য আৰু সক্ষম সেতু কেনেকৈ কাম কৰে, সেই বিষয়ে সহায় কৰিব পাৰোঁ।",
+    "guardUnverified": "মই অফিচিয়েল পৰিকল্পনা ৰেকৰ্ডৰ বিৰুদ্ধে সেই নিৰ্দিষ্ট সংখ্যা প্ৰমাণিত কৰিব নোৱাৰি। অনুগ্ৰহ কৰি পৰিকল্পনা বিৱৰণী পৃষ্ঠা পৰীক্ষা কৰক বা পৰ্টনেৰ বেংকৰ সৈতে নিশ্চিত কৰক।",
+    "guardDisclaimer": "টোকা: প্ৰতীকী প্ৰট'টাইপ তথ্য — চূড়ান্ত শৰ্তসমূহ সদায় অফিচিয়েল পৰ্টনেৰ বেংক বা পৰ্টেলৰ সৈতে প্ৰমাণিত কৰক।"
   },
   "footer": {
     "rights": "সক্ষম সেতু — একত্ৰিত ৰেহাই ঋণ প্ৰৱেশদ্বাৰ।",

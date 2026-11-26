@@ -742,7 +742,12 @@
     "errRate": "Too many questions in a short time. Please wait a little and try again.",
     "errAuth": "Chat is not set up on this server yet. Ask a staff member to add the Groq key.",
     "errNetwork": "Network problem. Please check your connection and try again.",
-    "errBad": "I could not read the helper's reply. Please try again."
+    "errBad": "I could not read the helper's reply. Please try again.",
+    "errUnavailable": "ചാറ്റ് താൽക്കാലികമായി ലഭ്യമല്ല.",
+    "guardUnknown": "എനിക്ക് അതേ വിശദാംശം സ്ഥിരീകരിച്ച രേഖകളിൽ ലഭ്യമല്ല. ദയവായി പദ്ധതിയുടെ വിശദാംശ പേജ് പരിശോധിക്കുക അല്ലെങ്കിൽ ഔദ്യോഗിക പങ്കാളി ബാങ്ക് അല്ലെങ്കിൽ പോർട്ടലുമായി സ്ഥിരീകരിക്കുക.",
+    "guardOfftopic": "ഞാൻ സർക്കാർ വായ്പാ പദ്ധതികൾ, യോഗ്യത, EMI/സബ്സിഡി അടിസ്ഥാനങ്ങൾ, സാക്ഷം സെറ്റു എങ്ങനെ പ്രവർത്തിക്കുന്നു എന്നിവയിൽ മാത്രമേ സഹായിക്കൂ.",
+    "guardUnverified": "അവരുടെ കൃത്യമായ സംഖ്യകൾ ഔദ്യോഗിക പദ്ധതിയുടെ രേഖകളുമായി സ്ഥിരീകരിക്കാൻ കഴിഞ്ഞില്ല. ദയവായി പദ്ധതിയുടെ വിശദാംശ പേജ് പരിശോധിക്കുക അല്ലെങ്കിൽ പങ്കാളി ബാങ്കുമായി സ്ഥിരീകരിക്കുക.",
+    "guardDisclaimer": "ശ്രദ്ധിക്കുക: റഫറൻസ് പ്രോട്ടോടൈപ്പ് ഡാറ്റ — അന്തിമ നിബന്ധനകൾ എല്ലായ്പ്പോഴും ഔദ്യോഗിക പങ്കാളി ബാങ്ക് അല്ലെങ്കിൽ പോർട്ടലുമായി സ്ഥിരീകരിക്കുക."
   },
   "footer": {
     "rights": "സക്ഷം സേതു — ഏകീകൃത ഇളവ് വായ്പാ പോർട്ടൽ.",

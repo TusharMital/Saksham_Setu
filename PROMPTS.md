@@ -651,3 +651,19 @@ What worked: Switching to any of the 23 supported languages now translates the e
 What failed or was missing: None.
 Did it follow the rules? Yes (`.env` remained git-ignored; zero API keys exposed)[cite: 7].
 Next prompt it led to: Claude independent security & code audit (P9) and live deployment.
+
+---
+
+### P9 | Claude & Antigravity | Security, Prompt-Injection & Grounding Audit (29/50 → 35/50 → Hardened)
+Date: 2026-11-26
+Run by: Mousam (25bcon2411)
+Prompt (exact text): Audited `core/chatbot.py` and `core/views.py` in Claude across 5 criteria (API key safety, prompt-injection resistance, error handling, scheme-data grounding, and 23-language handling — initial score 29/50, re-score 35/50), then applied both rounds of hardening fixes via Antigravity (UTF-8 HMAC-signed assistant history, validated `client_ip` with atomic rate limiter, cached DB single-source grounding with `no income cap` and tenure/subsidy fields, regex sentinel/decimal-safe truncation, localized guard notices, and target-script verification).
+Output summary (3 lines):
+- Hardened `core/chatbot.py` and `core/views.py` with UTF-8 HMAC `Signer` history verification, `ipaddress`-validated `client_ip`, safe cache outage handling, and dict type guards on `ChatView` and `VerifyCategoryView`.
+- Cached complete `LoanScheme` DB grounding records (including tenure, moratorium, subsidy, and `no income cap`), added decimal-safe truncation (`[.!?।۔](?=\s|$)`), numeric verification, localized guard messages, and script validation.
+- Verified all unit tests pass cleanly with zero secret or vendor leakage.
+What worked: Two-pass Claude audit + re-score caught subtle UTF-8/surrogate crashes, IP spoofing, and decimal truncation before live deployment.
+What failed or was missing: None.
+Did it follow the rules? Yes.
+Next prompt it led to: Live Groq chatbot edge-case testing (P6c), reverse prompting on P0 (P10), final `README.md` (P11), and live deployment.
+Screenshot file names: `docs/03_AI_Tools/p9_claude_review_before.png`, `docs/03_AI_Tools/p9_claude_review_after.png`

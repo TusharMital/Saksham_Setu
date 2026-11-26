@@ -742,7 +742,12 @@
     "errRate": "Too many questions in a short time. Please wait a little and try again.",
     "errAuth": "Chat is not set up on this server yet. Ask a staff member to add the Groq key.",
     "errNetwork": "Network problem. Please check your connection and try again.",
-    "errBad": "I could not read the helper's reply. Please try again."
+    "errBad": "I could not read the helper's reply. Please try again.",
+    "errUnavailable": "چَٹ ہن عارضی طور تے دستیاب نِی۔",
+    "guardUnknown": "میں وِیژڈ سکیم ریکارڈس وِچ اِیہ دقیق تفصیل نِی پُچھدِی۔ سکیم دِی تفصیل دِی صفحہ چیک کریں یا سرکاری پارٹنر بینک یا پورٹل نِی تصدیق کریں۔",
+    "guardOfftopic": "میں صرف سرکاری قرض سکیمس، اہلیت، EMI/سبسڈی دِی بنیادی معلومات، تے سکشَم ستو کیویں کم کرِیہ اِیہ سہاؤ کر سِکدِی۔",
+    "guardUnverified": "میں اِیہ دقیق اعداد و شمار سرکاری سکیم ریکارڈس نِی تصدیق نِی کر سِکدِی۔ سکیم دِی تفصیل دِی صفحہ چیک کریں یا پارٹنر بینک نِی تصدیق کریں۔",
+    "guardDisclaimer": "نوٹ: حوالہ پروٹوٹائپ ڈیٹا — ہمیشہ حتمی شرائط سرکاری پارٹنر بینک یا پورٹل نِی تصدیق کریں۔"
   },
   "footer": {
     "rights": "سکشم سیتو — متحدہ اسکیم تہٕ رعایتی قرض پورٹل۔",

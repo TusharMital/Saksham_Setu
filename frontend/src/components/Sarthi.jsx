@@ -428,11 +428,18 @@ export default function Sarthi() {
     try {
       const data = await api.chat({
         message,
-        history: next.slice(-6),
+        history: next.slice(-6).map((m) => ({
+          role: m.role,
+          content: m.content,
+          ...(m.sig ? { sig: m.sig } : {}),
+        })),
         lang,
         language: lang,
       });
-      const updated = [...next, { role: "assistant", content: data.reply }];
+      const updated = [
+        ...next,
+        { role: "assistant", content: data.reply, sig: data.reply_sig },
+      ];
       setHistory(updated);
       if (autoSpeak && voiceInfo.available && data.reply) {
         speakMessage(updated.length - 1, data.reply);

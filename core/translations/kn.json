@@ -742,7 +742,12 @@
     "errRate": "Too many questions in a short time. Please wait a little and try again.",
     "errAuth": "Chat is not set up on this server yet. Ask a staff member to add the Groq key.",
     "errNetwork": "Network problem. Please check your connection and try again.",
-    "errBad": "I could not read the helper's reply. Please try again."
+    "errBad": "I could not read the helper's reply. Please try again.",
+    "errUnavailable": "ಚಾಟ್ ತಾತ್ಕಾಲಿಕವಾಗಿ ಲಭ್ಯವಿಲ್ಲ.",
+    "guardUnknown": "ನನ್ನ ಬಳಿ ಆ ನಿಖರವಾದ ವಿವರಗಳು ಪರಿಶೀಲಿತ ಯೋಜನೆ ದಾಖಲೆಗಳಲ್ಲಿ ಇಲ್ಲ. ದಯವಿಟ್ಟು ಯೋಜನೆ ವಿವರಗಳ ಪುಟವನ್ನು ಪರಿಶೀಲಿಸಿ ಅಥವಾ ಅಧಿಕೃತ ಪಾಲುದಾರ ಬ್ಯಾಂಕ್ ಅಥವಾ ಪೋರ್ಟಲ್‌ನೊಂದಿಗೆ ದೃಢೀಕರಿಸಿ.",
+    "guardOfftopic": "ನಾನು ಸರ್ಕಾರದ ಸಾಲ ಯೋಜನೆಗಳು, ಅರ್ಹತೆ, EMI/ಸಬ್ಸಿಡಿ ಮೂಲಭೂತಗಳು ಮತ್ತು ಸಾಕ್ಷಮ್ ಸೇತು ಹೇಗೆ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ ಎಂಬುದರಲ್ಲಿ ಮಾತ್ರ ಸಹಾಯ ಮಾಡಬಹುದು.",
+    "guardUnverified": "ಅಧಿಕೃತ ಯೋಜನೆ ದಾಖಲೆಗಳ ವಿರುದ್ಧ ಆ ನಿಖರ ಸಂಖ್ಯೆಗಳನ್ನೂ ನಾನು ಪರಿಶೀಲಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಯೋಜನೆ ವಿವರಗಳ ಪುಟವನ್ನು ಪರಿಶೀಲಿಸಿ ಅಥವಾ ಪಾಲುದಾರ ಬ್ಯಾಂಕ್‌ನೊಂದಿಗೆ ದೃಢೀಕರಿಸಿ.",
+    "guardDisclaimer": "ಸೂಚನೆ: ಉಲ್ಲೇಖ ಪ್ರೋಟೋಟೈಪ್ ಡೇಟಾ — ಅಂತಿಮ ನಿಯಮಗಳನ್ನು ಸದಾ ಅಧಿಕೃತ ಪಾಲುದಾರ ಬ್ಯಾಂಕ್ ಅಥವಾ ಪೋರ್ಟಲ್‌ನೊಂದಿಗೆ ಪರಿಶೀಲಿಸಿ."
   },
   "footer": {
     "rights": "ಸಕ್ಷಮ ಸೇತು — ಏಕೀಕೃತ ರಿಯಾಯಿತಿ ಸಾಲ ಪೋರ್ಟಲ್.",
