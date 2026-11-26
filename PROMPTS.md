@@ -1,11 +1,15 @@
 # Prompt Log
 
 # Tools used
-| Tool | Used for |
+| Tool | Role & Actual Contribution |
 |---|---|
-| Cursor (Grok 4.6 Medium) | P0 first build (57 files), stopped at usage limit |
-| Antigravity | P0b audit and continuation|
-| Claude | Prompt critique, review, docs (to be filled) |
+| **Cursor** (Grok 4.6 Medium) | Initial P0 5-part prompt generation (57 files across Django backend & React frontend, commit `f5b7fec`) before hitting usage limit |
+| **Antigravity** | P0b audit handover, migrations, `seed_data`, 70-test suite, Bolt+Figma UI integration, 23-language bundles, 66-scheme portal, dual-mode EMI calculator, Esri/Overpass bank locator, and P9 security hardening |
+| **Bolt.new & Figma** | P4/P4a GovTech Saffron-White-Green responsive UI prototypes, form stepper, Health Bar cards, and visual layout system |
+| **ChatGPT** | P5a 22-Indian-language + RTL + Web Speech architecture critique and P10 reverse-prompting refinement of `P0` → `P0 v2` |
+| **Perplexity** | P7a live citation-backed research across Central Government (NSFDC, NBCFDC, NMDFC, NSTFDC, PMMY, PMEGP, Stand-Up India) and State schemes |
+| **Google Gemini** | Project planning, multi-tool prompt orchestration, and P8a/P8b screenshot-based UI & map bug triage |
+| **Claude** | P9 independent security, prompt-injection & grounding code review (`29/50` → `35/50` → hardened) and P10/P11 documentation review |
 
 ## Prompt entries
 
@@ -683,3 +687,19 @@ What failed or was missing: Initial 66-scheme prompt (~7,500 tokens) triggered G
 Did it follow the rules? Yes (`.env` remained git-ignored; zero secrets in code or screenshots).
 Next prompt it led to: Reverse prompting on P0 (P10), final `README.md` (P11), and live deployment.
 Screenshot file names: `docs/06_API_Integration/p6b_chatbot_api_code.png`, `docs/06_API_Integration/p6b_sarthi_real_response.png`, `docs/06_API_Integration/p6b_chatbot_edge_cases.png`
+
+---
+
+### P10 | ChatGPT / Claude | Reverse Prompting & Prompt Refinement (`P0` → `P0 v2`)
+Date: 2026-11-26
+Run by: Mousam (25bcon2411)
+Prompt (exact text): Critiqued the initial five-part `P0` prompt against real implementation lessons to identify ambiguities (dual JSON/DB data sources, cursor-following help popovers, unlinked `/locator` and `/apply` routes, and unbounded LLM prompt context) and produced a refined `P0 v2` specification.
+Output summary (3 lines):
+- Identified 4 structural improvements for `P0 v2`: single-source DB grounding with token-safe shortlisting, click-only accessibility popovers, scheme-driven `/apply` and `/locator` routing, and 23-language static + cached translation bundles.
+- Documented side-by-side comparison showing how tightening constraints eliminated duplicate data sources and runtime token overflows.
+- Saved reverse-prompting critique screenshot in `docs/04_Prompt_Improvements/p10_reverse_prompt_p0.png`.
+What worked: Pinpointed exact specification gaps discovered during multi-tool development.
+What failed or was missing: None.
+Did it follow the rules? Yes.
+Next prompt it led to: P11 (Final `README.md` assembly and production deployment).
+Screenshot file names: `docs/04_Prompt_Improvements/p10_reverse_prompt_p0.png`
