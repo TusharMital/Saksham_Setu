@@ -620,3 +620,19 @@ What failed or was missing: None.
 Did it follow the rules? Yes (multi-AI screenshot triage with Gemini + structured execution in Antigravity).
 Next prompt it led to: Bug Fix Round 2 (P8b).
 Screenshot file names: `docs/04_Prompt_Improvements/p8a_antigravity_prompt.png`, `docs/05_Website_Screenshots/p8a_required_docs_clean.png`, `docs/05_Website_Screenshots/p8a_sarthi_3_questions_advisor.png`
+
+---
+
+### P8b | Gemini & Antigravity | Bug Fix Round 2: Esri Map Tiles, Live GPS/PIN Local Discovery & Google Maps Directions
+Date: 2026-11-26
+Run by: Mousam (25bcon2411)
+Prompt (exact text): Diagnosed three bugs on `/locator?scheme=MLUPY` using Google Gemini and executed fixes in Antigravity: (1) consolidated duplicate map pages and replaced blocked `tile.openstreetmap.org` tiles with keyless Esri World Street Map tiles and `invalidateSize()`; (2) cleared stale PIN pre-fills, prioritized real Live GPS (`navigator.geolocation`) and 6-digit PIN geocoding, queried multiple Overpass API mirrors, and enforced strict local-radius filtering so faraway demo branches never appear; (3) validated branch coordinates and fixed Google Maps `"Get Directions"` URLs across cards, map popups, and the "More Details" modal.
+Output summary (3 lines):
+- Consolidated `/locator` onto `BranchLocator.jsx`, removed all `tile.openstreetmap.org` references across `frontend/`, and switched to keyless Esri World Street Map tiles with `invalidateSize()`.
+- Updated `BranchLocator.jsx` and `core/bank_locator.py` so Live GPS and 6-digit PIN searches resolve exact local coordinates, query Overpass mirrors, and strictly exclude out-of-radius offices.
+- Validated Indian lat/lng bounds and fixed Google Maps `"Get Directions"` links across branch cards, Leaflet popups, and the "More Details" modal; all tests, Vite build, and `collectstatic` passed.
+What worked: Street map renders cleanly with zero `403` blocks, Live GPS and PIN searches find real nearby branches, and Google Maps opens the exact branch location.
+What failed or was missing: Initial `P8b` pass left duplicate `Locator.jsx` and stale PIN pre-fill; refined second prompt resolved both cleanly.
+Did it follow the rules? Yes (multi-AI screenshot triage with Gemini + iterative prompt refinement in Antigravity).
+Next prompt it led to: Bug Fix Round 3 (P8c).
+Screenshot file names: `docs/04_Prompt_Improvements/p8b_antigravity_prompt.png`, `docs/05_Website_Screenshots/p8b_locator_map_gps_directions_fixed.png`

@@ -3,164 +3,132 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "../components/Icon.jsx";
 import { api } from "../api.js";
 import { useAppState } from "../state.jsx";
-import { useI18n } from "../i18n.jsx";
+import { useI18n, useTranslatedScheme, useTranslatedSchemes } from "../i18n.jsx";
 
-function buildChannelConfig(channelKey, scheme) {
+function buildChannelConfig(channelKey, scheme, t) {
   const officialUrl =
     scheme?.official_portal_url || scheme?.govt_portal_url || "https://www.jansamarth.in/";
   const bankUrl = scheme?.bank_portal_url || "";
   const schemeQuery = scheme?.code ? `?scheme=${encodeURIComponent(scheme.code)}` : "";
+  const c = (sub) => t(`paths.channels.${channelKey}.${sub}`, {
+    scheme: scheme?.name || t("paths.yourMatchedScheme"),
+    state: scheme?.applicable_states?.[0] || t("paths.stateFallback"),
+  });
 
   const configs = {
     pmsuraj: {
       key: "pmsuraj",
       icon: "globe",
-      tag: "NATIONAL PORTAL",
+      tag: c("tag"),
       recommended: true,
-      title: "Apply via PM-SURAJ Portal",
-      time: "20–30 mins",
-      desc: "Official Ministry of Social Justice & Empowerment national credit portal for NSFDC, NSKFDC, and NBCFDC concessional loans.",
-      steps: [
-        "Register with Aadhaar-linked mobile number on PM-SURAJ.",
-        `Select ${scheme?.name || "your matched scheme"} and upload caste & income certificates.`,
-        "Check sanction status directly on the PM-SURAJ portal or with your State Channelising Agency / bank.",
-      ],
+      title: c("title"),
+      time: c("time"),
+      desc: c("desc"),
+      steps: [c("step1"), c("step2"), c("step3")],
       externalUrl: "https://pmsuraj.dosje.gov.in/",
-      externalLabel: "Open PM-SURAJ Portal",
+      externalLabel: c("ext"),
     },
     jansamarth: {
       key: "jansamarth",
       icon: "globe",
-      tag: "CENTRAL PORTAL",
+      tag: c("tag"),
       recommended: true,
-      title: "Apply via JanSamarth Portal",
-      time: "15–25 mins",
-      desc: "Unified Government of India portal for instant digital eligibility, subsidy calculation, and bank lender selection.",
-      steps: [
-        "Check instant digital eligibility using Aadhaar, PAN, and Udyam/Income details.",
-        "Compare offers from participating Public & Private Sector Banks online.",
-        "Download digital in-principle sanction letter and visit selected branch.",
-      ],
+      title: c("title"),
+      time: c("time"),
+      desc: c("desc"),
+      steps: [c("step1"), c("step2"), c("step3")],
       externalUrl: officialUrl.includes("jansamarth.in")
         ? officialUrl
         : "https://www.jansamarth.in/",
-      externalLabel: "Open JanSamarth Portal",
+      externalLabel: c("ext"),
     },
     sca: {
       key: "sca",
       icon: "building",
-      tag: "STATE AGENCY (SCA)",
+      tag: c("tag"),
       recommended: false,
-      title: "Apply via State Channelising Agency (SCA)",
-      time: "1–2 visits",
-      desc: "Submit your file through your state's designated SC/ST/OBC/Minority Finance & Development Corporation office.",
-      steps: [
-        "Locate your nearest State Channelising Agency (SCA) district office.",
-        "Prepare your caste, income, residence, and project report papers.",
-        "Submit physical or state-portal application for concessional SCA quota.",
-      ],
+      title: c("title"),
+      time: c("time"),
+      desc: c("desc"),
+      steps: [c("step1"), c("step2"), c("step3")],
       internalRoute: `/locator${schemeQuery}`,
-      internalLabel: "Find SCA / Partner Office",
+      internalLabel: c("int"),
       externalUrl: officialUrl,
-      externalLabel: "Visit Corporation Website",
+      externalLabel: c("ext"),
     },
     bank: {
       key: "bank",
       icon: "location",
-      tag: "PARTNER BANK",
+      tag: c("tag"),
       recommended: false,
-      title: "Apply at Nearest Partner Bank Branch",
-      time: "1–2 visits",
-      desc: "Apply offline at a nearby Public Sector Bank or Regional Rural Bank branch with funds and scheme support.",
-      steps: [
-        "Find a high-health partner bank branch near your PIN code.",
-        "Keep your required documents ready and download your project summary PDF.",
-        "Meet the branch loan officer to submit the official bank form.",
-      ],
+      title: c("title"),
+      time: c("time"),
+      desc: c("desc"),
+      steps: [c("step1"), c("step2"), c("step3")],
       internalRoute: `/locator${schemeQuery}`,
-      internalLabel: "Find My Branch",
+      internalLabel: c("int"),
       externalUrl: bankUrl || undefined,
-      externalLabel: bankUrl ? "Open Bank Portal" : undefined,
+      externalLabel: bankUrl ? c("ext") : undefined,
     },
     mfi: {
       key: "mfi",
       icon: "wallet",
-      tag: "MICROFINANCE (MFI)",
+      tag: c("tag"),
       recommended: false,
-      title: "Apply via Empanelled NBFC-MFI",
-      time: "3–5 days",
-      desc: "Doorstep micro-credit servicing for individuals and SHG/JLG groups where bank/SCA branches are far away.",
-      steps: [
-        "Verify NBFC-MFI field centre availability in your locality.",
-        "Note that MFI interest rates are higher than SCA or JanSamarth bank channels.",
-        "Keep Aadhaar, caste/group KYC, and bank passbook ready.",
-      ],
+      title: c("title"),
+      time: c("time"),
+      desc: c("desc"),
+      steps: [c("step1"), c("step2"), c("step3")],
       internalRoute: `/locator${schemeQuery}`,
-      internalLabel: "Find MFI / Micro Desk",
+      internalLabel: c("int"),
     },
     kviconline: {
       key: "kviconline",
       icon: "bank",
-      tag: "KVIC PMEGP PORTAL",
+      tag: c("tag"),
       recommended: true,
-      title: "Apply on KVIC PMEGP e-Portal",
-      time: "25–35 mins",
-      desc: "Official Ministry of MSME online portal for PMEGP 15%–35% margin money subsidy applications.",
-      steps: [
-        "Fill the PMEGP New Unit application form on kviconline.gov.in.",
-        "Select KVIC, KVIB, or District Industries Centre (DIC) as implementing agency.",
-        "Complete mandatory EDP training after bank sanction for subsidy release.",
-      ],
+      title: c("title"),
+      time: c("time"),
+      desc: c("desc"),
+      steps: [c("step1"), c("step2"), c("step3")],
       externalUrl: "https://www.kviconline.gov.in/pmegpeportal/",
-      externalLabel: "Open KVIC PMEGP Portal",
+      externalLabel: c("ext"),
     },
     standupmitra: {
       key: "standupmitra",
       icon: "award",
-      tag: "SIDBI PORTAL",
+      tag: c("tag"),
       recommended: true,
-      title: "Apply on Stand-Up Mitra Portal",
-      time: "25–40 mins",
-      desc: "Dedicated SIDBI portal connecting SC, ST, and Women greenfield entrepreneurs with Lead District Managers and banks.",
-      steps: [
-        "Register as a Trainee or Ready Borrower on standupmitra.in.",
-        "Confirm active bank sanction availability for your greenfield DPR.",
-        "Submit online to your preferred scheduled commercial bank branch.",
-      ],
+      title: c("title"),
+      time: c("time"),
+      desc: c("desc"),
+      steps: [c("step1"), c("step2"), c("step3")],
       externalUrl: "https://www.standupmitra.in/",
-      externalLabel: "Open Stand-Up Mitra",
+      externalLabel: c("ext"),
     },
     pmvishwakarma: {
       key: "pmvishwakarma",
       icon: "sparkles",
-      tag: "ARTISAN CSC PORTAL",
+      tag: c("tag"),
       recommended: true,
-      title: "Register on PM Vishwakarma (via CSC)",
-      time: "20–30 mins",
-      desc: "Biometric Aadhaar registration at your nearest Common Service Centre (CSC) for the 5% loan and ₹15,000 toolkit grant.",
-      steps: [
-        "Visit nearest CSC with Aadhaar-linked mobile and Ration Card.",
-        "Complete biometric e-KYC under your notified traditional artisan trade.",
-        "Complete 5-day skill verification to unlock toolkit voucher & 5% loan.",
-      ],
+      title: c("title"),
+      time: c("time"),
+      desc: c("desc"),
+      steps: [c("step1"), c("step2"), c("step3")],
       externalUrl: "https://pmvishwakarma.gov.in/",
-      externalLabel: "Open PM Vishwakarma Portal",
+      externalLabel: c("ext"),
     },
     state_portal: {
       key: "state_portal",
       icon: "bank",
-      tag: "STATE GOVT PORTAL",
+      tag: c("tag"),
       recommended: true,
-      title: `Apply on ${scheme?.applicable_states?.[0] || "State"} Govt Portal`,
-      time: "20–30 mins",
-      desc: `Official State Government portal for ${scheme?.name || "this state scheme"} subsidy & loan processing.`,
-      steps: [
-        "Create an applicant login only on the official state government website.",
-        "Upload state domicile, category certificate, and project report.",
-        "Save the portal acknowledgement ID for district committee tracking.",
-      ],
+      title: c("title"),
+      time: c("time"),
+      desc: c("desc"),
+      steps: [c("step1"), c("step2"), c("step3")],
       externalUrl: officialUrl,
-      externalLabel: "Open Official State Portal",
+      externalLabel: c("ext"),
     },
   };
 
@@ -184,10 +152,12 @@ export default function ApplyPath() {
   const activeCode = queryCode || scheme?.code || "";
 
   const [allSchemes, setAllSchemes] = useState([]);
+  const translatedAllSchemes = useTranslatedSchemes(allSchemes);
   const [schemeSearch, setSchemeSearch] = useState("");
   const [loadedScheme, setLoadedScheme] = useState(() =>
     scheme && activeCode && scheme.code?.toUpperCase() === activeCode.toUpperCase() ? scheme : null
   );
+  const translatedLoadedScheme = useTranslatedScheme(loadedScheme);
   const [loading, setLoading] = useState(
     Boolean(activeCode && scheme?.code?.toUpperCase() !== activeCode.toUpperCase())
   );
@@ -250,7 +220,7 @@ export default function ApplyPath() {
 
   const groupedSchemes = useMemo(() => {
     const q = schemeSearch.trim().toLowerCase();
-    const filtered = allSchemes.filter((s) => {
+    const filtered = translatedAllSchemes.filter((s) => {
       if (!q) return true;
       return (
         s.code.toLowerCase().includes(q) ||
@@ -262,7 +232,7 @@ export default function ApplyPath() {
       central: filtered.filter((s) => (s.level || "central") === "central"),
       state: filtered.filter((s) => s.level === "state"),
     };
-  }, [allSchemes, schemeSearch]);
+  }, [translatedAllSchemes, schemeSearch]);
 
   const handleSelectScheme = (code) => {
     if (!code) return;
@@ -291,18 +261,18 @@ export default function ApplyPath() {
           <div className="locator-gate-icon">
             <Icon name="building" size={30} />
           </div>
-          <span className="eyebrow">SCHEME-DRIVEN APPLICATION PATH</span>
+          <span className="eyebrow">{t("paths.eyebrowGate")}</span>
           <h1>{t("paths.selectSchemeTitle")}</h1>
           <p>{schemeError || t("paths.selectSchemeDesc")}</p>
 
           <div className="locator-gate-controls">
-            <label htmlFor="apply-scheme-search">Search & Select from 66 Central & State Schemes</label>
+            <label htmlFor="apply-scheme-search">{t("paths.gateSearchLabel")}</label>
             <div className="modal-search-box" style={{ width: "100%", height: "42px", background: "#fff" }}>
               <Icon name="search" size={16} />
               <input
                 id="apply-scheme-search"
                 type="text"
-                placeholder="Type scheme code or name (e.g. PMMY, GBS, Stand-Up India)..."
+                placeholder={t("paths.gateSearchPlaceholder")}
                 value={schemeSearch}
                 onChange={(e) => setSchemeSearch(e.target.value)}
                 style={{ width: "100%" }}
@@ -310,25 +280,25 @@ export default function ApplyPath() {
             </div>
 
             <select
-              aria-label="Select a scheme"
+              aria-label={t("paths.selectSchemeLabel")}
               value=""
               onChange={(e) => handleSelectScheme(e.target.value)}
             >
-              <option value="">-- Choose a Scheme to View Official Channels --</option>
+              <option value="">{t("paths.chooseSchemePlaceholder")}</option>
               {groupedSchemes.central.length > 0 && (
-                <optgroup label={`Central Govt Schemes (${groupedSchemes.central.length})`}>
+                <optgroup label={`${t("results.tabCentral")} (${groupedSchemes.central.length})`}>
                   {groupedSchemes.central.map((s) => (
                     <option key={s.code} value={s.code}>
-                      {s.code} — {s.name} ({s.interest_rate}% p.a.)
+                      {s.code} — {s.name} ({s.interest_rate}% {t("detail.perAnnum")})
                     </option>
                   ))}
                 </optgroup>
               )}
               {groupedSchemes.state.length > 0 && (
-                <optgroup label={`State Govt Schemes (${groupedSchemes.state.length})`}>
+                <optgroup label={`${t("allSchemes.levelState")} (${groupedSchemes.state.length})`}>
                   {groupedSchemes.state.map((s) => (
                     <option key={s.code} value={s.code}>
-                      {s.code} — {s.name} ({s.interest_rate}% p.a.)
+                      {s.code} — {s.name} ({s.interest_rate}% {t("detail.perAnnum")})
                     </option>
                   ))}
                 </optgroup>
@@ -347,13 +317,13 @@ export default function ApplyPath() {
     );
   }
 
-  const selectedScheme = loadedScheme || { code: activeCode, name: activeCode, available_channels: [] };
+  const selectedScheme = translatedLoadedScheme || { code: activeCode, name: activeCode, available_channels: [] };
   const isState = selectedScheme.level === "state";
   const allowedChannelKeys = Array.isArray(selectedScheme.available_channels)
     ? selectedScheme.available_channels
     : [];
   const channels = allowedChannelKeys
-    .map((k) => buildChannelConfig(k, selectedScheme))
+    .map((k) => buildChannelConfig(k, selectedScheme, t))
     .filter(Boolean);
 
   return (
@@ -363,7 +333,7 @@ export default function ApplyPath() {
         <div className="apply-banner-left">
           <div className="apply-banner-badges">
             <span className="scheme-banner-eyebrow">
-              <Icon name="award" size={14} /> ACTIVE SCHEME APPLICATION PATH
+              <Icon name="award" size={14} /> {t("paths.eyebrowActive")}
             </span>
             <span className={`level-badge ${isState ? "state" : "central"}`}>
               {isState ? t("results.stateBadge") : t("results.centralBadge")}
@@ -380,7 +350,7 @@ export default function ApplyPath() {
             <div className="apply-selected-bank-chip">
               <Icon name="bank" size={14} />
               <span>
-                Selected Partner: <strong>{branch.name}</strong>
+                {t("paths.selectedPartner")} <strong>{branch.name}</strong>
               </span>
             </div>
           )}
@@ -388,12 +358,12 @@ export default function ApplyPath() {
 
         <div className="apply-banner-right">
           <select
-            aria-label="Switch scheme"
+            aria-label={t("paths.switchSchemeLabel")}
             value={selectedScheme.code}
             onChange={(e) => handleSelectScheme(e.target.value)}
           >
             {groupedSchemes.central.length > 0 && (
-              <optgroup label="Central Govt Schemes">
+              <optgroup label={t("results.tabCentral")}>
                 {groupedSchemes.central.map((s) => (
                   <option key={s.code} value={s.code}>
                     {s.code} — {s.name}
@@ -402,7 +372,7 @@ export default function ApplyPath() {
               </optgroup>
             )}
             {groupedSchemes.state.length > 0 && (
-              <optgroup label="State Govt Schemes">
+              <optgroup label={t("allSchemes.levelState")}>
                 {groupedSchemes.state.map((s) => (
                   <option key={s.code} value={s.code}>
                     {s.code} — {s.name}
@@ -416,7 +386,7 @@ export default function ApplyPath() {
             to={`/scheme/${encodeURIComponent(selectedScheme.code)}`}
             className="btn btn-outline btn-sm"
           >
-            <span>View Scheme Details →</span>
+            <span>{t("paths.viewDetailsArrow")}</span>
           </Link>
         </div>
       </section>
@@ -487,7 +457,7 @@ export default function ApplyPath() {
                     {isSarthiPicked && (
                       <span className="sarthi-rec-badge">
                         <Icon name="sparkles" size={12} />
-                        <span>Recommended by Sarthi</span>
+                        <span>{t("paths.recommendedBySarthi")}</span>
                       </span>
                     )}
                     <span className={`path-status-pill ${ch.recommended ? "" : "secondary"}`}>
@@ -502,7 +472,7 @@ export default function ApplyPath() {
                 <div className="time-est-badge">
                   <Icon name="track" size={16} />
                   <span>
-                    Typical time: <strong>{ch.time}</strong>
+                    {t("paths.typicalTime")} <strong>{ch.time}</strong>
                   </span>
                 </div>
 

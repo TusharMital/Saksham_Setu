@@ -170,8 +170,8 @@ export default function HelpField({
           {example && <small className="bubble-example">{example}</small>}
           <div className="bubble-actions">
             <span />
-            <button type="button" onClick={() => setBubble(false)} aria-label="Close help">
-              <Icon name="close" size={14} /> Close
+            <button type="button" onClick={() => setBubble(false)} aria-label={t("chat.close")}>
+              <Icon name="close" size={14} /> {t("chat.close")}
             </button>
           </div>
         </div>

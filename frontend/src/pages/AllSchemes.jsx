@@ -4,7 +4,7 @@ import Icon from "../components/Icon.jsx";
 import SchemeCompareBarAndModal from "../components/SchemeCompareBarAndModal.jsx";
 import { api } from "../api.js";
 import { useAppState } from "../state.jsx";
-import { useI18n } from "../i18n.jsx";
+import { useI18n, useTranslatedSchemes } from "../i18n.jsx";
 import {
   FALLBACK_STATES,
   formatCompactMoney,
@@ -51,6 +51,7 @@ export default function AllSchemes() {
   const navigate = useNavigate();
 
   const [schemes, setSchemes] = useState([]);
+  const translatedSchemes = useTranslatedSchemes(schemes);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [stateOptions, setStateOptions] = useState(FALLBACK_STATES);
@@ -383,7 +384,7 @@ export default function AllSchemes() {
   const filteredSchemes = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
 
-    const matched = schemes.filter((s) => {
+    const matched = translatedSchemes.filter((s) => {
       if (q) {
         const haystack = [
           s.code,
@@ -516,7 +517,7 @@ export default function AllSchemes() {
     }
     return sorted;
   }, [
-    schemes,
+    translatedSchemes,
     searchQuery,
     levelFilter,
     stateFilter,
@@ -532,8 +533,8 @@ export default function AllSchemes() {
   ]);
 
   const comparedSchemes = useMemo(
-    () => compareCodes.map((code) => schemes.find((s) => s.code === code)).filter(Boolean),
-    [compareCodes, schemes]
+    () => compareCodes.map((code) => translatedSchemes.find((s) => s.code === code)).filter(Boolean),
+    [compareCodes, translatedSchemes]
   );
 
   const toggleCompare = (code) => {
@@ -1080,7 +1081,7 @@ export default function AllSchemes() {
                         <div className="catalog-metric-cell">
                           <small>{t("allSchemes.metricTenure")}</small>
                           <strong>
-                            {s.tenure_months}m ({s.moratorium_months}m morat.)
+                            <bdi>{s.tenure_months}m ({s.moratorium_months}m)</bdi>
                           </strong>
                         </div>
                         <div className="catalog-metric-cell">

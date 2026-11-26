@@ -5436,6 +5436,27 @@ html[dir="rtl"] {
   text-align: right;
 }
 
+[dir="rtl"] .detail-doc-row,
+[dir="rtl"] .advisor-chip-btn,
+[dir="rtl"] .suggestion-pill,
+[dir="rtl"] .split-kv-list div,
+[dir="rtl"] .modal-branch-row,
+[dir="rtl"] .sarthi-advisor-bar {
+  text-align: right;
+}
+
+[dir="rtl"] .btn svg.icon,
+[dir="rtl"] .suggestion-pill svg.icon {
+  flex-shrink: 0;
+}
+
+[dir="rtl"] body,
+[dir="rtl"] .app-layout,
+[dir="rtl"] .main-content {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 /* ==========================================================================
    All-India Results Filter Tabs, Badges, Compare & Split-Window Comparison
    ========================================================================== */

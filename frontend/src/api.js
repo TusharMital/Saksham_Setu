@@ -44,4 +44,9 @@ export const api = {
   verifyCategory: (body) => request("/verify-category/", { method: "POST", body: JSON.stringify(body) }),
   languages: () => request("/i18n/languages/"),
   i18nBundle: (code) => request(`/i18n/${encodeURIComponent(code)}/`),
+  translateSchemes: (lang, schemeCodes) =>
+    request("/i18n/translate-schemes/", {
+      method: "POST",
+      body: JSON.stringify({ lang, scheme_codes: schemeCodes }),
+    }),
 };

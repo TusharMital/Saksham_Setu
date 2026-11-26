@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Icon from "../components/Icon.jsx";
 import { api } from "../api.js";
 import { useAppState } from "../state.jsx";
-import { useI18n } from "../i18n.jsx";
+import { useI18n, useTranslatedScheme } from "../i18n.jsx";
 
 function formatCompactInr(val) {
   const n = Number(val || 0);
@@ -18,7 +18,7 @@ function formatFullInr(val) {
   return `₹${Number(val).toLocaleString("en-IN")}`;
 }
 
-function EmiSvgVisuals({ emi, scheme }) {
+function EmiSvgVisuals({ emi, scheme, t }) {
   if (!emi) return null;
   const principal = Number(emi.principal || 0);
   const interest = Number(emi.total_interest || 0);
@@ -75,9 +75,9 @@ function EmiSvgVisuals({ emi, scheme }) {
     <div className="emi-visuals-grid">
       {/* Left SVG: Principal vs Total Interest Donut + Ratio */}
       <div className="emi-svg-card">
-        <h3>Principal vs. Total Interest</h3>
+        <h3>{t("calc.donutTitle")}</h3>
         <div className="donut-svg-wrap">
-          <svg viewBox="0 0 150 150" className="emi-donut-svg" role="img" aria-label="Principal vs Interest Donut Chart">
+          <svg viewBox="0 0 150 150" className="emi-donut-svg" role="img" aria-label={t("calc.donutTitle")}>
             <circle cx="75" cy="75" r={r} fill="none" stroke="#e2e8f0" strokeWidth="18" />
             <circle
               cx="75"
@@ -106,7 +106,7 @@ function EmiSvgVisuals({ emi, scheme }) {
               {principalPct}%
             </text>
             <text x="75" y="88" textAnchor="middle" className="donut-center-sub">
-              Principal
+              {t("detail.principalLabel")}
             </text>
           </svg>
 
@@ -114,22 +114,22 @@ function EmiSvgVisuals({ emi, scheme }) {
             <div className="donut-legend-row">
               <span className="legend-dot green" />
               <div>
-                <small>Principal ({principalPct}%)</small>
-                <strong>{formatFullInr(principal)}</strong>
+                <small>{t("compare.principalPct", { pct: String(principalPct) })}</small>
+                <strong><bdi>{formatFullInr(principal)}</bdi></strong>
               </div>
             </div>
             <div className="donut-legend-row">
               <span className="legend-dot saffron" />
               <div>
-                <small>Total Interest ({interestPct}%)</small>
-                <strong>{formatFullInr(interest)}</strong>
+                <small>{t("compare.interestPct", { pct: String(interestPct) })}</small>
+                <strong><bdi>{formatFullInr(interest)}</bdi></strong>
               </div>
             </div>
             <div className="donut-legend-row total">
               <span className="legend-dot navy" />
               <div>
-                <small>Total Payable ({scheme.tenure_months}m)</small>
-                <strong>{formatFullInr(emi.total_payable)}</strong>
+                <small>{t("calc.totalPayable")} ({scheme.tenure_months}m)</small>
+                <strong><bdi>{formatFullInr(emi.total_payable)}</bdi></strong>
               </div>
             </div>
           </div>
@@ -139,10 +139,10 @@ function EmiSvgVisuals({ emi, scheme }) {
       {/* Right SVG: Year-by-Year Remaining Balance Curve */}
       <div className="emi-svg-card">
         <div className="curve-head-row">
-          <h3>Year-by-Year Remaining Balance Curve</h3>
+          <h3>{t("detail.curveTitle")}</h3>
           {emi.moratorium_months > 0 && (
             <span className="moratorium-legend-tag">
-              Moratorium: {emi.moratorium_months}m shaded
+              {t("detail.moratoriumShaded", { months: String(emi.moratorium_months) })}
             </span>
           )}
         </div>
@@ -225,11 +225,11 @@ function EmiSvgVisuals({ emi, scheme }) {
             return (
               <g key={pt.year}>
                 <circle cx={cx} cy={cy} r="4.5" fill={pt.isMoratorium && pt.year > 0 ? "#d97706" : "#15803d"} stroke="#ffffff" strokeWidth="2">
-                  <title>{`Year ${pt.year}: Remaining Balance ${formatFullInr(pt.balance)}`}</title>
+                  <title>{t("detail.svgYearBalance", { year: String(pt.year), balance: formatFullInr(pt.balance) })}</title>
                 </circle>
                 {showTick && (
                   <text x={cx} y={height - 12} textAnchor="middle" className="svg-axis-label">
-                    {pt.year === 0 ? "Start" : `Yr ${pt.year}`}
+                    {pt.year === 0 ? t("detail.svgStart") : t("detail.svgYr", { year: String(pt.year) })}
                   </text>
                 )}
               </g>
@@ -246,6 +246,7 @@ export default function SchemeDetail() {
   const { t } = useI18n();
   const { form, setScheme } = useAppState();
   const [data, setData] = useState(null);
+  const translatedData = useTranslatedScheme(data);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -288,28 +289,29 @@ export default function SchemeDetail() {
     );
   }
 
-  if (error || !data) {
+  if (error || !translatedData) {
     return (
       <div className="page-shell text-center" style={{ padding: "4rem 1rem" }}>
-        <h2>Scheme Not Found</h2>
+        <h2>{t("detail.notFoundTitle")}</h2>
         <p style={{ color: "var(--slate)", margin: "1rem 0 2rem" }}>{error || `No scheme found for code ${code}.`}</p>
         <Link to="/results" className="btn btn-primary">
-          Back to Results
+          {t("detail.backToResults")}
         </Link>
       </div>
     );
   }
 
-  const isState = data.level === "state";
-  const docs = data.required_documents?.length ? data.required_documents : data.documents || [];
-  const emi = data.emi || {
-    principal: data.emi_amount,
-    monthly_emi: data.monthly_emi,
-    total_interest: data.total_interest,
-    total_payable: data.total_payable,
-    yearly_schedule: data.yearly_schedule || [],
-    tenure_months: data.tenure_months,
-    moratorium_months: data.moratorium_months,
+  const activeData = translatedData;
+  const isState = activeData.level === "state";
+  const docs = activeData.required_documents?.length ? activeData.required_documents : activeData.documents || [];
+  const emi = activeData.emi || {
+    principal: activeData.emi_amount,
+    monthly_emi: activeData.monthly_emi,
+    total_interest: activeData.total_interest,
+    total_payable: activeData.total_payable,
+    yearly_schedule: activeData.yearly_schedule || [],
+    tenure_months: activeData.tenure_months,
+    moratorium_months: activeData.moratorium_months,
   };
 
   return (
@@ -323,10 +325,10 @@ export default function SchemeDetail() {
           <span className={`level-badge ${isState ? "state" : "central"}`}>
             {isState ? t("results.stateBadge") : t("results.centralBadge")}
           </span>
-          <span className="badge-pill">{data.code}</span>
-          {(data.applicable_states || []).map((st) => (
+          <span className="badge-pill">{activeData.code}</span>
+          {(activeData.applicable_states || []).map((st) => (
             <span key={st} className="state-chip">
-              {st === "ALL" ? "All India" : st}
+              {st === "ALL" ? t("detail.allIndia") : st}
             </span>
           ))}
         </div>
@@ -335,39 +337,44 @@ export default function SchemeDetail() {
       {/* Scheme Hero Header */}
       <section className="detail-hero-card">
         <div className="detail-hero-main">
-          <p className="detail-agency">{data.agency || "Government of India"}</p>
-          <h1>{data.name}</h1>
-          <p className="detail-overview">{data.overview || data.description}</p>
+          <p className="detail-agency">{activeData.agency || "Government of India"}</p>
+          <h1>{activeData.name}</h1>
+          <p className="detail-overview">{activeData.overview || activeData.description}</p>
 
           <div className="detail-eligibility-pills">
-            {(data.eligible_categories || []).map((cat) => (
+            {(activeData.eligible_categories || []).map((cat) => (
               <span key={cat} className="cat-pill">
                 {cat}
               </span>
             ))}
-            {data.women_only && <span className="cat-pill women">Women Only</span>}
+            {activeData.women_only && <span className="cat-pill women">{t("detail.womenOnly")}</span>}
             <span className="cat-pill income">
-              Income Limit: {data.max_income ? formatFullInr(data.max_income) : "No Income Cap"}
+              {t("detail.incomeLimit")}{" "}
+              <bdi>{activeData.max_income ? formatFullInr(activeData.max_income) : t("detail.noIncomeCap")}</bdi>
             </span>
             <span className="cat-pill loan">
-              Loan Range: {formatFullInr(data.min_loan || 0)} – {formatFullInr(data.max_loan)}
+              {t("detail.loanRange")}{" "}
+              <bdi>
+                {formatFullInr(activeData.min_loan || 0)} –{" "}
+                {activeData.max_loan != null ? formatFullInr(activeData.max_loan) : t("detail.noUpperCap")}
+              </bdi>
             </span>
           </div>
 
           <div className="detail-hero-actions">
             <Link
-              to={`/locator?scheme=${encodeURIComponent(data.code)}`}
+              to={`/locator?scheme=${encodeURIComponent(activeData.code)}`}
               className="btn btn-secondary"
-              onClick={() => setScheme(data)}
+              onClick={() => setScheme(activeData)}
             >
               <Icon name="location" size={18} />
               <span>{t("detail.findBanksPortals")}</span>
               <Icon name="arrow" size={17} />
             </Link>
             <Link
-              to={`/calculator?scheme=${encodeURIComponent(data.code)}`}
+              to={`/calculator?scheme=${encodeURIComponent(activeData.code)}`}
               className="btn btn-outline"
-              onClick={() => setScheme(data)}
+              onClick={() => setScheme(activeData)}
             >
               <Icon name="calc" size={17} />
               <span>{t("detail.viewInCalc")}</span>
@@ -378,7 +385,7 @@ export default function SchemeDetail() {
         <aside className="detail-hero-highlights">
           <h3>{t("detail.highlights")}</h3>
           <ul>
-            {(data.key_highlights || []).map((hl, i) => (
+            {(activeData.key_highlights || []).map((hl, i) => (
               <li key={i}>
                 <Icon name="checkCircle" size={16} />
                 <span>{hl}</span>
@@ -387,12 +394,12 @@ export default function SchemeDetail() {
           </ul>
           <div className="detail-rate-subsidy-box">
             <div>
-              <small>INTEREST TERMS</small>
-              <p>{data.interest_rate_note || `${data.interest_rate}% p.a. indicative`}</p>
+              <small>{t("detail.interestTermsLabel")}</small>
+              <p>{activeData.interest_rate_note || `${activeData.interest_rate}% p.a.`}</p>
             </div>
             <div>
-              <small>SUBSIDY & MARGIN</small>
-              <p>{data.subsidy_margin_note || `${data.subsidy_percent}% subsidy`}</p>
+              <small>{t("detail.subsidyMarginLabel")}</small>
+              <p>{activeData.subsidy_margin_note || `${activeData.subsidy_percent}%`}</p>
             </div>
           </div>
         </aside>
@@ -405,15 +412,16 @@ export default function SchemeDetail() {
             <span className="eyebrow">{t("detail.emiEyebrow")}</span>
             <h2>{t("detail.emiTitle")}</h2>
             <p>
-              {form.loan_amount
-                ? `Auto-calculated for your requested loan of ₹${Number(form.loan_amount).toLocaleString("en-IN")} at ${data.interest_rate}% p.a. over ${data.tenure_months} months (${data.moratorium_months}m moratorium).`
-                : `Auto-calculated on indicative amount ₹${Number(emi.principal || 0).toLocaleString("en-IN")} at ${data.interest_rate}% p.a. over ${data.tenure_months} months (${data.moratorium_months}m moratorium).`}
+              <bdi>
+                {formatFullInr(emi.principal || 0)} • {activeData.interest_rate}% p.a. •{" "}
+                {activeData.tenure_months}m ({activeData.moratorium_months}m)
+              </bdi>
             </p>
           </div>
           <Link
-            to={`/calculator?scheme=${encodeURIComponent(data.code)}`}
+            to={`/calculator?scheme=${encodeURIComponent(activeData.code)}`}
             className="btn btn-outline detail-calc-link"
-            onClick={() => setScheme(data)}
+            onClick={() => setScheme(activeData)}
           >
             <Icon name="calc" size={17} />
             <span>{t("detail.viewInCalc")}</span>
@@ -422,28 +430,28 @@ export default function SchemeDetail() {
 
         <div className="detail-kpi-strip">
           <div className="kpi-card kpi-saffron">
-            <small>MONTHLY EMI</small>
-            <strong>₹{Number(emi.monthly_emi || 0).toLocaleString("en-IN")}</strong>
-            <span>after {data.moratorium_months}m moratorium</span>
+            <small>{t("detail.monthlyEmiCap")}</small>
+            <strong><bdi>₹{Number(emi.monthly_emi || 0).toLocaleString("en-IN")}</bdi></strong>
+            <span>{t("detail.afterMoratorium", { months: String(activeData.moratorium_months) })}</span>
           </div>
           <div className="kpi-card kpi-emerald">
-            <small>LOAN PRINCIPAL</small>
-            <strong>₹{Number(emi.principal || 0).toLocaleString("en-IN")}</strong>
-            <span>at {data.interest_rate}% p.a.</span>
+            <small>{t("detail.loanPrincipalCap")}</small>
+            <strong><bdi>₹{Number(emi.principal || 0).toLocaleString("en-IN")}</bdi></strong>
+            <span>{t("detail.atRatePa", { rate: String(activeData.interest_rate) })}</span>
           </div>
           <div className="kpi-card kpi-amber">
-            <small>TOTAL INTEREST</small>
-            <strong>₹{Number(emi.total_interest || 0).toLocaleString("en-IN")}</strong>
-            <span>over {data.tenure_months} months</span>
+            <small>{t("detail.totalInterestCap")}</small>
+            <strong><bdi>₹{Number(emi.total_interest || 0).toLocaleString("en-IN")}</bdi></strong>
+            <span>{t("detail.overMonths", { months: String(activeData.tenure_months) })}</span>
           </div>
           <div className="kpi-card">
-            <small>TOTAL PAYABLE</small>
-            <strong>₹{Number(emi.total_payable || 0).toLocaleString("en-IN")}</strong>
-            <span>principal + interest</span>
+            <small>{t("detail.totalPayableCap")}</small>
+            <strong><bdi>₹{Number(emi.total_payable || 0).toLocaleString("en-IN")}</bdi></strong>
+            <span>{t("detail.principalPlusInterest")}</span>
           </div>
         </div>
 
-        <EmiSvgVisuals emi={emi} scheme={data} />
+        <EmiSvgVisuals emi={emi} scheme={activeData} t={t} />
       </section>
 
       {/* 2-Column Lower Section: Required Documents + Important Notes */}
@@ -453,7 +461,7 @@ export default function SchemeDetail() {
             <Icon name="document" size={20} />
             <div>
               <h2>{t("detail.docsTitle")}</h2>
-              <small>Documents required to apply for this scheme</small>
+              <small>{t("detail.docsSubtitle")}</small>
             </div>
           </div>
           <ol className="detail-doc-list detail-doc-list-readonly">
@@ -474,11 +482,11 @@ export default function SchemeDetail() {
             <Icon name="alert" size={20} />
             <div>
               <h2>{t("detail.notesTitle")}</h2>
-              <small>Key rules & comparison caveats</small>
+              <small>{t("detail.notesSubtitle")}</small>
             </div>
           </div>
           <ul className="detail-notes-list">
-            {(data.important_notes || []).map((note, idx) => (
+            {(activeData.important_notes || []).map((note, idx) => (
               <li key={idx}>
                 <Icon name="alert" size={15} />
                 <span>{note}</span>
@@ -487,29 +495,29 @@ export default function SchemeDetail() {
           </ul>
 
           <div className="detail-cta-panel">
-            <p>Ready to apply via verified channels for {data.code}?</p>
+            <p>{t("detail.readyToApply", { code: activeData.code })}</p>
             <Link
-              to={`/apply?scheme=${encodeURIComponent(data.code)}`}
+              to={`/apply?scheme=${encodeURIComponent(activeData.code)}`}
               className="btn btn-primary btn-lg full"
-              onClick={() => setScheme(data)}
+              onClick={() => setScheme(activeData)}
             >
               <span>{t("detail.applyCta")}</span>
               <Icon name="arrow" size={18} />
             </Link>
             <Link
-              to={`/locator?scheme=${encodeURIComponent(data.code)}`}
+              to={`/locator?scheme=${encodeURIComponent(activeData.code)}`}
               className="btn btn-secondary full"
               style={{ marginTop: "10px" }}
-              onClick={() => setScheme(data)}
+              onClick={() => setScheme(activeData)}
             >
               <Icon name="location" size={17} />
               <span>{t("detail.findBanksPortals")}</span>
             </Link>
             <Link
-              to={`/calculator?scheme=${encodeURIComponent(data.code)}`}
+              to={`/calculator?scheme=${encodeURIComponent(activeData.code)}`}
               className="btn btn-outline full"
               style={{ marginTop: "10px" }}
-              onClick={() => setScheme(data)}
+              onClick={() => setScheme(activeData)}
             >
               <Icon name="calc" size={17} />
               <span>{t("detail.viewInCalc")}</span>

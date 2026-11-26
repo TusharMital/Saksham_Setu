@@ -543,6 +543,173 @@ class I18nApiAndValidatorTests(TestCase):
         self.assertEqual(repaired["b"], "सही")
         self.assertEqual(fallbacks, ["a"])
 
+    def test_recommend_endpoint_hindi_localized_rejection_reasons(self):
+        from core.models import LoanScheme
+
+        LoanScheme.objects.create(
+            code="MH_TEST",
+            name="Maharashtra Test Scheme",
+            level="state",
+            applicable_states=["Maharashtra"],
+            eligible_categories=["SC"],
+            max_loan=500000,
+            min_loan=50000,
+            interest_rate=5.0,
+            subsidy_percent=15,
+            finance_percent=85,
+            tenure_months=60,
+            moratorium_months=6,
+            max_income=300000,
+            min_age=18,
+            max_age=55,
+            applicant_types=["individual"],
+            states_supported=["Maharashtra"],
+            women_only=False,
+            pwd_only=False,
+            sectors=["trade"],
+            description="Test",
+        )
+        payload = woman_rajasthan()
+        payload["lang"] = "hi"
+        res = self.client.post("/api/recommend/", payload, format="json")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.data["language"], "hi")
+        rejected_mh = next(r for r in res.data["rejected"] if r["code"] == "MH_TEST")
+        self.assertTrue(len(rejected_mh["rejection_reasons"]) >= 1)
+        reason_text = rejected_mh["rejection_reasons"][0]
+        self.assertIn("Maharashtra Test Scheme", reason_text)
+        # Should contain Hindi Devanagari characters rather than English-only prefix
+        self.assertTrue(any("\u0900" <= ch <= "\u097f" for ch in reason_text))
+
+    def test_translate_schemes_endpoint_validates_lang_uses_cache_and_handles_missing_key(self):
+        from core.models import LoanScheme
+
+        LoanScheme.objects.create(
+            code="MSY",
+            name="Mahila Samriddhi Yojana",
+            agency="NSFDC",
+            overview="Concessional micro-credit for women entrepreneurs.",
+            interest_rate=4.0,
+            subsidy_percent=15,
+            finance_percent=95,
+            tenure_months=36,
+            moratorium_months=3,
+            max_loan=100000,
+            min_loan=10000,
+            max_income=500000,
+            min_age=18,
+            max_age=60,
+            applicant_types=["individual"],
+            states_supported=["all"],
+            sectors=["trade"],
+            key_highlights=["4% interest"],
+            required_documents=["Aadhaar Card"],
+            important_notes=["Verify with partner"],
+        )
+
+        # Invalid language -> 400
+        bad_res = self.client.post(
+            "/api/i18n/translate-schemes/",
+            {"lang": "invalid_xx", "scheme_codes": ["MSY"]},
+            format="json",
+        )
+        self.assertEqual(bad_res.status_code, 400)
+
+        # English -> returns English immediately without API call
+        en_res = self.client.post(
+            "/api/i18n/translate-schemes/",
+            {"lang": "en", "scheme_codes": ["MSY"]},
+            format="json",
+        )
+        self.assertEqual(en_res.status_code, 200)
+        self.assertEqual(en_res.data["language"], "en")
+        self.assertEqual(en_res.data["translations"]["MSY"]["name"], "Mahila Samriddhi Yojana")
+
+        # Hindi cached entry -> served from persistent cache even with missing GROQ_API_KEY
+        with override_settings(GROQ_API_KEY=""):
+            hi_res = self.client.post(
+                "/api/i18n/translate-schemes/",
+                {"lang": "hi", "scheme_codes": ["MSY"]},
+                format="json",
+            )
+            self.assertEqual(hi_res.status_code, 200)
+            self.assertEqual(hi_res.data["language"], "hi")
+            self.assertIn("MSY", hi_res.data["translations"])
+
+            # Uncached language with missing GROQ_API_KEY -> graceful English fallback (200)
+            fallback_res = self.client.post(
+                "/api/i18n/translate-schemes/",
+                {"lang": "brx", "scheme_codes": ["MSY"]},
+                format="json",
+            )
+            self.assertEqual(fallback_res.status_code, 200)
+            self.assertEqual(fallback_res.data["fallback_count"], 1)
+            self.assertEqual(
+                fallback_res.data["translations"]["MSY"]["name"],
+                "Mahila Samriddhi Yojana",
+            )
+
+    def test_verify_category_hindi_localization(self):
+        res = self.client.post(
+            "/api/verify-category/",
+            {
+                "loan_state": "Rajasthan",
+                "certificate_state": "Rajasthan",
+                "category": "SC",
+                "certificate_type": "sc_cert",
+                "sub_caste": "Dhobi",
+                "annual_income": 300000,
+                "lang": "hi",
+            },
+            format="json",
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.data["status"], "verified_sc")
+        msg = res.data["message"] + " " + res.data["next_step"]
+        self.assertTrue(any("\u0900" <= ch <= "\u097f" for ch in msg))
+
+    @patch("core.bank_locator.requests.post")
+    def test_live_search_hindi_localized_partner_labels(self, mock_overpass_post):
+        call_command("seed_data")
+        overpass_resp = MagicMock()
+        overpass_resp.status_code = 200
+        overpass_resp.json.return_value = {
+            "elements": [
+                {
+                    "type": "node",
+                    "id": 9901,
+                    "lat": 26.9125,
+                    "lon": 75.7875,
+                    "tags": {"amenity": "bank", "name": "State Bank of India"},
+                },
+            ]
+        }
+        mock_overpass_post.return_value = overpass_resp
+
+        res = self.client.get(
+            "/api/banks/live-search/?scheme=MLUPY&lat=26.9124&lng=75.7873&radius_km=10&lang=hi"
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertGreaterEqual(len(res.data["branches"]), 1)
+        first = res.data["branches"][0]
+        self.assertTrue(any("\u0900" <= ch <= "\u097f" for ch in first["institution_label"]))
+        self.assertTrue(any("\u0900" <= ch <= "\u097f" for ch in first["why"]))
+        health_vals = " ".join((first.get("health", {}).get("labels") or {}).values())
+        self.assertTrue(any("\u0900" <= ch <= "\u097f" for ch in health_vals))
+
+    def test_translate_schemes_all_66_hindi_cached(self):
+        call_command("seed_data")
+        with override_settings(GROQ_API_KEY=""):
+            res = self.client.post(
+                "/api/i18n/translate-schemes/",
+                {"lang": "hi", "scheme_codes": None},
+                format="json",
+            )
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.data["total_schemes"], 66)
+        self.assertEqual(res.data["fallback_count"], 0)
+        self.assertEqual(len(res.data["translations"]), 66)
+
 
 class CategoryVerifierTests(TestCase):
     def setUp(self):

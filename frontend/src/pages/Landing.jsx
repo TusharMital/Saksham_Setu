@@ -140,7 +140,7 @@ export default function Landing() {
       <section className="how-section">
         <div className="page-shell-compact">
           <div className="section-heading">
-            <span className="eyebrow">A SIMPLE JOURNEY</span>
+            <span className="eyebrow">{t("landing.howEyebrow")}</span>
             <h2>{t("landing.how")}</h2>
             <p>{t("landing.howSub")}</p>
           </div>

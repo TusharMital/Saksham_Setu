@@ -10,6 +10,36 @@ import requests
 from django.conf import settings
 from django.core.cache import cache
 
+from core.i18n_templates import fmt_tpl, get_section_templates
+
+BANK_BACKEND_DEFAULTS = {
+    "labelPSB": "Public Sector Bank",
+    "labelRRB": "Regional Rural Bank",
+    "labelSCA": "State Channelising Agency",
+    "labelMFI": "NBFC-MFI",
+    "labelPORTAL": "Official Govt Portal",
+    "labelDefault": "Partner Bank",
+    "healthFunds": "Funds Available",
+    "healthNoFunds": "Limited Funds",
+    "healthScheme": "Scheme Supported",
+    "healthNoScheme": "Check Scheme Support",
+    "healthLowNpa": "Low NPA",
+    "healthHighNpa": "Elevated NPA",
+    "whyLiveOsm": "Live branch {dist} km away; matched to {inst} supporting {channels}.",
+    "whyDirectory": "Partner {instType} desk ({dist} km away) • Fund quota ₹{quota} Cr • NPA {npa}%.",
+    "whyPortal": "Official online application portal for {code}.",
+    "whyRankedPrefix": "Ranked here because it is ",
+    "whyClose": "very close to you",
+    "whyEasyTravel": "within easy travel",
+    "whyKmAway": "{dist} km away",
+    "whyNoQuota": "no remaining fund quota in this demo",
+    "whyQuota": "quota ₹{quota} Cr",
+    "whyNpa": "NPA {npa}%",
+    "whySupportsScheme": "supports this scheme",
+    "whyNoListScheme": "does not list this scheme",
+    "empty25km": "No physical bank branches mapped within 25 km of this PIN/location — you can apply directly via the Official Government Portals tab above",
+}
+
 EARTH_KM = 6371.0
 ZERO_FUND_PENALTY = 5.0  # so a next-door empty desk cannot beat a funded partner
 INDIAN_PIN_RE = re.compile(r"^[1-9][0-9]{5}$")
@@ -303,7 +333,8 @@ def _norm(value, lo, hi):
     return (value - lo) / (hi - lo)
 
 
-def health_checks(branch):
+def health_checks(branch, lang="en"):
+    tpl = get_section_templates("bankBackend", BANK_BACKEND_DEFAULTS, lang=lang)
     funds_ok = float(branch.get("fund_quota_crore") or 0) > 0
     scheme_ok = bool(branch.get("scheme_supported", True))
     npa_ok = float(branch.get("npa_percent") or 0) <= 6.0
@@ -318,10 +349,16 @@ def health_checks(branch):
         "scheme_supported": scheme_ok,
         "npa_low": npa_ok,
         "color": color,
+        "labels": {
+            "funds": tpl["healthFunds"] if funds_ok else tpl["healthNoFunds"],
+            "scheme": tpl["healthScheme"] if scheme_ok else tpl["healthNoScheme"],
+            "npa": tpl["healthLowNpa"] if npa_ok else tpl["healthHighNpa"],
+        },
     }
 
 
-def rank_branches(branches, user_lat, user_lng, scheme_code=None):
+def rank_branches(branches, user_lat, user_lng, scheme_code=None, lang="en"):
+    tpl = get_section_templates("bankBackend", BANK_BACKEND_DEFAULTS, lang=lang)
     candidates = []
     for raw in branches:
         b = raw if isinstance(raw, dict) else {
@@ -365,22 +402,22 @@ def rank_branches(branches, user_lat, user_lng, scheme_code=None):
         c["norm_fund_quota"] = round(norm_q, 3)
         c["norm_npa"] = round(norm_n, 3)
         c["branch_score"] = round(score, 4)
-        c["health"] = health_checks(c)
+        c["health"] = health_checks(c, lang=lang)
         why = []
         if dist < 5:
-            why.append("very close to you")
+            why.append(tpl["whyClose"])
         elif dist < 25:
-            why.append("within easy travel")
+            why.append(tpl["whyEasyTravel"])
         else:
-            why.append(f"{dist:.0f} km away")
+            why.append(fmt_tpl(tpl["whyKmAway"], dist=f"{dist:.0f}"))
         if float(c["fund_quota_crore"] or 0) <= 0:
-            why.append("no remaining fund quota in this demo")
+            why.append(tpl["whyNoQuota"])
         else:
-            why.append(f"quota Rs {c['fund_quota_crore']} Cr")
-        why.append(f"NPA {c['npa_percent']}%")
+            why.append(fmt_tpl(tpl["whyQuota"], quota=c["fund_quota_crore"]))
+        why.append(fmt_tpl(tpl["whyNpa"], npa=c["npa_percent"]))
         if scheme_code:
-            why.append("supports this scheme" if c["scheme_supported"] else "does not list this scheme")
-        c["why"] = "Ranked here because it is " + "; ".join(why) + "."
+            why.append(tpl["whySupportsScheme"] if c["scheme_supported"] else tpl["whyNoListScheme"])
+        c["why"] = tpl["whyRankedPrefix"] + "; ".join(why) + "."
         ranked.append(c)
 
     ranked.sort(key=lambda x: x["branch_score"], reverse=True)

@@ -1,6 +1,65 @@
 """Two-layer scheme recommender. All thresholds come from scheme records, not code."""
 
+import json
 from decimal import Decimal
+from functools import lru_cache
+from pathlib import Path
+
+from core.i18n_validator import sanitize_bundle_with_fallback
+from core.languages import SUPPORTED_LANGUAGES
+
+TRANSLATIONS_DIR = Path(__file__).resolve().parent / "translations"
+
+DEFAULT_REJECTION_TEMPLATES = {
+    "stateMismatch": "State mismatch: {name} is applicable only in {states}, whereas your selected state is {userState}.",
+    "supiRule": "Category/Women rule: Stand-Up India is exclusively for SC/ST entrepreneurs or Women entrepreneurs (of any category), whereas your profile is {category} without women-led status.",
+    "ewsScOnly": "Category mismatch: {name} is exclusively for Scheduled Caste (SC) applicants (not eligible for EWS under DoPT OM 2019). Consider PM MUDRA Yojana or PMEGP instead.",
+    "categoryMismatch": "Category mismatch: {name} is open only to {categories} applicants, whereas your profile category is {userCategory}.",
+    "womenOnly": "Women-only scheme: {name} is exclusively reserved for women entrepreneurs or women-led units.",
+    "incomeExceeded": "Income ceiling exceeded: your annual family income ({income}) is above the {ceiling} limit.",
+    "loanTooLow": "Loan amount too low: requested {loan} is below the {minLoan} minimum.",
+    "loanTooHigh": "Loan amount exceeds cap: requested {loan} is above the {maxLoan} maximum.",
+    "ageOutside": "Age outside range: applicant age {age} years is outside the {minAge}–{maxAge} year range.",
+    "applicantType": "Applicant type mismatch: this scheme is for {allowed}, not {userType}.",
+    "pwdOnly": "PwD-only scheme: this scheme is reserved for persons with certified disability.",
+    "notSpecified": "not specified",
+    "matchedSummary": "Matched: score {score}/100 (interest {interest}, subsidy {subsidy}, loan fit {loanFit}, special {special}).",
+}
+
+
+@lru_cache(maxsize=32)
+def _rejection_templates(lang: str) -> dict[str, str]:
+    code = str(lang or "en").strip().lower()
+    if code not in SUPPORTED_LANGUAGES:
+        code = "en"
+    en_path = TRANSLATIONS_DIR / "en.json"
+    en_src = dict(DEFAULT_REJECTION_TEMPLATES)
+    if en_path.exists():
+        try:
+            en_data = json.loads(en_path.read_text(encoding="utf-8"))
+            if isinstance(en_data.get("rejection"), dict):
+                en_src = {**en_src, **en_data["rejection"]}
+        except (OSError, ValueError):
+            pass
+    if code == "en":
+        return en_src
+    tgt_path = TRANSLATIONS_DIR / f"{code}.json"
+    if not tgt_path.exists():
+        return en_src
+    try:
+        tgt_data = json.loads(tgt_path.read_text(encoding="utf-8"))
+        tgt_rej = tgt_data.get("rejection") if isinstance(tgt_data.get("rejection"), dict) else {}
+        repaired, _ = sanitize_bundle_with_fallback(en_src, tgt_rej)
+        return repaired
+    except (OSError, ValueError):
+        return en_src
+
+
+def _fmt_tpl(tpl: str, **kwargs) -> str:
+    out = str(tpl)
+    for k, v in kwargs.items():
+        out = out.replace(f"{{{k}}}", str(v))
+    return out
 
 
 DEFAULT_INCOME_CEILING = Decimal("500000")
@@ -70,14 +129,15 @@ def scheme_to_dict(scheme):
 def _fmt_inr(amount):
     n = float(amount)
     if n >= 10000000:
-        return f"Rs {n / 10000000:.2f} Cr".replace(".00 Cr", " Cr")
+        return f"₹{n / 10000000:.2f} Cr".replace(".00 Cr", " Cr")
     if n >= 100000:
-        return f"Rs {n / 100000:.1f} lakh".replace(".0 lakh", " lakh")
-    return f"Rs {int(n):,}"
+        return f"₹{n / 100000:.1f} lakh".replace(".0 lakh", " lakh")
+    return f"₹{int(n):,}"
 
 
-def layer1_evaluate(applicant, scheme):
+def layer1_evaluate(applicant, scheme, lang="en"):
     """Evaluate all Layer-1 eligibility rules and return (accepted, summary_reason, rejection_reasons)."""
+    tpl = _rejection_templates(lang)
     rejection_reasons = []
 
     # 1. State applicability check
@@ -86,8 +146,12 @@ def layer1_evaluate(applicant, scheme):
     app_state = str(applicant.get("state") or "").strip().lower()
     if states and "all" not in states and app_state not in states:
         rejection_reasons.append(
-            f"State mismatch: {scheme['name']} is applicable only in {', '.join(str(s) for s in raw_states)}, "
-            f"whereas your selected state is {applicant.get('state') or 'not specified'}."
+            _fmt_tpl(
+                tpl["stateMismatch"],
+                name=scheme["name"],
+                states=", ".join(str(s) for s in raw_states),
+                userState=applicant.get("state") or tpl["notSpecified"],
+            )
         )
 
     # 2. Category eligibility check
@@ -99,26 +163,29 @@ def layer1_evaluate(applicant, scheme):
     if scheme.get("code") == "SUPI":
         if not is_woman and caste_cat not in ("SC", "ST"):
             rejection_reasons.append(
-                f"Category/Women rule: Stand-Up India is exclusively for SC/ST entrepreneurs or Women entrepreneurs "
-                f"(of any category), whereas your profile is {applicant.get('caste_category') or 'General'} without women-led status."
+                _fmt_tpl(
+                    tpl["supiRule"],
+                    category=applicant.get("caste_category") or "General",
+                )
             )
     elif caste_cat and caste_cat not in cats_upper:
         if caste_cat == "EWS" and cats_upper == ["SC"]:
             rejection_reasons.append(
-                f"Category mismatch: {scheme['name']} is exclusively for Scheduled Caste (SC) applicants "
-                "(not eligible for EWS under DoPT OM 2019). Consider PM MUDRA Yojana or PMEGP instead."
+                _fmt_tpl(tpl["ewsScOnly"], name=scheme["name"])
             )
         else:
             rejection_reasons.append(
-                f"Category mismatch: {scheme['name']} is open only to {', '.join(raw_cats or ['SC'])} applicants, "
-                f"whereas your profile category is {applicant.get('caste_category')}."
+                _fmt_tpl(
+                    tpl["categoryMismatch"],
+                    name=scheme["name"],
+                    categories=", ".join(raw_cats or ["SC"]),
+                    userCategory=applicant.get("caste_category"),
+                )
             )
 
     # 3. Women-only check
     if scheme.get("women_only") and not is_woman:
-        rejection_reasons.append(
-            f"Women-only scheme: {scheme['name']} is exclusively reserved for women entrepreneurs or women-led units."
-        )
+        rejection_reasons.append(_fmt_tpl(tpl["womenOnly"], name=scheme["name"]))
 
     # 4. Income ceiling check (ignore if null)
     income = _dec(applicant.get("annual_family_income"))
@@ -133,8 +200,11 @@ def layer1_evaluate(applicant, scheme):
         ceiling = _dec(ceiling_raw)
         if ceiling > 0 and income > ceiling:
             rejection_reasons.append(
-                f"Income ceiling exceeded: your annual family income ({_fmt_inr(income)}) "
-                f"is above the {_fmt_inr(ceiling)} limit."
+                _fmt_tpl(
+                    tpl["incomeExceeded"],
+                    income=_fmt_inr(income),
+                    ceiling=_fmt_inr(ceiling),
+                )
             )
 
     # 5. Loan amount range check (ignore max_loan / min_loan if null)
@@ -145,13 +215,21 @@ def layer1_evaluate(applicant, scheme):
         min_loan = _dec(min_raw)
         if loan < min_loan:
             rejection_reasons.append(
-                f"Loan amount too low: requested {_fmt_inr(loan)} is below the {_fmt_inr(min_loan)} minimum."
+                _fmt_tpl(
+                    tpl["loanTooLow"],
+                    loan=_fmt_inr(loan),
+                    minLoan=_fmt_inr(min_loan),
+                )
             )
     if max_raw is not None:
         max_loan = _dec(max_raw)
         if max_loan > 0 and loan > max_loan:
             rejection_reasons.append(
-                f"Loan amount exceeds cap: requested {_fmt_inr(loan)} is above the {_fmt_inr(max_loan)} maximum."
+                _fmt_tpl(
+                    tpl["loanTooHigh"],
+                    loan=_fmt_inr(loan),
+                    maxLoan=_fmt_inr(max_loan),
+                )
             )
 
     # 6. Age range check
@@ -160,7 +238,12 @@ def layer1_evaluate(applicant, scheme):
     max_age = int(scheme.get("max_age") or 75)
     if age and (age < min_age or age > max_age):
         rejection_reasons.append(
-            f"Age outside range: applicant age {age} years is outside the {min_age}–{max_age} year range."
+            _fmt_tpl(
+                tpl["ageOutside"],
+                age=age,
+                minAge=min_age,
+                maxAge=max_age,
+            )
         )
 
     # 7. Applicant type check
@@ -168,14 +251,16 @@ def layer1_evaluate(applicant, scheme):
     app_type = str(applicant.get("applicant_type") or "individual").lower()
     if allowed_types and app_type not in allowed_types:
         rejection_reasons.append(
-            f"Applicant type mismatch: this scheme is for {', '.join(allowed_types)}, not {app_type}."
+            _fmt_tpl(
+                tpl["applicantType"],
+                allowed=", ".join(allowed_types),
+                userType=app_type,
+            )
         )
 
     # 8. PwD-only check
     if scheme.get("pwd_only") and not applicant.get("disability"):
-        rejection_reasons.append(
-            "PwD-only scheme: this scheme is reserved for persons with certified disability."
-        )
+        rejection_reasons.append(tpl["pwdOnly"])
 
     if rejection_reasons:
         return False, "Rejected: " + " ".join(rejection_reasons), rejection_reasons
@@ -187,9 +272,9 @@ def layer1_evaluate(applicant, scheme):
     )
 
 
-def layer1_reason(applicant, scheme):
+def layer1_reason(applicant, scheme, lang="en"):
     """Backward-compatible wrapper returning (accepted: bool, one-line reason)."""
-    ok, reason, _ = layer1_evaluate(applicant, scheme)
+    ok, reason, _ = layer1_evaluate(applicant, scheme, lang=lang)
     return ok, reason
 
 
@@ -263,12 +348,12 @@ def layer2_score(applicant, scheme, cohort):
     }
 
 
-def recommend(applicant, schemes):
+def recommend(applicant, schemes, lang="en"):
     """Return matched/accepted (scored) and rejected schemes with detailed rejection_reasons."""
     rows = [scheme_to_dict(s) for s in schemes]
     accepted, rejected = [], []
     for scheme in rows:
-        ok, reason, rejection_reasons = layer1_evaluate(applicant, scheme)
+        ok, reason, rejection_reasons = layer1_evaluate(applicant, scheme, lang=lang)
         item = {
             **scheme,
             "reason": reason,
@@ -281,6 +366,7 @@ def recommend(applicant, schemes):
             rejected.append(item)
 
     if accepted:
+        tpl = _rejection_templates(lang)
         scored = []
         for scheme in accepted:
             extra = layer2_score(applicant, scheme, accepted)
@@ -290,12 +376,13 @@ def recommend(applicant, schemes):
         for i, item in enumerate(accepted):
             item["rank"] = i + 1
             item["best"] = i == 0
-            item["reason"] = (
-                f"Matched: score {item['score']}/100 "
-                f"(interest {item['breakdown']['interest']}, "
-                f"subsidy {item['breakdown']['subsidy_finance']}, "
-                f"loan fit {item['breakdown']['loan_fit']}, "
-                f"special {item['breakdown']['special_bonus']})."
+            item["reason"] = _fmt_tpl(
+                tpl["matchedSummary"],
+                score=item["score"],
+                interest=item["breakdown"]["interest"],
+                subsidy=item["breakdown"]["subsidy_finance"],
+                loanFit=item["breakdown"]["loan_fit"],
+                special=item["breakdown"]["special_bonus"],
             )
 
     return {

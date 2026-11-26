@@ -7,6 +7,42 @@ from typing import Any
 
 from django.conf import settings
 
+from core.i18n_templates import fmt_tpl, get_section_templates
+
+VERIFY_DEFAULTS = {
+    "invalidCategoryMsg": "Please select a valid category (SC, ST, OBC, EWS, or General).",
+    "invalidCategoryNext": "Choose your social category to check state and scheme eligibility.",
+    "invalidCertMsg": "Please select a valid certificate type.",
+    "invalidCertNext": "Select the certificate you hold or 'Not Available Yet'.",
+    "generalCertMismatchMsg": "Certificate mismatch: a '{certificate_type}' cannot be paired with category 'General'. Select the category printed on your certificate.",
+    "generalCertMismatchNext": "Update your category to match the certificate or select 'Not Available Yet'.",
+    "docMismatchMsg": "Document-to-category mismatch: '{certificate_type}' does not legally match claimed category '{category}'.{extra_rule}",
+    "docMismatchExtraEws": " Under DoPT OM No. 36039/1/2019-Estt(Res), SC/ST/OBC persons are excluded from EWS reservation.",
+    "docMismatchNext": "Provide the matching official certificate for your claimed category, or correct your selected category.",
+    "notNotifiedMsg": "'{caste}' is NOT notified as Scheduled Caste (SC) in {loan_state}; in {loan_state} it falls under {actual_cat} ({citation}).",
+    "notNotifiedNext": "In {loan_state}, apply under the {actual_cat} category (e.g. NBCFDC/State OBC or central MSME schemes like PM MUDRA/PMEGP) rather than NSFDC.",
+    "interstateMsg": "Inter-state SC certificate warning: certificate issued in {certificate_state}, but loan/business state is {loan_state}. {note}",
+    "interstateNext": "Obtain local domicile / Tehsildar verification in {loan_state}, or apply through a central public sector bank / NSFDC direct routing where applicable.",
+    "scCertMissingMsg": "SC category checks passed for {loan_state}, but an official SC Caste Certificate is required for NSFDC sanction.",
+    "scCertMissingNext": "Obtain an SC Caste Certificate from your local Tehsildar / SDM before submitting to the partner bank.",
+    "scVerifiedMsg": "SC status and document verified for {loan_state}. {income_note}",
+    "scIncomeOk": "Income meets the NSFDC ceiling (<= ₹{cap}).",
+    "scIncomeExceeded": "However, annual family income (₹{income}) exceeds the NSFDC ceiling of ₹{cap}.",
+    "scVerifiedNextOk": "Proceed with NSFDC schemes via {sca_name} or a listed partner bank.",
+    "scVerifiedNextAlt": "Explore non-income-capped central schemes such as Stand-Up India, PM MUDRA, or PMEGP.",
+    "ewsIncomeMissing": "annual family income must be provided and below ₹8,00,000",
+    "ewsIncomeHigh": "annual family income (₹{income}) must be strictly below ₹8,00,000",
+    "ewsAssetsExceeded": "family assets exceed DoPT EWS limits (< 5 acres agri land, < 1,000 sq.ft flat, < 100/200 sq.yd plot)",
+    "ewsIneligibleMsg": "EWS criteria not met: {reasons}.",
+    "ewsIneligibleNext": "Check eligibility under General-category central schemes such as PM MUDRA Yojana or PMEGP.",
+    "ewsVerifiedMsg": "EWS eligibility verified under DoPT OM 2019 (income < ₹8,00,000 and asset limits met). Note: NSFDC schemes are exclusively for Scheduled Castes (SC), so EWS applicants are routed to central MSME/credit schemes.",
+    "ewsVerifiedNext": "Ensure your EWS Income & Asset Certificate (issued by Tehsildar/SDM for the valid FY) is attached, and apply under PM MUDRA Yojana (PMMY) or PMEGP.",
+    "minorityCertMismatchMsg": "Certificate mismatch: '{certificate_type}' does not match Minority community selection. Select 'Not Available Yet' or the exact category printed on your certificate.",
+    "minorityCertMismatchNext": "Choose 'Not Available Yet' or select the category matching your certificate.",
+    "nonNsfdcMsg": "Category '{category}' acknowledged. NSFDC schemes on this portal are exclusively for Scheduled Caste (SC) applicants.",
+    "nonNsfdcNext": "Consider applying through {alt_agency}.",
+}
+
 CATEGORY_CERT_MAP = {
     "SC": "sc_cert",
     "ST": "st_cert",
@@ -109,10 +145,11 @@ def _parse_income(value: Any) -> float | None:
         return None
 
 
-def verify_category_and_document(payload: dict[str, Any]) -> dict[str, Any]:
+def verify_category_and_document(payload: dict[str, Any], lang: str = "en") -> dict[str, Any]:
     """Verify claimed category, document type, state notification (Art. 341), and EWS rules (DoPT 2019)."""
     rules = load_state_category_rules()
     states_dict = rules.get("states", {})
+    tpl = get_section_templates("verify", VERIFY_DEFAULTS, lang=lang or payload.get("lang") or "en")
 
     loan_state = _normalize_state(payload.get("loan_state"), states_dict)
     certificate_state = _normalize_state(payload.get("certificate_state"), states_dict)
@@ -141,8 +178,8 @@ def verify_category_and_document(payload: dict[str, Any]) -> dict[str, Any]:
             "loan_state": loan_state,
             "certificate_type": certificate_type,
             "citation": art341_citation,
-            "message": "Please select a valid category (SC, ST, OBC, EWS, or General).",
-            "next_step": "Choose your social category to check state and scheme eligibility.",
+            "message": tpl["invalidCategoryMsg"],
+            "next_step": tpl["invalidCategoryNext"],
         }
 
     if certificate_type not in VALID_CERT_TYPES:
@@ -156,8 +193,8 @@ def verify_category_and_document(payload: dict[str, Any]) -> dict[str, Any]:
             "loan_state": loan_state,
             "certificate_type": certificate_type,
             "citation": art341_citation,
-            "message": "Please select a valid certificate type.",
-            "next_step": "Select the certificate you hold or 'Not Available Yet'.",
+            "message": tpl["invalidCertMsg"],
+            "next_step": tpl["invalidCertNext"],
         }
 
     # 1. Document-to-Category Match
@@ -174,15 +211,12 @@ def verify_category_and_document(payload: dict[str, Any]) -> dict[str, Any]:
                 "loan_state": loan_state,
                 "certificate_type": certificate_type,
                 "citation": dopt_citation if certificate_type == "ews_cert" else art341_citation,
-                "message": (
-                    f"Certificate mismatch: a '{certificate_type}' cannot be paired with category 'General'. "
-                    "Select the category printed on your certificate."
-                ),
-                "next_step": "Update your category to match the certificate or select 'Not Available Yet'.",
+                "message": fmt_tpl(tpl["generalCertMismatchMsg"], certificate_type=certificate_type),
+                "next_step": tpl["generalCertMismatchNext"],
             }
         if category != "GENERAL" and certificate_type != expected_cert:
             extra_rule = (
-                " Under DoPT OM No. 36039/1/2019-Estt(Res), SC/ST/OBC persons are excluded from EWS reservation."
+                tpl["docMismatchExtraEws"]
                 if (category in {"SC", "ST", "OBC"} and certificate_type == "ews_cert")
                 or (category == "EWS" and certificate_type in {"sc_cert", "st_cert", "obc_cert"})
                 else ""
@@ -197,11 +231,13 @@ def verify_category_and_document(payload: dict[str, Any]) -> dict[str, Any]:
                 "loan_state": loan_state,
                 "certificate_type": certificate_type,
                 "citation": dopt_citation if "ews_cert" in (certificate_type, expected_cert) else art341_citation,
-                "message": (
-                    f"Document-to-category mismatch: '{certificate_type}' does not legally match claimed category '{category}'."
-                    f"{extra_rule}"
+                "message": fmt_tpl(
+                    tpl["docMismatchMsg"],
+                    certificate_type=certificate_type,
+                    category=category,
+                    extra_rule=extra_rule,
                 ),
-                "next_step": "Provide the matching official certificate for your claimed category, or correct your selected category.",
+                "next_step": tpl["docMismatchNext"],
             }
 
     # 2. Regional State Caste Notification Check (for SC)
@@ -221,12 +257,17 @@ def verify_category_and_document(payload: dict[str, Any]) -> dict[str, Any]:
                     "loan_state": loan_state,
                     "certificate_type": certificate_type,
                     "citation": art341_citation,
-                    "message": (
-                        f"'{lookup['canonical_caste']}' is NOT notified as Scheduled Caste (SC) in {loan_state}; "
-                        f"in {loan_state} it falls under {actual_cat} ({art341_citation})."
+                    "message": fmt_tpl(
+                        tpl["notNotifiedMsg"],
+                        caste=lookup["canonical_caste"],
+                        loan_state=loan_state,
+                        actual_cat=actual_cat,
+                        citation=art341_citation,
                     ),
-                    "next_step": (
-                        f"In {loan_state}, apply under the {actual_cat} category (e.g. NBCFDC/State OBC or central MSME schemes like PM MUDRA/PMEGP) rather than NSFDC."
+                    "next_step": fmt_tpl(
+                        tpl["notNotifiedNext"],
+                        loan_state=loan_state,
+                        actual_cat=actual_cat,
                     ),
                 }
 
@@ -242,13 +283,13 @@ def verify_category_and_document(payload: dict[str, Any]) -> dict[str, Any]:
                 "certificate_state": certificate_state,
                 "certificate_type": certificate_type,
                 "citation": art341_citation,
-                "message": (
-                    f"Inter-state SC certificate warning: certificate issued in {certificate_state}, "
-                    f"but loan/business state is {loan_state}. {rules['sc_constitutional_rule']['interstate_migration_note']}"
+                "message": fmt_tpl(
+                    tpl["interstateMsg"],
+                    certificate_state=certificate_state,
+                    loan_state=loan_state,
+                    note=rules["sc_constitutional_rule"]["interstate_migration_note"],
                 ),
-                "next_step": (
-                    f"Obtain local domicile / Tehsildar verification in {loan_state}, or apply through a central public sector bank / NSFDC direct routing where applicable."
-                ),
+                "next_step": fmt_tpl(tpl["interstateNext"], loan_state=loan_state),
             }
 
         # 4. Verified SC + Document + State Match
@@ -263,15 +304,17 @@ def verify_category_and_document(payload: dict[str, Any]) -> dict[str, Any]:
                 "loan_state": loan_state,
                 "certificate_type": certificate_type,
                 "citation": f"{art341_citation}; {nsfdc_citation}",
-                "message": (
-                    f"SC category checks passed for {loan_state or 'selected state'}, "
-                    "but an official SC Caste Certificate is required for NSFDC sanction."
-                ),
-                "next_step": "Obtain an SC Caste Certificate from your local Tehsildar / SDM before submitting to the partner bank.",
+                "message": fmt_tpl(tpl["scCertMissingMsg"], loan_state=loan_state or "India"),
+                "next_step": tpl["scCertMissingNext"],
             }
 
         income_ok = True if annual_income is None else annual_income <= nsfdc_cap
         sca_name = states_dict.get(loan_state, {}).get("sca_name", "State Channelising Agency (SCA)")
+        income_note = (
+            fmt_tpl(tpl["scIncomeOk"], cap=f"{nsfdc_cap:,}")
+            if income_ok
+            else fmt_tpl(tpl["scIncomeExceeded"], income=f"{int(annual_income):,}", cap=f"{nsfdc_cap:,}")
+        )
         return {
             "status": "verified_sc",
             "valid": True,
@@ -282,18 +325,15 @@ def verify_category_and_document(payload: dict[str, Any]) -> dict[str, Any]:
             "loan_state": loan_state,
             "certificate_type": certificate_type,
             "citation": f"{art341_citation}; {nsfdc_citation}",
-            "message": (
-                f"SC status and document verified for {loan_state or 'your state'}. "
-                + (
-                    f"Income meets the NSFDC ceiling (<= Rs {nsfdc_cap:,})."
-                    if income_ok
-                    else f"However, annual family income (Rs {int(annual_income):,}) exceeds the NSFDC ceiling of Rs {nsfdc_cap:,}."
-                )
+            "message": fmt_tpl(
+                tpl["scVerifiedMsg"],
+                loan_state=loan_state or "India",
+                income_note=income_note,
             ),
             "next_step": (
-                f"Proceed with NSFDC schemes via {sca_name} or a listed partner bank."
+                fmt_tpl(tpl["scVerifiedNextOk"], sca_name=sca_name)
                 if income_ok
-                else "Explore non-income-capped central schemes such as Stand-Up India, PM MUDRA, or PMEGP."
+                else tpl["scVerifiedNextAlt"]
             ),
         }
 
@@ -303,13 +343,11 @@ def verify_category_and_document(payload: dict[str, Any]) -> dict[str, Any]:
         if not income_ok or not ews_assets_compliant:
             reasons = []
             if annual_income is None:
-                reasons.append("annual family income must be provided and below Rs 8,00,000")
+                reasons.append(tpl["ewsIncomeMissing"])
             elif annual_income >= ews_cap:
-                reasons.append(f"annual family income (Rs {int(annual_income):,}) must be strictly below Rs 8,00,000")
+                reasons.append(fmt_tpl(tpl["ewsIncomeHigh"], income=f"{int(annual_income):,}"))
             if not ews_assets_compliant:
-                reasons.append(
-                    "family assets exceed DoPT EWS limits (< 5 acres agri land, < 1,000 sq.ft flat, < 100/200 sq.yd plot)"
-                )
+                reasons.append(tpl["ewsAssetsExceeded"])
             return {
                 "status": "ews_ineligible",
                 "valid": False,
@@ -320,8 +358,8 @@ def verify_category_and_document(payload: dict[str, Any]) -> dict[str, Any]:
                 "loan_state": loan_state,
                 "certificate_type": certificate_type,
                 "citation": dopt_citation,
-                "message": f"EWS criteria not met: {'; '.join(reasons)}.",
-                "next_step": "Check eligibility under General-category central schemes such as PM MUDRA Yojana or PMEGP.",
+                "message": fmt_tpl(tpl["ewsIneligibleMsg"], reasons="; ".join(reasons)),
+                "next_step": tpl["ewsIneligibleNext"],
             }
 
         return {
@@ -335,14 +373,8 @@ def verify_category_and_document(payload: dict[str, Any]) -> dict[str, Any]:
             "certificate_type": certificate_type,
             "citation": dopt_citation,
             "alternative_schemes": rules["ews_rules"]["alternative_schemes"],
-            "message": (
-                "EWS eligibility verified under DoPT OM 2019 (income < Rs 8,00,000 and asset limits met). "
-                "Note: NSFDC schemes are exclusively for Scheduled Castes (SC), so EWS applicants are routed to central MSME/credit schemes."
-            ),
-            "next_step": (
-                "Ensure your EWS Income & Asset Certificate (issued by Tehsildar/SDM for the valid FY) is attached, "
-                "and apply under PM MUDRA Yojana (PMMY) or PMEGP."
-            ),
+            "message": tpl["ewsVerifiedMsg"],
+            "next_step": tpl["ewsVerifiedNext"],
         }
 
     if category == "MINORITY" and certificate_type in {"sc_cert", "st_cert", "obc_cert", "ews_cert"}:
@@ -356,11 +388,8 @@ def verify_category_and_document(payload: dict[str, Any]) -> dict[str, Any]:
             "loan_state": loan_state,
             "certificate_type": certificate_type,
             "citation": dopt_citation if certificate_type == "ews_cert" else art341_citation,
-            "message": (
-                f"Certificate mismatch: '{certificate_type}' does not match Minority community selection. "
-                "Select 'Not Available Yet' or the exact category printed on your certificate."
-            ),
-            "next_step": "Choose 'Not Available Yet' or select the category matching your certificate.",
+            "message": fmt_tpl(tpl["minorityCertMismatchMsg"], certificate_type=certificate_type),
+            "next_step": tpl["minorityCertMismatchNext"],
         }
 
     # ST, OBC, Minority, or General
@@ -383,8 +412,6 @@ def verify_category_and_document(payload: dict[str, Any]) -> dict[str, Any]:
         "loan_state": loan_state,
         "certificate_type": certificate_type,
         "citation": nsfdc_citation,
-        "message": (
-            f"Category '{category}' acknowledged. NSFDC schemes on this portal are exclusively for Scheduled Caste (SC) applicants."
-        ),
-        "next_step": f"Consider applying through {alt_agency}.",
+        "message": fmt_tpl(tpl["nonNsfdcMsg"], category=category),
+        "next_step": fmt_tpl(tpl["nonNsfdcNext"], alt_agency=alt_agency),
     }

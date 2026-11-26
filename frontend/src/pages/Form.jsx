@@ -47,7 +47,7 @@ function resolveDistrictOption(stateName, rawDistrict, statesMap) {
 }
 
 export default function Form() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { form, updateForm, setResult } = useAppState();
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
@@ -99,7 +99,7 @@ export default function Form() {
     }
     const opts = base.map((d) => ({ value: d, label: d }));
     if (!base.includes("Other")) {
-      opts.push({ value: "Other", label: "Other" });
+      opts.push({ value: "Other", label: f("otherOption") });
     }
     return [selectPlaceholder, ...opts];
   })();
@@ -195,6 +195,7 @@ export default function Form() {
         annual_family_income: Number(form.annual_family_income),
         loan_amount: Number(form.loan_amount),
         project_cost: Number(form.project_cost || form.loan_amount),
+        lang,
       };
       const data = await api.recommend(payload);
       setResult(data);
@@ -222,10 +223,11 @@ export default function Form() {
           form.caste_category === "EWS" || form.certificate_type === "ews_cert"
             ? !!form.ews_assets_compliant
             : true,
+        lang,
       });
       setVerifyResult(res);
     } catch (err) {
-      setVerifyError(err.body?.detail || err.message || "Could not verify category.");
+      setVerifyError(err.body?.detail || err.message || f("verifyFailed"));
     } finally {
       setVerifyBusy(false);
     }
@@ -246,13 +248,14 @@ export default function Form() {
     form.sub_caste,
     form.annual_family_income,
     form.ews_assets_compliant,
+    lang,
   ]);
 
   return (
     <div className="page-shell">
       {/* Title & Eyebrow */}
       <div className="page-title">
-        <span className="eyebrow">CHECK ELIGIBILITY</span>
+        <span className="eyebrow">{f("eyebrow")}</span>
         <h1>{f("title")}</h1>
         <p>{f("subtitle")}</p>
       </div>
@@ -266,9 +269,9 @@ export default function Form() {
           />
         </div>
         {[
-          { num: 1, title: f("step1"), sub: "STEP 1" },
-          { num: 2, title: f("step2"), sub: "STEP 2" },
-          { num: 3, title: f("step3"), sub: "STEP 3" },
+          { num: 1, title: f("step1"), sub: f("stepLabel", { n: "1" }) },
+          { num: 2, title: f("step2"), sub: f("stepLabel", { n: "2" }) },
+          { num: 3, title: f("step3"), sub: f("stepLabel", { n: "3" }) },
         ].map((s) => (
           <div
             key={s.num}
@@ -331,7 +334,7 @@ export default function Form() {
                     onChange={(v) => updateForm({ pin: v })}
                     error={errors.pin}
                   />
-                  {pinBusy && <p className="pin-lookup-hint">Looking up PIN code...</p>}
+                  {pinBusy && <p className="pin-lookup-hint">{f("pinLookingUp")}</p>}
                   {!pinBusy && pinNote && <p className="pin-lookup-hint">{pinNote}</p>}
                   {!pinBusy && pinInfo && (
                     <div className="pin-match-badge" role="status">
@@ -351,7 +354,7 @@ export default function Form() {
                       {pinInfo.post_offices?.length > 1 && (
                         <div className="pin-match-row">
                           <label htmlFor="pin-po-select" style={{ fontSize: "12px", fontWeight: 600 }}>
-                            Kasba / Post Office:
+                            {f("kasbaLabel")}
                           </label>
                           <select
                             id="pin-po-select"
@@ -509,20 +512,20 @@ export default function Form() {
                     <div className="verify-result-head">
                       <strong>
                         {verifyResult.status === "verified_sc"
-                          ? "Verified SC"
+                          ? f("verifyStatusVerifiedSc")
                           : verifyResult.status === "state_mismatch_warning"
-                            ? "State Mismatch Warning"
+                            ? f("verifyStatusStateMismatch")
                             : verifyResult.status === "not_notified_in_state"
-                              ? "Not Notified in State"
+                              ? f("verifyStatusNotNotified")
                               : verifyResult.status === "ews_verified_non_nsfdc"
-                                ? "EWS Verified — Non-NSFDC"
+                                ? f("verifyStatusEwsVerified")
                                 : verifyResult.status === "ews_ineligible"
-                                  ? "EWS Ineligible"
+                                  ? f("verifyStatusEwsIneligible")
                                   : verifyResult.status === "document_category_mismatch"
-                                    ? "Document / Category Mismatch"
+                                    ? f("verifyStatusDocMismatch")
                                     : verifyResult.status === "document_missing"
-                                      ? "Certificate Required"
-                                      : "Category Verified (Non-NSFDC)"}
+                                      ? f("verifyStatusCertRequired")
+                                      : f("verifyStatusNonNsfdc")}
                       </strong>
                       <span
                         className={`status-tag ${
@@ -534,13 +537,17 @@ export default function Form() {
                               : "bad"
                         }`}
                       >
-                        {verifyResult.nsfdc_eligible ? "NSFDC ELIGIBLE" : verifyResult.ews_eligible ? "EWS ELIGIBLE" : "CHECK RULE"}
+                        {verifyResult.nsfdc_eligible
+                          ? f("verifyTagNsfdc")
+                          : verifyResult.ews_eligible
+                            ? f("verifyTagEws")
+                            : f("verifyTagCheck")}
                       </span>
                     </div>
                     <p>{verifyResult.message}</p>
-                    <small className="verify-citation">Rule: {verifyResult.citation}</small>
+                    <small className="verify-citation">{f("verifyRuleLabel")} {verifyResult.citation}</small>
                     <p className="verify-next-step">
-                      <strong>Next step:</strong> {verifyResult.next_step}
+                      <strong>{f("verifyNextStepLabel")}</strong> {verifyResult.next_step}
                     </p>
                   </div>
                 )}

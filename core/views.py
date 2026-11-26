@@ -15,7 +15,8 @@ from core.bank_locator import (
     reverse_geocode_coords,
 )
 from core.category_verifier import verify_category_and_document
-from core.chatbot import chat_completion
+from core.chatbot import chat_completion, resolve_language
+from core.dynamic_translator import translate_schemes
 from core.emi import calculate_emi
 from core.geo import coords_from_pin, load_india_districts, lookup_pin_details, rank_branches
 from core.i18n_validator import sanitize_bundle_with_fallback
@@ -319,9 +320,16 @@ class SchemeDetailView(APIView):
 class RecommendView(APIView):
     def post(self, request):
         data = validate_applicant(request.data)
+        raw_lang = (
+            request.data.get("lang")
+            or request.data.get("language")
+            or request.query_params.get("lang")
+            or "en"
+        )
+        lang_meta = resolve_language(raw_lang)
         schemes = LoanScheme.objects.all()
-        result = recommend(data, schemes)
-        return Response({"demo": True, **result})
+        result = recommend(data, schemes, lang=lang_meta["code"])
+        return Response({"demo": True, "language": lang_meta["code"], **result})
 
 
 class BranchListView(APIView):
@@ -330,6 +338,7 @@ class BranchListView(APIView):
         lat = request.query_params.get("lat")
         lng = request.query_params.get("lng")
         pin = request.query_params.get("pin")
+        lang_meta = resolve_language(request.query_params.get("lang") or "en")
         if (lat in (None, "") or lng in (None, "")) and pin:
             plat, plng, _ = coords_from_pin(pin)
             lat, lng = plat, plng
@@ -341,10 +350,17 @@ class BranchListView(APIView):
                 {"detail": "Please share location or a 6-digit PIN so we can find nearby partners."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        ranked = rank_branches(Branch.objects.all(), user_lat, user_lng, scheme_code=scheme)
+        ranked = rank_branches(
+            Branch.objects.all(),
+            user_lat,
+            user_lng,
+            scheme_code=scheme,
+            lang=lang_meta["code"],
+        )
         return Response(
             {
                 "demo": True,
+                "language": lang_meta["code"],
                 "user": {"lat": user_lat, "lng": user_lng},
                 "branches": ranked,
             }
@@ -404,16 +420,21 @@ class LiveBankSearchView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        lang_meta = resolve_language(
+            request.query_params.get("lang") or request.query_params.get("language") or "en"
+        )
         payload = live_search_banks_and_portals(
             user_lat=user_lat,
             user_lng=user_lng,
             scheme=scheme,
             radius_km=radius_km,
             resolved_location=resolved_location,
+            lang=lang_meta["code"],
         )
         return Response(
             {
                 "scheme": LoanSchemeSerializer(scheme).data if scheme else None,
+                "language": lang_meta["code"],
                 "location": resolved_location,
                 "location_label": resolved_location.get("location_label", ""),
                 "center": {"lat": resolved_location["lat"], "lng": resolved_location["lng"]},
@@ -566,9 +587,37 @@ class I18nBundleView(APIView):
         return resp
 
 
+class TranslateSchemesView(APIView):
+    def post(self, request):
+        body = request.data if isinstance(request.data, dict) else {}
+        raw_lang = body.get("lang") or body.get("language") or ""
+        try:
+            get_language_meta(raw_lang)
+        except ValueError:
+            return Response(
+                {"detail": f"Unsupported or missing language code: {raw_lang!r}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        scheme_codes = body.get("scheme_codes")
+        if scheme_codes is not None and not isinstance(scheme_codes, list):
+            return Response(
+                {"detail": "'scheme_codes' must be a list of scheme codes."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        res = translate_schemes(scheme_codes, raw_lang)
+        return Response(res, status=status.HTTP_200_OK)
+
+
 class VerifyCategoryView(APIView):
     def post(self, request):
-        result = verify_category_and_document(request.data or {})
+        body = request.data or {}
+        lang_meta = resolve_language(
+            body.get("lang")
+            or body.get("language")
+            or request.query_params.get("lang")
+            or "en"
+        )
+        result = verify_category_and_document(body, lang=lang_meta["code"])
         return Response(result, status=status.HTTP_200_OK)
 
 

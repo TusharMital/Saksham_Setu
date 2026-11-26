@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import Icon from "../components/Icon.jsx";
 import { api } from "../api.js";
 import { useAppState } from "../state.jsx";
-import { useI18n } from "../i18n.jsx";
+import { useI18n, useTranslatedScheme, useTranslatedSchemes } from "../i18n.jsx";
 
 const MARKET_PRESETS = [
   {
@@ -727,10 +727,12 @@ export default function Calculator() {
 
   // All 66 schemes for Mode B dropdown
   const [allSchemes, setAllSchemes] = useState([]);
+  const translatedAllSchemes = useTranslatedSchemes(allSchemes);
   const [schemesLoading, setSchemesLoading] = useState(false);
 
   // Mode B active locked scheme
   const [lockedScheme, setLockedScheme] = useState(null);
+  const translatedLockedScheme = useTranslatedScheme(lockedScheme);
   const [schemeLoading, setSchemeLoading] = useState(Boolean(querySchemeCode));
   const [schemeError, setSchemeError] = useState("");
 
@@ -754,7 +756,20 @@ export default function Calculator() {
   const [expandedYearMonths, setExpandedYearMonths] = useState(null);
   const emiRequestSeq = useRef(0);
 
-  const isLocked = Boolean(lockedScheme);
+  const presetLabels = useMemo(
+    () => ({
+      mudra: t("calc.presetMudra"),
+      msme: t("calc.presetMsme"),
+      education: t("calc.presetEducation"),
+      housing: t("calc.presetHousing"),
+      agriculture: t("calc.presetAgri"),
+      vehicle: t("calc.presetVehicle"),
+      personal: t("calc.presetPersonal"),
+    }),
+    [t]
+  );
+
+  const isLocked = Boolean(translatedLockedScheme);
   const selectedPreset = useMemo(
     () => MARKET_PRESETS.find((p) => p.id === activePresetId) || null,
     [activePresetId]
@@ -1170,8 +1185,8 @@ export default function Calculator() {
           </div>
           <h1>{t("calc.title")}</h1>
           <p>
-            {isLocked && lockedScheme
-              ? `${lockedScheme.code} — ${lockedScheme.name}`
+            {isLocked && translatedLockedScheme
+              ? `${translatedLockedScheme.code} — ${translatedLockedScheme.name}`
               : t("calc.subtitle")}
           </p>
         </div>
@@ -1185,12 +1200,12 @@ export default function Calculator() {
           <div className="calc-scheme-select-row">
             <select
               id="calc-scheme-select"
-              value={lockedScheme?.code || querySchemeCode || ""}
+              value={translatedLockedScheme?.code || querySchemeCode || ""}
               onChange={(e) => handleSelectScheme(e.target.value)}
               disabled={schemesLoading}
             >
               <option value="">{t("calc.loadSchemePlaceholder")}</option>
-              {allSchemes.map((s) => (
+              {translatedAllSchemes.map((s) => (
                 <option key={s.code} value={s.code}>
                   {s.code} — {s.name} ({s.interest_rate}% p.a.)
                 </option>
@@ -1211,7 +1226,7 @@ export default function Calculator() {
       </div>
 
       {/* Mode B Lock Banner */}
-      {isLocked && lockedScheme && (
+      {isLocked && translatedLockedScheme && (
         <div className="calc-lock-banner" role="status">
           <div className="calc-lock-banner-main">
             <span className="calc-lock-icon-circle">
@@ -1220,8 +1235,8 @@ export default function Calculator() {
             <div>
               <strong>
                 {t("calc.lockedBannerTitle", {
-                  name: lockedScheme.name,
-                  code: lockedScheme.code,
+                  name: translatedLockedScheme.name,
+                  code: translatedLockedScheme.code,
                 })}
               </strong>
               <p>{t("calc.lockedBannerDesc")}</p>
@@ -1254,7 +1269,7 @@ export default function Calculator() {
           </div>
           {isLocked && (
             <span className="locked-chip">
-              <LockSvg size={13} /> Locked
+              <LockSvg size={13} /> {t("calc.lockedChip")}
             </span>
           )}
         </div>
@@ -1272,17 +1287,17 @@ export default function Calculator() {
                 onClick={() => applyPreset(preset)}
               >
                 <div className="preset-card-top">
-                  <strong>{preset.name}</strong>
-                  <span className="preset-rate-pill">{preset.rate.toFixed(2)}% p.a.</span>
+                  <strong>{presetLabels[preset.id] || preset.name}</strong>
+                  <span className="preset-rate-pill"><bdi>{preset.rate.toFixed(2)}% p.a.</bdi></span>
                 </div>
                 <div className="preset-card-meta">
-                  <span>{formatInr(preset.amount)}</span>
+                  <span><bdi>{formatInr(preset.amount)}</bdi></span>
                   <span>•</span>
-                  <span>{preset.tenure}m</span>
+                  <span><bdi>{preset.tenure}m</bdi></span>
                   {preset.moratorium > 0 && (
                     <>
                       <span>•</span>
-                      <span>{preset.moratorium}m morat.</span>
+                      <span><bdi>{preset.moratorium}m</bdi></span>
                     </>
                   )}
                 </div>
@@ -1305,11 +1320,11 @@ export default function Calculator() {
                 <h2>{t("calc.loanDetails")}</h2>
                 {isLocked ? (
                   <span className="locked-chip">
-                    <LockSvg size={13} /> Fixed by Scheme
+                    <LockSvg size={13} /> {t("calc.fixedByScheme")}
                   </span>
                 ) : (
                   <span className="preset-active-tag">
-                    {selectedPreset ? selectedPreset.name : t("calc.customLabel")}
+                    {selectedPreset ? (presetLabels[selectedPreset.id] || selectedPreset.name) : t("calc.customLabel")}
                   </span>
                 )}
               </div>
@@ -1321,7 +1336,7 @@ export default function Calculator() {
             </div>
 
             {schemeLoading && (
-              <div className="calc-loading-pill">Loading scheme rules…</div>
+              <div className="calc-loading-pill">{t("calc.loadingSchemeRules")}</div>
             )}
 
             {/* 1. Loan Amount (₹) */}
@@ -1357,9 +1372,9 @@ export default function Calculator() {
                 aria-label={`${t("calc.amount")} slider`}
               />
               <small className="slider-limits">
-                <span>₹10,000</span>
-                <span className="limit-mid">{formatCompactInr(amount)}</span>
-                <span>₹1 Crore</span>
+                <span><bdi>{t("calc.amountMinLimit")}</bdi></span>
+                <span className="limit-mid"><bdi>{formatCompactInr(amount)}</bdi></span>
+                <span><bdi>{t("calc.amountMaxLimit")}</bdi></span>
               </small>
             </div>
 
@@ -1447,7 +1462,7 @@ export default function Calculator() {
                     aria-label={t("calc.tenure")}
                   />
                   <span className="input-suffix">
-                    {tenureUnit === "years" ? "yrs" : "mos"}
+                    {tenureUnit === "years" ? t("calc.yrsUnit") : t("calc.mosUnit")}
                   </span>
                 </div>
               </div>
@@ -1466,11 +1481,13 @@ export default function Calculator() {
                 aria-label={`${t("calc.tenure")} slider`}
               />
               <small className="slider-limits">
-                <span>{tenureUnit === "years" ? "1 Year" : "6 Months"}</span>
+                <span>{tenureUnit === "years" ? t("calc.minYearsLimit") : t("calc.minMonthsLimit")}</span>
                 <span className="limit-mid">
-                  {tenure} months ({(tenure / 12).toFixed(1)} yrs)
+                  <bdi>
+                    {tenure} {t("calc.monthsUnit")} ({(tenure / 12).toFixed(1)} {t("calc.yrsUnit")})
+                  </bdi>
                 </span>
-                <span>{tenureUnit === "years" ? "30 Years" : "360 Months"}</span>
+                <span>{tenureUnit === "years" ? t("calc.maxYearsLimit") : t("calc.maxMonthsLimit")}</span>
               </small>
             </div>
 
@@ -1493,7 +1510,7 @@ export default function Calculator() {
                     onBlur={handleMoratoriumBlur}
                     aria-label={t("calc.moratoriumShort")}
                   />
-                  <span className="input-suffix">mos</span>
+                  <span className="input-suffix">{t("calc.mosUnit")}</span>
                 </div>
               </div>
               <input
@@ -1507,27 +1524,29 @@ export default function Calculator() {
                 aria-label={`${t("calc.moratoriumShort")} slider`}
               />
               <small className="slider-limits">
-                <span>0 (Immediate)</span>
-                <span className="limit-mid">{moratorium} months</span>
-                <span>{maxMoratorium} Months</span>
+                <span>{t("calc.moratoriumZeroLimit")}</span>
+                <span className="limit-mid">
+                  <bdi>{moratorium} {t("calc.monthsUnit")}</bdi>
+                </span>
+                <span><bdi>{maxMoratorium} {t("calc.monthsUnit")}</bdi></span>
               </small>
             </div>
           </section>
 
           {/* Mode B Official Scheme Terms Card */}
-          {isLocked && lockedScheme && (
+          {isLocked && translatedLockedScheme && (
             <section className="calc-scheme-terms-card">
               <div className="scheme-terms-head">
                 <div>
                   <span className="eyebrow">{t("calc.schemeTermsTitle")}</span>
-                  <h3>{lockedScheme.name}</h3>
+                  <h3>{translatedLockedScheme.name}</h3>
                 </div>
                 <span
                   className={`level-badge ${
-                    lockedScheme.level === "state" ? "state" : "central"
+                    translatedLockedScheme.level === "state" ? "state" : "central"
                   }`}
                 >
-                  {lockedScheme.level === "state"
+                  {translatedLockedScheme.level === "state"
                     ? t("results.stateBadge")
                     : t("results.centralBadge")}
                 </span>
@@ -1536,53 +1555,59 @@ export default function Calculator() {
               <dl className="scheme-terms-dl">
                 <div>
                   <dt>{t("calc.agencyLabel")}</dt>
-                  <dd>{lockedScheme.agency || "Government of India"}</dd>
+                  <dd>{translatedLockedScheme.agency || t("detail.govtOfIndia")}</dd>
                 </div>
                 <div>
                   <dt>{t("calc.rateNoteLabel")}</dt>
                   <dd>
-                    <strong>{lockedScheme.interest_rate}% p.a.</strong>
-                    {lockedScheme.interest_rate_note
-                      ? ` — ${lockedScheme.interest_rate_note}`
+                    <strong><bdi>{translatedLockedScheme.interest_rate}% p.a.</bdi></strong>
+                    {translatedLockedScheme.interest_rate_note
+                      ? ` — ${translatedLockedScheme.interest_rate_note}`
                       : ""}
                   </dd>
                 </div>
                 <div>
                   <dt>{t("calc.loanLimitLabel")}</dt>
                   <dd>
-                    {formatInr(lockedScheme.min_loan || 0)} –{" "}
-                    {lockedScheme.max_loan != null
-                      ? formatInr(lockedScheme.max_loan)
-                      : "No fixed upper cap"}
+                    <bdi>
+                      {formatInr(translatedLockedScheme.min_loan || 0)} –{" "}
+                      {translatedLockedScheme.max_loan != null
+                        ? formatInr(translatedLockedScheme.max_loan)
+                        : t("detail.noUpperCap")}
+                    </bdi>
                   </dd>
                 </div>
                 <div>
                   <dt>{t("calc.subsidyNoteLabel")}</dt>
                   <dd>
-                    {lockedScheme.subsidy_margin_note ||
-                      `${lockedScheme.subsidy_percent || 0}% subsidy`}
+                    {translatedLockedScheme.subsidy_margin_note ||
+                      `${translatedLockedScheme.subsidy_percent || 0}%`}
                   </dd>
                 </div>
                 <div>
                   <dt>{t("calc.tenureMoratoriumLabel")}</dt>
                   <dd>
-                    {lockedScheme.tenure_months} months tenure •{" "}
-                    {lockedScheme.moratorium_months} months moratorium
+                    <bdi>
+                      {t("results.tenureFormat", {
+                        tenure: String(translatedLockedScheme.tenure_months),
+                        moratorium: String(translatedLockedScheme.moratorium_months),
+                      })}
+                    </bdi>
                   </dd>
                 </div>
               </dl>
 
               <div className="scheme-terms-actions">
                 <Link
-                  to={`/scheme/${encodeURIComponent(lockedScheme.code)}`}
+                  to={`/scheme/${encodeURIComponent(translatedLockedScheme.code)}`}
                   className="btn btn-outline btn-sm"
                 >
                   <span>{t("calc.viewSchemeDetails")}</span>
                 </Link>
                 <Link
-                  to={`/apply?scheme=${encodeURIComponent(lockedScheme.code)}`}
+                  to={`/apply?scheme=${encodeURIComponent(translatedLockedScheme.code)}`}
                   className="btn btn-primary btn-sm"
-                  onClick={() => setScheme(lockedScheme)}
+                  onClick={() => setScheme(translatedLockedScheme)}
                 >
                   <span>{t("calc.applyScheme")}</span>
                   <Icon name="arrow" size={15} />
@@ -1600,20 +1625,22 @@ export default function Calculator() {
               <div>
                 <span className="hero-emi-eyebrow">{t("calc.heroEmiLabel")}</span>
                 <div className="hero-emi-readout">
-                  <strong>{formatExactInr(activeCalc.monthly_emi)}</strong>
+                  <strong><bdi>{formatExactInr(activeCalc.monthly_emi)}</bdi></strong>
                   <span>/ {t("calc.perMonth")}</span>
                 </div>
                 <small className="hero-emi-sub">
-                  {activeCalc.annual_rate}% p.a. • {activeCalc.tenure_months} months
-                  {activeCalc.moratorium_months > 0
-                    ? ` (${activeCalc.moratorium_months}m moratorium)`
-                    : ""}
+                  <bdi>
+                    {activeCalc.annual_rate}% p.a. • {activeCalc.tenure_months} {t("calc.monthsUnit")}
+                    {activeCalc.moratorium_months > 0
+                      ? ` (${activeCalc.moratorium_months}m)`
+                      : ""}
+                  </bdi>
                 </small>
               </div>
               <div className="hero-ratio-chip">
                 <small>{t("calc.ratioLabel")}</small>
                 <strong>
-                  {principalRatioPct}% / {interestRatioPct}%
+                  <bdi>{principalRatioPct}% / {interestRatioPct}%</bdi>
                 </strong>
                 <div className="ratio-bar-track compact">
                   <div
@@ -1631,33 +1658,33 @@ export default function Calculator() {
             <div className="calc-kpi-strip-4">
               <article className="calc-mini-kpi">
                 <small>{t("calc.principalAmount")}</small>
-                <strong className="text-forest">{formatExactInr(activeCalc.principal)}</strong>
-                <span>{principalRatioPct}% of total</span>
+                <strong className="text-forest"><bdi>{formatExactInr(activeCalc.principal)}</bdi></strong>
+                <span><bdi>{principalRatioPct}%</bdi></span>
               </article>
               <article className="calc-mini-kpi">
                 <small>{t("calc.totalInterest")}</small>
                 <strong className="text-saffron">
-                  {formatExactInr(activeCalc.total_interest)}
+                  <bdi>{formatExactInr(activeCalc.total_interest)}</bdi>
                 </strong>
-                <span>{interestRatioPct}% of total</span>
+                <span><bdi>{interestRatioPct}%</bdi></span>
               </article>
               <article className="calc-mini-kpi">
                 <small>{t("calc.totalPayable")}</small>
-                <strong>{formatExactInr(activeCalc.total_payable)}</strong>
-                <span>principal + interest</span>
+                <strong><bdi>{formatExactInr(activeCalc.total_payable)}</bdi></strong>
+                <span>{t("detail.principalPlusInterest")}</span>
               </article>
               <article className="calc-mini-kpi">
                 <small>{t("calc.ratioLabel")}</small>
                 <strong>
-                  {principalRatioPct}% : {interestRatioPct}%
+                  <bdi>{principalRatioPct}% : {interestRatioPct}%</bdi>
                 </strong>
-                <span>Principal : Interest</span>
+                <span>{t("detail.principalLabel")}</span>
               </article>
             </div>
           </div>
 
           {/* Govt Scheme vs. Bank Market (11.0%) Savings Callout */}
-          {isLocked && lockedScheme && marketComparison && (
+          {isLocked && translatedLockedScheme && marketComparison && (
             <div
               className={`calc-savings-callout ${
                 marketComparison.isCheaper ? "is-saving" : "is-neutral"
@@ -1672,7 +1699,7 @@ export default function Calculator() {
                       ? t("calc.savingsHighlight", {
                           saved: formatExactInr(marketComparison.interestSaved),
                         })
-                      : `${lockedScheme.code} @ ${activeCalc.annual_rate}% vs. 11.0% Market Benchmark`}
+                      : `${translatedLockedScheme.code} @ ${activeCalc.annual_rate}% vs. 11.0%`}
                   </h3>
                 </div>
               </div>
@@ -1681,26 +1708,26 @@ export default function Calculator() {
                   {t("calc.savingsSub", {
                     marketInterest: formatExactInr(marketComparison.marketInterest),
                     schemeInterest: formatExactInr(activeCalc.total_interest),
-                    code: lockedScheme.code,
+                    code: translatedLockedScheme.code,
                     monthlyDiff: formatExactInr(marketComparison.monthlySaved),
                   })}
                 </p>
               ) : (
                 <p>
-                  Standard 11.0% p.a. market loan interest:{" "}
-                  <strong>{formatExactInr(marketComparison.marketInterest)}</strong> vs.{" "}
-                  <strong>{formatExactInr(activeCalc.total_interest)}</strong> under{" "}
-                  {lockedScheme.code}.
+                  <bdi>
+                    11.0% p.a.: {formatExactInr(marketComparison.marketInterest)} vs.{" "}
+                    {formatExactInr(activeCalc.total_interest)} ({translatedLockedScheme.code})
+                  </bdi>
                 </p>
               )}
               <div className="savings-compare-pills">
                 <span>
-                  {lockedScheme.code} ({activeCalc.annual_rate}%):{" "}
-                  <b>{formatExactInr(activeCalc.monthly_emi)}/mo</b>
+                  {translatedLockedScheme.code} ({activeCalc.annual_rate}%):{" "}
+                  <b><bdi>{formatExactInr(activeCalc.monthly_emi)}</bdi></b>
                 </span>
                 <span>
-                  Bank Market (11.0%):{" "}
-                  <b>{formatExactInr(marketComparison.marketMonthlyEmi)}/mo</b>
+                  {t("calc.bankMarketLabel")}{" "}
+                  <b><bdi>{formatExactInr(marketComparison.marketMonthlyEmi)}</bdi></b>
                 </span>
               </div>
             </div>
@@ -1782,13 +1809,13 @@ export default function Calculator() {
                           onClick={() =>
                             setExpandedYearMonths(isMonthsOpen ? null : row.year)
                           }
-                          title="Click to toggle monthly rows"
+                          title={t("calc.toggleMonthlyRows")}
                         >
                           <td>
                             <strong>{t("calc.yearLabel", { year: String(row.year) })}</strong>
                             {row.is_moratorium_year && (
                               <span className="moratorium-badge-sm" style={{ marginLeft: 8 }}>
-                                {row.moratorium_months}m morat.
+                                <bdi>{t("calc.moratoriumMonthsBadge", { months: String(row.moratorium_months) })}</bdi>
                               </span>
                             )}
                           </td>
@@ -1810,8 +1837,8 @@ export default function Calculator() {
                             <tr key={`m-${m.month}`} className="monthly-subrow">
                               <td>
                                 <small>
-                                  Month {m.month}
-                                  {m.note ? " (Moratorium)" : ""}
+                                  {t("calc.monthLabel", { month: String(m.month) })}
+                                  {m.note ? ` ${t("calc.moratoriumLabel")}` : ""}
                                 </small>
                               </td>
                               <td>—</td>

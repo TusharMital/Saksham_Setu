@@ -252,9 +252,9 @@ export default function Layout({ children }) {
 
   const voiceUnavailableNotice =
     !voiceInfo.supported
-      ? "Speech not supported in this browser"
+      ? t("nav.speechUnsupported")
       : !voiceInfo.available
-        ? `No browser voice for ${currentLanguageMeta.name} (${speakLang})`
+        ? t("nav.noVoiceForLang", { lang: currentLanguageMeta.name, locale: speakLang })
         : "";
 
   const voiceBtnTitle = voiceUnavailableNotice
@@ -326,7 +326,7 @@ export default function Layout({ children }) {
               <span className="voice-guide-label">{t("nav.voiceGuide")}</span>
               <span className="voice-guide-status">
                 {!voiceInfo.available
-                  ? "N/A"
+                  ? t("nav.voiceNA")
                   : voiceGuideEnabled
                     ? t("nav.voiceOn")
                     : t("nav.voiceOff")}
@@ -338,11 +338,11 @@ export default function Layout({ children }) {
                 type="button"
                 className="voice-stop-btn"
                 onClick={stopAllSpeech}
-                aria-label="Stop speaking"
-                title="Stop speaking"
+                aria-label={t("nav.stopSpeaking")}
+                title={t("nav.stopSpeaking")}
               >
                 <Icon name="close" size={14} />
-                <span>Stop</span>
+                <span>{t("nav.stopSpeaking")}</span>
               </button>
             )}
 
@@ -373,13 +373,13 @@ export default function Layout({ children }) {
                       type="text"
                       value={langQuery}
                       onChange={(e) => setLangQuery(e.target.value)}
-                      placeholder="Search 23 languages..."
-                      aria-label="Search language"
+                      placeholder={t("nav.searchLangPlaceholder")}
+                      aria-label={t("nav.searchLangPlaceholder")}
                     />
                   </div>
                   <ul className="lang-options-list" role="listbox" aria-label="Supported languages">
                     {filteredLanguages.length === 0 ? (
-                      <li className="lang-empty">No matching language</li>
+                      <li className="lang-empty">{t("nav.noMatchingLang")}</li>
                     ) : (
                       filteredLanguages.map((item) => {
                         const selected = item.code === lang;

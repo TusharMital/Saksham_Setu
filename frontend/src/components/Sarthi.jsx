@@ -63,68 +63,36 @@ const CHANNEL_META = {
   },
 };
 
-const ADVISOR_QUESTIONS = {
-  1: {
-    en: {
-      prompt:
-        "1/3: Are you comfortable registering and uploading documents online on an official portal, or do you prefer face-to-face help from a bank officer?",
+function getAdvisorQuestion(step, t) {
+  if (step === 1) {
+    return {
+      prompt: t("chat.advisorQ1"),
       options: [
-        { id: "online", label: "Comfortable applying online" },
-        { id: "in_person", label: "Prefer in-person bank help" },
-        { id: "either", label: "Either works for me" },
+        { id: "online", label: t("chat.advisorQ1OptOnline") },
+        { id: "in_person", label: t("chat.advisorQ1OptInPerson") },
+        { id: "either", label: t("chat.advisorQ1OptEither") },
       ],
-    },
-    hi: {
-      prompt:
-        "1/3: क्या आप आधिकारिक पोर्टल पर ऑनलाइन पंजीकरण और दस्तावेज़ अपलोड करने में सहज हैं, या बैंक अधिकारी से आमने-सामने मदद लेना पसंद करेंगे?",
+    };
+  }
+  if (step === 2) {
+    return {
+      prompt: t("chat.advisorQ2"),
       options: [
-        { id: "online", label: "ऑनलाइन आवेदन करने में सहज हूँ" },
-        { id: "in_person", label: "बैंक में आमने-सामने मदद पसंद है" },
-        { id: "either", label: "दोनों में से कोई भी ठीक है" },
+        { id: "ready", label: t("chat.advisorQ2OptReady") },
+        { id: "missing_few", label: t("chat.advisorQ2OptMissing") },
+        { id: "need_help", label: t("chat.advisorQ2OptHelp") },
       ],
-    },
-  },
-  2: {
-    en: {
-      prompt:
-        "2/3: Do you already have your Aadhaar, PAN, caste/income certificate, and basic project details ready right now?",
-      options: [
-        { id: "ready", label: "Yes, all documents ready" },
-        { id: "missing_few", label: "Missing 1–2 documents" },
-        { id: "need_help", label: "Need help preparing them" },
-      ],
-    },
-    hi: {
-      prompt:
-        "2/3: क्या आपके पास आधार, पैन, जाति/आय प्रमाणपत्र और परियोजना का बुनियादी विवरण अभी तैयार है?",
-      options: [
-        { id: "ready", label: "हाँ, सभी दस्तावेज़ तैयार हैं" },
-        { id: "missing_few", label: "1–2 दस्तावेज़ कम हैं" },
-        { id: "need_help", label: "तैयार करने में मदद चाहिए" },
-      ],
-    },
-  },
-  3: {
-    en: {
-      prompt:
-        "3/3: Is there a partner bank branch or CSC/SCA center near your PIN code that you can visit easily?",
-      options: [
-        { id: "nearby", label: "Yes, branch is nearby" },
-        { id: "from_home", label: "No, prefer applying from home" },
-        { id: "not_sure", label: "Not sure" },
-      ],
-    },
-    hi: {
-      prompt:
-        "3/3: क्या आपके पिन कोड के पास कोई साझेदार बैंक शाखा या CSC/SCA केंद्र है जहाँ आप आसानी से जा सकते हैं?",
-      options: [
-        { id: "nearby", label: "हाँ, पास में शाखा है" },
-        { id: "from_home", label: "नहीं, घर से आवेदन करना बेहतर है" },
-        { id: "not_sure", label: "निश्चित नहीं हूँ" },
-      ],
-    },
-  },
-};
+    };
+  }
+  return {
+    prompt: t("chat.advisorQ3"),
+    options: [
+      { id: "nearby", label: t("chat.advisorQ3OptNearby") },
+      { id: "from_home", label: t("chat.advisorQ3OptHome") },
+      { id: "not_sure", label: t("chat.advisorQ3OptUnsure") },
+    ],
+  };
+}
 
 function normalizeAvailableChannels(raw) {
   if (!Array.isArray(raw)) return [];
@@ -288,7 +256,7 @@ export default function Sarthi() {
       const schemeCode = detail.schemeCode || "";
       const schemeName = detail.schemeName || schemeCode;
       const availableChannels = normalizeAvailableChannels(detail.availableChannels);
-      const q1Copy = (lang === "hi" ? ADVISOR_QUESTIONS[1].hi : ADVISOR_QUESTIONS[1].en).prompt;
+      const q1Copy = getAdvisorQuestion(1, t).prompt;
 
       cancelSpeech();
       setSpeakingId(null);
@@ -304,6 +272,9 @@ export default function Sarthi() {
         messages: [{ role: "assistant", content: q1Copy }],
         recommendation: null,
       });
+      if (autoSpeak && voiceInfo.available && q1Copy) {
+        speakMessage("advisor-q1", q1Copy);
+      }
 
       setTimeout(() => {
         (drawerRef.current || widgetRef.current)?.scrollIntoView?.({
@@ -377,13 +348,16 @@ export default function Sarthi() {
 
     if (currentStep < 3) {
       const nextStep = currentStep + 1;
-      const qCopy = (lang === "hi" ? ADVISOR_QUESTIONS[nextStep].hi : ADVISOR_QUESTIONS[nextStep].en).prompt;
+      const qCopy = getAdvisorQuestion(nextStep, t).prompt;
       setAdvisor({
         ...advisor,
         step: nextStep,
         answers: nextAnswers,
         messages: [...nextMessages, { role: "assistant", content: qCopy }],
       });
+      if (autoSpeak && voiceInfo.available && qCopy) {
+        speakMessage(`advisor-q${nextStep}`, qCopy);
+      }
       return;
     }
 
@@ -401,6 +375,9 @@ export default function Sarthi() {
       messages: nextMessages,
       recommendation,
     });
+    if (autoSpeak && voiceInfo.available && recommendation?.reason) {
+      speakMessage("advisor-rec", `${recommendation.channelLabel}. ${recommendation.reason}`);
+    }
   };
 
   const handleHighlightRecommendation = () => {
@@ -504,12 +481,9 @@ export default function Sarthi() {
       ? "नमस्ते! मैं सारथी हूँ। मैं आपको योजनाएँ खोजने, आवश्यक दस्तावेज़ समझने और ऋण आवेदन में सहायता कर सकता हूँ।"
       : "Namaste! I’m Sarthi, your GovTech scheme advisor. Ask me anything about loans, subsidies, documents, or bank branches.";
 
-  const isHi = lang === "hi";
   const activeAdvisorQ =
     advisor && advisor.step !== "done"
-      ? isHi
-        ? ADVISOR_QUESTIONS[advisor.step]?.hi
-        : ADVISOR_QUESTIONS[advisor.step]?.en
+      ? getAdvisorQuestion(advisor.step, t)
       : null;
 
   return (
@@ -561,7 +535,7 @@ export default function Sarthi() {
                 }
               >
                 <Icon name="speaker" size={15} />
-                <span>{autoSpeak ? "Auto" : "Mute"}</span>
+                <span>{autoSpeak ? t("chat.auto") : t("chat.mute")}</span>
               </button>
               <button
                 type="button"
@@ -592,19 +566,15 @@ export default function Sarthi() {
             <div className="sarthi-advisor-bar">
               <span className="advisor-progress-pill">
                 {advisor.step === "done"
-                  ? isHi
-                    ? `सुझाव तैयार • ${advisor.schemeCode}`
-                    : `Recommendation Ready • ${advisor.schemeCode}`
-                  : isHi
-                    ? `प्रश्न ${advisor.step} / 3 • ${advisor.schemeCode}`
-                    : `Question ${advisor.step} of 3 • ${advisor.schemeCode}`}
+                  ? `${t("chat.advisorReady")} • ${advisor.schemeCode}`
+                  : `${t("chat.advisorQuestionProgress", { step: String(advisor.step) })} • ${advisor.schemeCode}`}
               </span>
               <button
                 type="button"
                 className="advisor-cancel-link"
                 onClick={() => setAdvisor(null)}
               >
-                {isHi ? "रद्द करें / सामान्य चैट" : "Cancel / Exit Advisor"}
+                {t("chat.advisorCancel")}
               </button>
             </div>
           )}
@@ -640,14 +610,10 @@ export default function Sarthi() {
                     <div className="sarthi-rec-card">
                       <div className="sarthi-rec-head">
                         <Icon name="sparkles" size={16} />
-                        <span>
-                          {isHi ? "सारथी का अनुशंसित रास्ता" : "Sarthi Recommended Option"}
-                        </span>
+                        <span>{t("chat.advisorRecTitle")}</span>
                       </div>
                       <h4>{advisor.recommendation.channelLabel}</h4>
-                      <p className="sarthi-rec-why-label">
-                        {isHi ? "यह रास्ता आपके लिए सबसे आसान क्यों है:" : "Why this path is smoothest for you:"}
-                      </p>
+                      <p className="sarthi-rec-why-label">{t("chat.advisorWhyLabel")}</p>
                       <p className="sarthi-rec-reason">{advisor.recommendation.reason}</p>
                       <div className="sarthi-rec-card-actions">
                         <button
@@ -656,9 +622,7 @@ export default function Sarthi() {
                           onClick={handleHighlightRecommendation}
                         >
                           <Icon name="checkCircle" size={14} />
-                          <span>
-                            {isHi ? "अनुशंसित विकल्प हाइलाइट करें" : "Highlight Recommended Option"}
-                          </span>
+                          <span>{t("chat.advisorHighlightBtn")}</span>
                         </button>
                         {advisor.recommendation.isBranchPath && (
                           <button
@@ -667,9 +631,7 @@ export default function Sarthi() {
                             onClick={handleFindNearestBranch}
                           >
                             <Icon name="location" size={14} />
-                            <span>
-                              {isHi ? "नज़दीकी शाखा खोजें →" : "Find Nearest Branch →"}
-                            </span>
+                            <span>{t("chat.advisorFindBranchBtn")}</span>
                           </button>
                         )}
                       </div>
@@ -678,7 +640,7 @@ export default function Sarthi() {
                         className="advisor-cancel-link advisor-exit-footer"
                         onClick={() => setAdvisor(null)}
                       >
-                        {isHi ? "रद्द करें / सामान्य सारथी चैट पर जाएँ" : "Cancel / Exit Advisor"}
+                        {t("chat.advisorCancel")}
                       </button>
                     </div>
                   </div>
@@ -696,7 +658,7 @@ export default function Sarthi() {
                         onClick={() => speakMessage("welcome", welcomeText)}
                       >
                         <Icon name={speakingId === "welcome" ? "close" : "speaker"} size={14} />{" "}
-                        {speakingId === "welcome" ? "Stop" : lang === "hi" ? "सुनें" : "Listen"}
+                        {speakingId === "welcome" ? t("chat.stop") : t("chat.listen")}
                       </button>
                     )}
                   </div>
@@ -711,10 +673,10 @@ export default function Sarthi() {
                           type="button"
                           className="speech-listen-btn"
                           onClick={() => speakMessage(i, m.content)}
-                          aria-label={speakingId === i ? "Stop reading message" : "Replay message aloud"}
+                          aria-label={speakingId === i ? t("chat.stop") : t("chat.replay")}
                         >
                           <Icon name={speakingId === i ? "close" : "speaker"} size={13} />{" "}
-                          {speakingId === i ? "Stop" : "Replay"}
+                          {speakingId === i ? t("chat.stop") : t("chat.replay")}
                         </button>
                       )}
                     </div>
@@ -734,7 +696,7 @@ export default function Sarthi() {
                 {history.length === 0 && (
                   <div className="chat-suggestions-box">
                     <span className="suggestions-label">
-                      {lang === "hi" ? "सुझाए गए प्रश्न:" : "Suggested Questions:"}
+                      {t("chat.suggestedQuestions")}
                     </span>
                     {[t("chat.suggest1"), t("chat.suggest2"), t("chat.suggest3")].map((s) => (
                       <button key={s} className="suggestion-pill" type="button" onClick={() => send(s)}>
@@ -772,7 +734,7 @@ export default function Sarthi() {
             </button>
             <input
               aria-label={t("chat.placeholder")}
-              placeholder={recording ? "Listening..." : t("chat.placeholder")}
+              placeholder={recording ? t("chat.listening") : t("chat.placeholder")}
               value={input}
               onChange={(e) => setInput(e.target.value)}
             />

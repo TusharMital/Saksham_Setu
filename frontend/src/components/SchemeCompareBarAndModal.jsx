@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "./Icon.jsx";
 import { api } from "../api.js";
-import { useI18n } from "../i18n.jsx";
+import { useI18n, useTranslatedSchemes } from "../i18n.jsx";
 import {
   CHANNEL_LABELS,
   computeClientEmi,
@@ -24,6 +24,7 @@ export default function SchemeCompareBarAndModal({
 }) {
   const { t } = useI18n();
   const navigate = useNavigate();
+  const translatedCompared = useTranslatedSchemes(comparedSchemes);
   const [compareDetails, setCompareDetails] = useState({});
   const [compareLoading, setCompareLoading] = useState(false);
 
@@ -94,7 +95,7 @@ export default function SchemeCompareBarAndModal({
                 type="button"
                 className="btn btn-primary"
                 disabled={compareCodes.length < 2}
-                title={compareCodes.length < 2 ? "Select at least 2 schemes to compare" : undefined}
+                title={compareCodes.length < 2 ? t("compare.minSelectHint") : undefined}
                 onClick={() => setCompareOpen(true)}
               >
                 <span>{t("results.compareSelected", { count: String(compareCodes.length) })}</span>
@@ -105,22 +106,22 @@ export default function SchemeCompareBarAndModal({
         </div>
       )}
 
-      {compareOpen && comparedSchemes.length >= 2 && (
+      {compareOpen && translatedCompared.length >= 2 && (
         <div
           className="split-compare-overlay"
           role="dialog"
           aria-modal="true"
-          aria-label="Scheme Side-by-Side Comparison"
+          aria-label={t("compare.eyebrow")}
         >
           <div className="split-compare-window">
             <header className="split-compare-header">
               <div>
-                <span className="eyebrow">SIDE-BY-SIDE SCHEME COMPARISON</span>
-                <h2>Comparing {comparedSchemes.length} Schemes</h2>
+                <span className="eyebrow">{t("compare.eyebrow")}</span>
+                <h2>{t("compare.title", { count: String(translatedCompared.length) })}</h2>
                 <p>
-                  Loan Basis:{" "}
+                  {t("compare.loanBasis")}{" "}
                   <strong>
-                    ₹{Number(loanAmountBasis || 500000).toLocaleString("en-IN")}
+                    <bdi>₹{Number(loanAmountBasis || 500000).toLocaleString("en-IN")}</bdi>
                   </strong>
                   {profileSummary ? ` • ${profileSummary}` : ""}
                 </p>
@@ -137,9 +138,9 @@ export default function SchemeCompareBarAndModal({
 
             <div
               className="split-compare-columns"
-              style={{ "--compare-cols": comparedSchemes.length }}
+              style={{ "--compare-cols": translatedCompared.length }}
             >
-              {comparedSchemes.map((s) => {
+              {translatedCompared.map((s) => {
                 const detail = compareDetails[s.code];
                 const principal =
                   detail?.emi?.principal || getSchemeDefaultPrincipal(s, loanAmountBasis);
@@ -186,71 +187,71 @@ export default function SchemeCompareBarAndModal({
                       <small className="split-col-agency">{s.agency}</small>
 
                       <section className="split-section">
-                        <h4>Summary</h4>
+                        <h4>{t("compare.summary")}</h4>
                         <dl className="split-kv-list">
                           <div>
-                            <dt>{s.score ? "Match Score" : "Categories"}</dt>
+                            <dt>{s.score ? t("compare.matchScore") : t("compare.categories")}</dt>
                             <dd>
                               <strong>
                                 {s.score
                                   ? `${s.score}%`
-                                  : (s.eligible_categories || []).join(", ") || "All"}
+                                  : (s.eligible_categories || []).join(", ") || t("allSchemes.allOption")}
                               </strong>
                             </dd>
                           </div>
                           <div>
-                            <dt>Interest Rate</dt>
+                            <dt>{t("compare.interestRate")}</dt>
                             <dd className="text-forest">
-                              <strong>{s.interest_rate}% p.a.</strong>
+                              <strong><bdi>{s.interest_rate}% p.a.</bdi></strong>
                             </dd>
                           </div>
                           <div>
-                            <dt>Max Loan Limit</dt>
+                            <dt>{t("compare.maxLoanLimit")}</dt>
                             <dd>
-                              <strong>{formatMoney(s.max_loan)}</strong>
+                              <strong><bdi>{formatMoney(s.max_loan)}</bdi></strong>
                             </dd>
                           </div>
                           <div>
-                            <dt>Tenure & Moratorium</dt>
+                            <dt>{t("compare.tenureMoratorium")}</dt>
                             <dd>
-                              {s.tenure_months}m ({s.moratorium_months}m moratorium)
+                              <bdi>{t("results.tenureFormat", { tenure: String(s.tenure_months), moratorium: String(s.moratorium_months) })}</bdi>
                             </dd>
                           </div>
                         </dl>
                         <p className="split-sub-note">
-                          <strong>Subsidy / Margin:</strong>{" "}
+                          <strong>{t("compare.subsidyMargin")}</strong>{" "}
                           {subsidyText || `${s.subsidy_percent || 0}%`}
                         </p>
                         {s.interest_rate_note && (
                           <p className="split-sub-note">
-                            <strong>Rate Terms:</strong> {s.interest_rate_note}
+                            <strong>{t("compare.rateTerms")}</strong> {s.interest_rate_note}
                           </p>
                         )}
                       </section>
 
                       <section className="split-section">
-                        <h4>EMI Details {compareLoading && !detail ? "(updating…)" : ""}</h4>
+                        <h4>{t("compare.emiDetails")} {compareLoading && !detail ? t("compare.updating") : ""}</h4>
                         <div className="split-emi-kpis">
                           <div>
-                            <small>Monthly EMI</small>
+                            <small>{t("compare.monthlyEmi")}</small>
                             <strong className="text-saffron">
-                              ₹{Number(monthlyEmi).toLocaleString("en-IN")}
+                              <bdi>₹{Number(monthlyEmi).toLocaleString("en-IN")}</bdi>
                             </strong>
                           </div>
                           <div>
-                            <small>Total Interest</small>
-                            <strong>₹{Number(totalInterest).toLocaleString("en-IN")}</strong>
+                            <small>{t("compare.totalInterest")}</small>
+                            <strong><bdi>₹{Number(totalInterest).toLocaleString("en-IN")}</bdi></strong>
                           </div>
                           <div>
-                            <small>Total Payable</small>
-                            <strong>₹{Number(totalPayable).toLocaleString("en-IN")}</strong>
+                            <small>{t("compare.totalPayable")}</small>
+                            <strong><bdi>₹{Number(totalPayable).toLocaleString("en-IN")}</bdi></strong>
                           </div>
                         </div>
 
-                        <div className="ratio-bar-wrap" aria-label="Principal vs Interest Ratio">
+                        <div className="ratio-bar-wrap" aria-label={t("calc.ratioLabel")}>
                           <div className="ratio-bar-labels">
-                            <span>Principal {principalPct}%</span>
-                            <span>Interest {interestPct}%</span>
+                            <span>{t("compare.principalPct", { pct: String(principalPct) })}</span>
+                            <span>{t("compare.interestPct", { pct: String(interestPct) })}</span>
                           </div>
                           <div className="ratio-bar-track">
                             <div
@@ -266,7 +267,7 @@ export default function SchemeCompareBarAndModal({
                       </section>
 
                       <section className="split-section">
-                        <h4>Important Notes & Channels</h4>
+                        <h4>{t("compare.notesChannels")}</h4>
                         {s.key_highlights?.length > 0 && (
                           <ul className="split-notes-list highlights">
                             {s.key_highlights.slice(0, 3).map((h, i) => (

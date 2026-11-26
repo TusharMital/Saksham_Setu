@@ -11,6 +11,7 @@ from django.conf import settings
 from django.core.cache import cache
 
 from core.geo import (
+    BANK_BACKEND_DEFAULTS,
     INDIAN_PIN_RE,
     coords_from_pin,
     haversine_km,
@@ -18,6 +19,7 @@ from core.geo import (
     lookup_pin_details,
     normalize_indian_state,
 )
+from core.i18n_templates import fmt_tpl, get_section_templates
 from core.models import Branch, LoanScheme
 
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
@@ -482,15 +484,16 @@ def _provided_schemes_for_channels(channels, all_schemes):
     return out
 
 
-def _institution_label(inst_type):
+def _institution_label(inst_type, tpl=None):
+    t = tpl or BANK_BACKEND_DEFAULTS
     labels = {
-        "PSB": "Public Sector Bank",
-        "RRB": "Regional Rural Bank",
-        "SCA": "State Channelising Agency",
-        "MFI": "NBFC-MFI",
-        "PORTAL": "Official Govt Portal",
+        "PSB": t["labelPSB"],
+        "RRB": t["labelRRB"],
+        "SCA": t["labelSCA"],
+        "MFI": t["labelMFI"],
+        "PORTAL": t["labelPORTAL"],
     }
-    return labels.get(inst_type, "Partner Bank")
+    return labels.get(inst_type, t["labelDefault"])
 
 
 def _collect_local_branches_for_radius(
@@ -503,8 +506,10 @@ def _collect_local_branches_for_radius(
     directory,
     db_branches,
     loc_meta,
+    lang="en",
 ):
     """Collect Overpass + directory branches strictly within effective_radius km."""
+    tpl = get_section_templates("bankBackend", BANK_BACKEND_DEFAULTS, lang=lang)
     osm_branches, overpass_ok = fetch_overpass_banks(user_lat, user_lng, effective_radius)
 
     branches_by_inst = {}
@@ -590,7 +595,7 @@ def _collect_local_branches_for_radius(
                 "institution_name": inst["name"] if inst else ob["name"],
                 "short_code": inst["short_code"] if inst else "BANK",
                 "institution_type": inst_type,
-                "institution_label": _institution_label(inst_type),
+                "institution_label": _institution_label(inst_type, tpl),
                 "out_of_local_radius": False,
                 "address": address,
                 "district": branch_summary["district"],
@@ -623,8 +628,22 @@ def _collect_local_branches_for_radius(
                     "scheme_supported": not scheme_channels or bool(set(supported_channels) & scheme_channels),
                     "npa_low": True,
                     "color": "green",
+                    "labels": {
+                        "funds": tpl["healthFunds"],
+                        "scheme": (
+                            tpl["healthScheme"]
+                            if (not scheme_channels or bool(set(supported_channels) & scheme_channels))
+                            else tpl["healthNoScheme"]
+                        ),
+                        "npa": tpl["healthLowNpa"],
+                    },
                 },
-                "why": f"Live branch {dist} km away; matched to {inst['name'] if inst else 'partner bank'} supporting {', '.join(supported_channels[:3])}.",
+                "why": fmt_tpl(
+                    tpl["whyLiveOsm"],
+                    dist=dist,
+                    inst=inst["name"] if inst else tpl["labelDefault"],
+                    channels=", ".join(supported_channels[:3]),
+                ),
             }
         )
 
@@ -700,9 +719,11 @@ def _collect_local_branches_for_radius(
                 "fund_quota_crore": db_b.fund_quota_crore,
                 "scheme_supported": scheme_supported,
                 "npa_percent": db_b.npa_percent,
-            }
+            },
+            lang=lang,
         )
 
+        inst_type_label = _institution_label(inst_type, tpl)
         all_branch_records.append(
             {
                 "id": f"db-{db_b.id}",
@@ -712,7 +733,7 @@ def _collect_local_branches_for_radius(
                 "institution_name": inst["name"] if inst else db_b.name,
                 "short_code": inst["short_code"] if inst else db_b.partner_type,
                 "institution_type": inst_type,
-                "institution_label": _institution_label(inst_type),
+                "institution_label": inst_type_label,
                 "out_of_local_radius": False,
                 "address": db_b.address,
                 "district": db_b.city,
@@ -739,7 +760,13 @@ def _collect_local_branches_for_radius(
                 "fund_quota_crore": db_b.fund_quota_crore,
                 "npa_percent": db_b.npa_percent,
                 "health": health,
-                "why": f"Partner {inst_type} desk ({dist} km away) • Fund quota ₹{db_b.fund_quota_crore} Cr • NPA {db_b.npa_percent}%.",
+                "why": fmt_tpl(
+                    tpl["whyDirectory"],
+                    instType=inst_type_label,
+                    dist=dist,
+                    quota=db_b.fund_quota_crore,
+                    npa=db_b.npa_percent,
+                ),
             }
         )
 
@@ -762,8 +789,10 @@ def live_search_banks_and_portals(
     scheme=None,
     radius_km=10,
     resolved_location=None,
+    lang="en",
 ):
     """Combine Overpass live branches, local DB branches, and official portals strictly within radius."""
+    tpl = get_section_templates("bankBackend", BANK_BACKEND_DEFAULTS, lang=lang)
     r_km = max(1, min(50, int(radius_km or 10)))
     directory = load_bank_portals_directory()
     all_schemes = list(LoanScheme.objects.all())
@@ -788,6 +817,7 @@ def live_search_banks_and_portals(
         directory,
         db_branches,
         loc_meta,
+        lang=lang,
     )
 
     # Auto-expand once to 25 km if 0 branches were found within 5 km or 10 km
@@ -804,6 +834,7 @@ def live_search_banks_and_portals(
             directory,
             db_branches,
             loc_meta,
+            lang=lang,
         )
 
     # Sort each institution's all_branches by distance
@@ -835,7 +866,7 @@ def live_search_banks_and_portals(
         ])
 
     empty_message = (
-        "No physical bank branches mapped within 25 km of this PIN/location — you can apply directly via the Official Government Portals tab above"
+        tpl["empty25km"]
         if len(filtered_branches) == 0
         else ""
     )
@@ -872,7 +903,7 @@ def live_search_banks_and_portals(
                 "institution_name": entry["name"],
                 "short_code": entry["short_code"],
                 "institution_type": "PORTAL",
-                "institution_label": "Official Govt Portal",
+                "institution_label": _institution_label("PORTAL", tpl),
                 "address": entry.get("headquarters", "Online National Portal"),
                 "district": "",
                 "state": (scheme.applicable_states[0] if scheme and scheme.applicable_states else "All India"),
@@ -906,8 +937,16 @@ def live_search_banks_and_portals(
                     "scheme_supported": True,
                     "npa_low": True,
                     "color": "green",
+                    "labels": {
+                        "funds": tpl["healthFunds"],
+                        "scheme": tpl["healthScheme"],
+                        "npa": tpl["healthLowNpa"],
+                    },
                 },
-                "why": f"Official online application portal for {scheme_code or 'eligible government schemes'}.",
+                "why": fmt_tpl(
+                    tpl["whyPortal"],
+                    code=scheme_code or "eligible schemes",
+                ),
             }
         )
 

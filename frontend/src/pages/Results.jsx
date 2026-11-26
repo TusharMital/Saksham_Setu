@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/Icon.jsx";
 import SchemeCompareBarAndModal from "../components/SchemeCompareBarAndModal.jsx";
+import { api } from "../api.js";
 import { useAppState } from "../state.jsx";
-import { useI18n } from "../i18n.jsx";
+import { useI18n, useTranslatedSchemes } from "../i18n.jsx";
 import {
   computeClientEmi,
   formatMoney,
@@ -11,8 +12,8 @@ import {
 } from "../utils/schemeHelpers.js";
 
 export default function Results() {
-  const { t } = useI18n();
-  const { result, form, setScheme } = useAppState();
+  const { t, lang } = useI18n();
+  const { result, setResult, form, setScheme } = useAppState();
   const [activeTab, setActiveTab] = useState("all");
   const [compareCodes, setCompareCodes] = useState([]);
   const [compareNotice, setCompareNotice] = useState("");
@@ -20,8 +21,34 @@ export default function Results() {
   const [showRejected, setShowRejected] = useState(false);
   const navigate = useNavigate();
 
-  const matched = useMemo(() => result?.matched || result?.accepted || [], [result]);
-  const rejected = useMemo(() => result?.rejected || [], [result]);
+  // Re-fetch localized rejection reasons if language changed while on Results
+  useEffect(() => {
+    if (!result || !form?.state || !form?.loan_amount) return;
+    if ((result.language || "en") === lang) return;
+    let cancelled = false;
+    api
+      .recommend({
+        ...form,
+        age: Number(form.age),
+        annual_family_income: Number(form.annual_family_income),
+        loan_amount: Number(form.loan_amount),
+        project_cost: Number(form.project_cost || form.loan_amount),
+        lang,
+      })
+      .then((res) => {
+        if (!cancelled && res) setResult(res);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang]);
+
+  const rawMatched = useMemo(() => result?.matched || result?.accepted || [], [result]);
+  const rawRejected = useMemo(() => result?.rejected || [], [result]);
+  const matched = useTranslatedSchemes(rawMatched);
+  const rejected = useTranslatedSchemes(rawRejected);
 
   const userState = form.state || "State";
   const centralSchemes = useMemo(() => matched.filter((s) => (s.level || "central") === "central"), [matched]);
@@ -57,7 +84,7 @@ export default function Results() {
       <div className="page-shell text-center" style={{ padding: "4rem 1rem" }}>
         <h2>{t("results.empty")}</h2>
         <p style={{ color: "var(--slate)", margin: "1rem 0 2rem" }}>
-          Please complete the 3-step eligibility check first.
+          {t("results.completeCheckFirst")}
         </p>
         <button className="btn btn-primary btn-lg" type="button" onClick={() => navigate("/form")}>
           <Icon name="search" size={20} />
@@ -84,7 +111,7 @@ export default function Results() {
       {/* Results Header + Profile Chip */}
       <div className="results-head">
         <div className="page-title" style={{ marginBottom: 0 }}>
-          <span className="eyebrow">YOUR RESULTS</span>
+          <span className="eyebrow">{t("results.eyebrow")}</span>
           <h1>{t("results.title", { count: String(matched.length) })}</h1>
           <p>{t("results.subtitle")}</p>
         </div>
@@ -92,7 +119,7 @@ export default function Results() {
         <div className="profile-chip">
           <Icon name="user" size={16} />
           <div>
-            <span>Profile: </span>
+            <span>{t("results.profileLabel")} </span>
             <strong>
               {form.state} • {form.caste_category || "General"} •{" "}
               <bdi>₹{Number(form.loan_amount || 0).toLocaleString("en-IN")}</bdi>
@@ -153,7 +180,7 @@ export default function Results() {
         <div className="empty-tab-card">
           <p>
             {activeTab === "state"
-              ? `No state-specific schemes matched your profile in ${userState}. Switch to "All Eligible" or "Central Govt" to view nationwide schemes, or inspect the Not Selected section below.`
+              ? t("results.emptyStateTab", { state: userState })
               : t("results.empty")}
           </p>
         </div>
@@ -217,7 +244,7 @@ export default function Results() {
                         <span className="metric-note-clamp">{s.subsidy_margin_note}</span>
                       ) : (
                         <>
-                          <bdi>{s.subsidy_percent}%</bdi> margin money
+                          <bdi>{s.subsidy_percent}%</bdi> {t("results.marginMoney")}
                         </>
                       ),
                       "var(--saffron)"
@@ -225,13 +252,16 @@ export default function Results() {
                     {metricRow(
                       "calendar",
                       t("results.tenure"),
-                      `${s.tenure_months}m tenure (${s.moratorium_months}m moratorium)`
+                      t("results.tenureFormat", {
+                        tenure: String(s.tenure_months),
+                        moratorium: String(s.moratorium_months),
+                      })
                     )}
                     {metricRow(
                       "calc",
                       t("results.emi"),
                       <>
-                        <bdi>₹{emiCalc.monthlyEmi.toLocaleString("en-IN")}</bdi> / month
+                        <bdi>₹{emiCalc.monthlyEmi.toLocaleString("en-IN")}</bdi> {t("results.perMonth")}
                       </>,
                       "var(--saffron-dark)"
                     )}
@@ -325,7 +355,7 @@ export default function Results() {
                     <ul className="rejected-reasons-list">
                       {reasons.map((pt, i) => (
                         <li key={i}>
-                          <span className="reason-tag">Disqualified:</span> {pt}
+                          <span className="reason-tag">{t("results.disqualifiedTag")}</span> {pt}
                         </li>
                       ))}
                     </ul>

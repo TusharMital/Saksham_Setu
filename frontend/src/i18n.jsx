@@ -6,6 +6,7 @@ import { api } from "./api.js";
 const LANG_STORAGE_KEY = "ss-lang";
 const BUNDLE_CACHE_PREFIX = "ss-i18n-bundle-v1-";
 const LANGUAGES_CACHE_KEY = "ss-i18n-languages-v1";
+const SCHEME_CACHE_PREFIX = "ss-scheme-i18n-v1-";
 
 const LOCAL_DICTS = { en, hi };
 
@@ -221,4 +222,143 @@ export function I18nProvider({ children }) {
 
 export function useI18n() {
   return useContext(I18nContext);
+}
+
+const memorySchemeTransCache = new Map();
+
+function readSchemeTransCache(lang) {
+  if (memorySchemeTransCache.has(lang)) return memorySchemeTransCache.get(lang);
+  try {
+    const raw = localStorage.getItem(`${SCHEME_CACHE_PREFIX}${lang}`);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object") {
+        memorySchemeTransCache.set(lang, parsed);
+        return parsed;
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+  return {};
+}
+
+function writeSchemeTransCache(lang, entries) {
+  const existing = readSchemeTransCache(lang);
+  const merged = { ...existing, ...entries };
+  memorySchemeTransCache.set(lang, merged);
+  try {
+    localStorage.setItem(`${SCHEME_CACHE_PREFIX}${lang}`, JSON.stringify(merged));
+  } catch {
+    /* ignore quota */
+  }
+  return merged;
+}
+
+function mergeSchemeTranslation(scheme, tr) {
+  if (!scheme || !tr) return scheme;
+  return {
+    ...scheme,
+    name: tr.name || scheme.name,
+    agency: tr.agency || scheme.agency,
+    overview: tr.overview || scheme.overview,
+    description: tr.overview || scheme.description,
+    interest_rate_note: tr.interest_rate_note || scheme.interest_rate_note,
+    subsidy_margin_note: tr.subsidy_margin_note || scheme.subsidy_margin_note,
+    subsidy_note: tr.subsidy_note || tr.subsidy_margin_note || scheme.subsidy_note,
+    key_highlights:
+      Array.isArray(tr.key_highlights) && tr.key_highlights.length
+        ? tr.key_highlights
+        : scheme.key_highlights,
+    required_documents:
+      Array.isArray(tr.required_documents) && tr.required_documents.length
+        ? tr.required_documents
+        : scheme.required_documents,
+    documents:
+      Array.isArray(tr.required_documents) && tr.required_documents.length
+        ? tr.required_documents
+        : scheme.documents,
+    important_notes:
+      Array.isArray(tr.important_notes) && tr.important_notes.length
+        ? tr.important_notes
+        : scheme.important_notes,
+  };
+}
+
+export function useTranslatedSchemes(schemes) {
+  const { lang } = useI18n();
+  const [transMap, setTransMap] = useState(() =>
+    lang === "en" ? {} : readSchemeTransCache(lang)
+  );
+  const inflightRef = useRef(new Set());
+
+  const codesKey = useMemo(() => {
+    if (!Array.isArray(schemes)) return "";
+    return schemes
+      .map((s) => s?.code)
+      .filter(Boolean)
+      .join(",");
+  }, [schemes]);
+
+  useEffect(() => {
+    if (lang === "en" || !codesKey) {
+      setTransMap({});
+      return;
+    }
+
+    const cached = readSchemeTransCache(lang);
+    setTransMap(cached);
+
+    const codes = codesKey.split(",").filter(Boolean);
+    const missing = codes.filter(
+      (c) => !cached[c] && !inflightRef.current.has(`${lang}:${c}`)
+    );
+    if (missing.length === 0) return;
+
+    let cancelled = false;
+    missing.forEach((c) => inflightRef.current.add(`${lang}:${c}`));
+
+    // Fetch in batches of 20 codes to keep response latency snappy
+    const batches = [];
+    for (let i = 0; i < missing.length; i += 20) {
+      batches.push(missing.slice(i, i + 20));
+    }
+
+    Promise.all(
+      batches.map((batch) =>
+        api
+          .translateSchemes(lang, batch)
+          .then((res) => {
+            if (res?.translations && typeof res.translations === "object") {
+              const updated = writeSchemeTransCache(lang, res.translations);
+              if (!cancelled) {
+                setTransMap(updated);
+              }
+            }
+          })
+          .catch(() => {
+            /* graceful English fallback */
+          })
+          .finally(() => {
+            batch.forEach((c) => inflightRef.current.delete(`${lang}:${c}`));
+          })
+      )
+    );
+
+    return () => {
+      cancelled = true;
+    };
+  }, [lang, codesKey]);
+
+  return useMemo(() => {
+    if (!Array.isArray(schemes)) return [];
+    if (lang === "en") return schemes;
+    return schemes.map((s) => (s?.code ? mergeSchemeTranslation(s, transMap[s.code]) : s));
+  }, [schemes, lang, transMap]);
+}
+
+export function useTranslatedScheme(scheme) {
+  const arr = useMemo(() => (scheme ? [scheme] : []), [scheme]);
+  const translated = useTranslatedSchemes(arr);
+  return scheme ? translated[0] || scheme : null;
 }
