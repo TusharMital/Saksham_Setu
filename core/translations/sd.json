@@ -241,6 +241,13 @@
     "askSarthiPrompt": "پڪ ناهي ته ڪهڙو آپشن چونڊيو؟",
     "askSarthiSub": "سارٿي توهان کان 3 سادا سوال پڇي آسان ترين رستو ٻڌائي سگهي ٿو.",
     "askSarthiBtn": "سارٿي کان پڇو",
+    "selectSchemeTitle": "Select a Scheme First",
+    "selectSchemeDesc": "Official application channels, portals, and partner banks depend strictly on your chosen government scheme.",
+    "findEligibleFirstBtn": "Find Your Eligible Scheme First",
+    "applicationPathFor": "Application Path for:",
+    "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
+    "saveAndTrack": "Save Application & Get Tracking ID",
+    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "آڌار، ذات سرٽيفڪيٽ ۽ پروجيڪٽ ڪاغذن جون صاف تصويرون رکو.",
       "فون تي ڏکيو لڳي ته ڪمپيوٽر تي بينڪ پورٽل کوليو.",

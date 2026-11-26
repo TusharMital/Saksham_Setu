@@ -241,6 +241,13 @@
     "askSarthiPrompt": "कुन विकल्प छान्ने निश्चित हुनुहुन्न?",
     "askSarthiSub": "सारथीले तपाईंलाई ३ सरल प्रश्न सोधेर सबैभन्दा सजिलो बाटो बताउन सक्छ।",
     "askSarthiBtn": "सारथीलाई सोध्नुहोस्",
+    "selectSchemeTitle": "Select a Scheme First",
+    "selectSchemeDesc": "Official application channels, portals, and partner banks depend strictly on your chosen government scheme.",
+    "findEligibleFirstBtn": "Find Your Eligible Scheme First",
+    "applicationPathFor": "Application Path for:",
+    "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
+    "saveAndTrack": "Save Application & Get Tracking ID",
+    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "आधार, जात प्रमाणपत्र र परियोजना कागजातका स्पष्ट फोटो राख्नुहोस्।",
       "फोनमा गाह्रो लागेमा कम्प्युटरमा बैंक पोर्टल खोल्नुहोस्।",

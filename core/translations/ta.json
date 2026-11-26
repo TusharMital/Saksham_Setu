@@ -241,6 +241,13 @@
     "askSarthiPrompt": "எந்த வழியைத் தேர்ந்தெடுப்பது என்று உறுதியாகத் தெரியவில்லையா?",
     "askSarthiSub": "சாரதி உங்களிடம் 3 எளிய கேள்விகளைக் கேட்டு சிறந்த வழியைப் பரிந்துரைக்கும்.",
     "askSarthiBtn": "சாரதியிடம் கேள்",
+    "selectSchemeTitle": "Select a Scheme First",
+    "selectSchemeDesc": "Official application channels, portals, and partner banks depend strictly on your chosen government scheme.",
+    "findEligibleFirstBtn": "Find Your Eligible Scheme First",
+    "applicationPathFor": "Application Path for:",
+    "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
+    "saveAndTrack": "Save Application & Get Tracking ID",
+    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "ஆதார், சாதிச் சான்றிதழ் மற்றும் திட்ட ஆவணங்களின் தெளிவான புகைப்படங்களை வைத்திருங்கள்.",
       "தொலைபேசியில் சிரமமாக இருந்தால் கணினியில் வங்கித் தளத்தைத் திறக்கவும்.",

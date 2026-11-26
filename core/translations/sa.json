@@ -241,6 +241,13 @@
     "askSarthiPrompt": "कः विकल्पः चेतव्यः इति न निश्चितम्?",
     "askSarthiSub": "सारथिः भवन्तं ३ सरलान् प्रश्नान् पृष्ट्वा सुगमं मार्गं वक्तुं शक्नोति।",
     "askSarthiBtn": "सारथिं पृच्छतु",
+    "selectSchemeTitle": "Select a Scheme First",
+    "selectSchemeDesc": "Official application channels, portals, and partner banks depend strictly on your chosen government scheme.",
+    "findEligibleFirstBtn": "Find Your Eligible Scheme First",
+    "applicationPathFor": "Application Path for:",
+    "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
+    "saveAndTrack": "Save Application & Get Tracking ID",
+    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "आधारपत्रस्य, जातिप्रमाणपत्रस्य, परियोजनाप्रपत्राणां च स्पष्टचित्राणि स्थापयतु।",
       "दूरवाण्यां कठिनं चेत् सङ्गणके वित्तकोषजालपुटम् उद्घाटयतु।",

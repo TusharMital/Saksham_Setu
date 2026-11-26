@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "../components/Icon.jsx";
 import { api } from "../api.js";
@@ -6,8 +6,10 @@ import { useAppState } from "../state.jsx";
 import { useI18n } from "../i18n.jsx";
 
 function buildChannelConfig(channelKey, scheme) {
-  const officialUrl = scheme?.official_portal_url || scheme?.govt_portal_url || "https://www.jansamarth.in/";
+  const officialUrl =
+    scheme?.official_portal_url || scheme?.govt_portal_url || "https://www.jansamarth.in/";
   const bankUrl = scheme?.bank_portal_url || "";
+  const schemeQuery = scheme?.code ? `?scheme=${encodeURIComponent(scheme.code)}` : "";
 
   const configs = {
     pmsuraj: {
@@ -39,7 +41,9 @@ function buildChannelConfig(channelKey, scheme) {
         "Compare offers from participating Public & Private Sector Banks online.",
         "Download digital in-principle sanction letter and visit selected branch.",
       ],
-      externalUrl: officialUrl.includes("jansamarth.in") ? officialUrl : "https://www.jansamarth.in/",
+      externalUrl: officialUrl.includes("jansamarth.in")
+        ? officialUrl
+        : "https://www.jansamarth.in/",
       externalLabel: "Open JanSamarth Portal",
     },
     sca: {
@@ -55,7 +59,7 @@ function buildChannelConfig(channelKey, scheme) {
         "Prepare your caste, income, residence, and project report papers.",
         "Submit physical or state-portal application for concessional SCA quota.",
       ],
-      internalRoute: scheme?.code ? `/locator?scheme=${encodeURIComponent(scheme.code)}` : "/locator",
+      internalRoute: `/locator${schemeQuery}`,
       internalLabel: "Find SCA / Partner Office",
       externalUrl: officialUrl,
       externalLabel: "Visit Corporation Website",
@@ -73,8 +77,8 @@ function buildChannelConfig(channelKey, scheme) {
         "Complete your document checklist and download your project summary PDF.",
         "Meet the branch loan officer to submit the official bank form.",
       ],
-      internalRoute: scheme?.code ? `/locator?scheme=${encodeURIComponent(scheme.code)}` : "/locator",
-      internalLabel: tLabelFallback("Find My Branch"),
+      internalRoute: `/locator${schemeQuery}`,
+      internalLabel: "Find My Branch",
       externalUrl: bankUrl || undefined,
       externalLabel: bankUrl ? "Open Bank Portal" : undefined,
     },
@@ -91,7 +95,7 @@ function buildChannelConfig(channelKey, scheme) {
         "Note that MFI interest rates are higher than SCA or JanSamarth bank channels.",
         "Keep Aadhaar, caste/group KYC, and bank passbook ready.",
       ],
-      internalRoute: scheme?.code ? `/locator?scheme=${encodeURIComponent(scheme.code)}` : "/locator",
+      internalRoute: `/locator${schemeQuery}`,
       internalLabel: "Find MFI / Micro Desk",
     },
     kviconline: {
@@ -163,45 +167,73 @@ function buildChannelConfig(channelKey, scheme) {
   return configs[channelKey] || null;
 }
 
-function tLabelFallback(str) {
-  return str;
-}
-
 export default function ApplyPath() {
   const { t } = useI18n();
-  const { scheme, setScheme } = useAppState();
+  const { form, scheme, setScheme, branch, refNo, setRefNo } = useAppState();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const queryCode = searchParams.get("scheme");
-  const [loadedScheme, setLoadedScheme] = useState(() =>
-    queryCode && scheme?.code?.toUpperCase() !== queryCode.toUpperCase() ? null : scheme
-  );
-  const [loading, setLoading] = useState(Boolean(queryCode && scheme?.code?.toUpperCase() !== queryCode.toUpperCase()));
+  const queryCode = (searchParams.get("scheme") || "").trim();
+  const activeCode = queryCode || scheme?.code || "";
 
+  const [allSchemes, setAllSchemes] = useState([]);
+  const [schemeSearch, setSchemeSearch] = useState("");
+  const [loadedScheme, setLoadedScheme] = useState(() =>
+    scheme && activeCode && scheme.code?.toUpperCase() === activeCode.toUpperCase() ? scheme : null
+  );
+  const [loading, setLoading] = useState(
+    Boolean(activeCode && scheme?.code?.toUpperCase() !== activeCode.toUpperCase())
+  );
+  const [schemeError, setSchemeError] = useState("");
+  const [savingApp, setSavingApp] = useState(false);
+  const [saveNotice, setSaveNotice] = useState("");
+
+  // Load 66 schemes for searchable/grouped selector
   useEffect(() => {
-    if (!queryCode) {
-      setLoadedScheme(scheme);
+    let cancelled = false;
+    api
+      .schemes()
+      .then((res) => {
+        if (!cancelled && Array.isArray(res?.schemes)) {
+          setAllSchemes(res.schemes);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Fetch scheme details when activeCode changes
+  useEffect(() => {
+    if (!activeCode) {
+      setLoadedScheme(null);
+      setSchemeError("");
       setLoading(false);
       return;
     }
-    if (scheme && scheme.code?.toUpperCase() === queryCode.toUpperCase()) {
+    if (scheme && scheme.code?.toUpperCase() === activeCode.toUpperCase()) {
       setLoadedScheme(scheme);
+      setSchemeError("");
       setLoading(false);
       return;
     }
     let cancelled = false;
     setLoading(true);
+    setSchemeError("");
     api
-      .schemeDetail(queryCode)
+      .schemeDetail(activeCode)
       .then((res) => {
         if (!cancelled) {
           setLoadedScheme(res);
           setScheme(res);
         }
       })
-      .catch(() => {
-        if (!cancelled) setLoadedScheme(scheme);
+      .catch((err) => {
+        if (!cancelled) {
+          setLoadedScheme(null);
+          setSchemeError(err.body?.detail || err.message || `Scheme '${activeCode}' not found.`);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -209,61 +241,247 @@ export default function ApplyPath() {
     return () => {
       cancelled = true;
     };
-  }, [queryCode, scheme, setScheme]);
+  }, [activeCode, scheme, setScheme]);
 
-  const selectedScheme = loadedScheme || {
-    code: queryCode || "GENERAL",
-    name: "Select a scheme to see exact official channels",
-    available_channels: ["pmsuraj", "jansamarth", "bank"],
-    official_portal_url: "https://www.jansamarth.in/",
+  const groupedSchemes = useMemo(() => {
+    const q = schemeSearch.trim().toLowerCase();
+    const filtered = allSchemes.filter((s) => {
+      if (!q) return true;
+      return (
+        s.code.toLowerCase().includes(q) ||
+        s.name.toLowerCase().includes(q) ||
+        (s.agency || "").toLowerCase().includes(q)
+      );
+    });
+    return {
+      central: filtered.filter((s) => (s.level || "central") === "central"),
+      state: filtered.filter((s) => s.level === "state"),
+    };
+  }, [allSchemes, schemeSearch]);
+
+  const handleSelectScheme = (code) => {
+    if (!code) return;
+    navigate(`/apply?scheme=${encodeURIComponent(code)}`);
   };
 
-  const allowedChannelKeys =
-    Array.isArray(selectedScheme.available_channels) && selectedScheme.available_channels.length > 0
-      ? selectedScheme.available_channels
-      : ["bank", "state_portal"];
+  const handleSaveAndTrack = async () => {
+    setSaveNotice("");
+    if (refNo && loadedScheme?.code) {
+      navigate("/track");
+      return;
+    }
+    if (!form.full_name?.trim()) {
+      setSaveNotice(t("paths.needProfileForTrack"));
+      return;
+    }
+    setSavingApp(true);
+    try {
+      const data = await api.createApplication({
+        ...form,
+        applicant_name: form.full_name.trim(),
+        scheme_code: loadedScheme.code,
+        partner: branch?.name || "To be chosen",
+        partner_block: branch
+          ? `${branch.name}, ${branch.address}, ${branch.phone || ""}`
+          : "To be chosen",
+      });
+      setRefNo(data.ref_no);
+      navigate("/track");
+    } catch (err) {
+      setSaveNotice(err.body?.detail || err.message || "Could not save application.");
+    } finally {
+      setSavingApp(false);
+    }
+  };
 
-  const channels = allowedChannelKeys.map((k) => buildChannelConfig(k, selectedScheme)).filter(Boolean);
+  // Gate when NO scheme is selected
+  if (!activeCode || (!loading && !loadedScheme)) {
+    return (
+      <div className="page-shell apply-path-page">
+        <div className="locator-empty-gate">
+          <div className="locator-gate-icon">
+            <Icon name="building" size={30} />
+          </div>
+          <span className="eyebrow">SCHEME-DRIVEN APPLICATION PATH</span>
+          <h1>{t("paths.selectSchemeTitle")}</h1>
+          <p>{schemeError || t("paths.selectSchemeDesc")}</p>
+
+          <div className="locator-gate-controls">
+            <label htmlFor="apply-scheme-search">Search & Select from 66 Central & State Schemes</label>
+            <div className="modal-search-box" style={{ width: "100%", height: "42px", background: "#fff" }}>
+              <Icon name="search" size={16} />
+              <input
+                id="apply-scheme-search"
+                type="text"
+                placeholder="Type scheme code or name (e.g. PMMY, GBS, Stand-Up India)..."
+                value={schemeSearch}
+                onChange={(e) => setSchemeSearch(e.target.value)}
+                style={{ width: "100%" }}
+              />
+            </div>
+
+            <select
+              aria-label="Select a scheme"
+              value=""
+              onChange={(e) => handleSelectScheme(e.target.value)}
+            >
+              <option value="">-- Choose a Scheme to View Official Channels --</option>
+              {groupedSchemes.central.length > 0 && (
+                <optgroup label={`Central Govt Schemes (${groupedSchemes.central.length})`}>
+                  {groupedSchemes.central.map((s) => (
+                    <option key={s.code} value={s.code}>
+                      {s.code} — {s.name} ({s.interest_rate}% p.a.)
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+              {groupedSchemes.state.length > 0 && (
+                <optgroup label={`State Govt Schemes (${groupedSchemes.state.length})`}>
+                  {groupedSchemes.state.map((s) => (
+                    <option key={s.code} value={s.code}>
+                      {s.code} — {s.name} ({s.interest_rate}% p.a.)
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+            </select>
+
+            <div className="locator-gate-actions">
+              <Link to="/form" className="btn btn-primary btn-lg">
+                <span>{t("paths.findEligibleFirstBtn")}</span>
+                <Icon name="arrow" size={18} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const selectedScheme = loadedScheme || { code: activeCode, name: activeCode, available_channels: [] };
+  const isState = selectedScheme.level === "state";
+  const allowedChannelKeys = Array.isArray(selectedScheme.available_channels)
+    ? selectedScheme.available_channels
+    : [];
+  const channels = allowedChannelKeys
+    .map((k) => buildChannelConfig(k, selectedScheme))
+    .filter(Boolean);
 
   return (
     <div className="page-shell apply-path-page">
-      {/* Page Title */}
-      <div className="page-title">
-        <span className="eyebrow">OFFICIAL APPLICATION CHANNELS</span>
-        <h1>{t("paths.title")}</h1>
-        <p>{t("paths.subtitle")}</p>
-        <div className="scheme-tag-pill" style={{ marginTop: "12px", display: "inline-flex", flexWrap: "wrap" }}>
-          <Icon name="award" size={16} />
-          <span>
-            Selected Scheme:{" "}
+      {/* Active Scheme Context Banner */}
+      <section className="apply-scheme-context-banner">
+        <div className="apply-banner-left">
+          <div className="apply-banner-badges">
+            <span className="scheme-banner-eyebrow">
+              <Icon name="award" size={14} /> ACTIVE SCHEME APPLICATION PATH
+            </span>
+            <span className={`level-badge ${isState ? "state" : "central"}`}>
+              {isState ? t("results.stateBadge") : t("results.centralBadge")}
+            </span>
+          </div>
+          <h1>
+            {t("paths.applicationPathFor")}{" "}
             <strong>
-              {selectedScheme.code} — {selectedScheme.name}
+              {selectedScheme.name} ({selectedScheme.code})
             </strong>
-          </span>
-          {selectedScheme.code && selectedScheme.code !== "GENERAL" && (
-            <Link
-              to={`/scheme/${encodeURIComponent(selectedScheme.code)}`}
-              style={{ color: "var(--saffron)", fontWeight: 700, marginLeft: "6px" }}
-            >
-              View Scheme Details →
-            </Link>
+          </h1>
+          <p>{t("paths.subtitle")}</p>
+          {branch && (
+            <div className="apply-selected-bank-chip">
+              <Icon name="bank" size={14} />
+              <span>
+                Selected Partner: <strong>{branch.name}</strong>
+              </span>
+            </div>
           )}
         </div>
-        <div style={{ marginTop: "14px", display: "flex", gap: "12px", flexWrap: "wrap" }}>
-          <Link
-            to={
-              selectedScheme.code && selectedScheme.code !== "GENERAL"
-                ? `/locator?scheme=${encodeURIComponent(selectedScheme.code)}`
-                : "/locator"
-            }
-            className="btn btn-secondary"
+
+        <div className="apply-banner-right">
+          <select
+            aria-label="Switch scheme"
+            value={selectedScheme.code}
+            onChange={(e) => handleSelectScheme(e.target.value)}
           >
-            <Icon name="location" size={18} />
-            <span>{t("detail.findBanksPortals")}</span>
-            <Icon name="arrow" size={17} />
+            {groupedSchemes.central.length > 0 && (
+              <optgroup label="Central Govt Schemes">
+                {groupedSchemes.central.map((s) => (
+                  <option key={s.code} value={s.code}>
+                    {s.code} — {s.name}
+                  </option>
+                ))}
+              </optgroup>
+            )}
+            {groupedSchemes.state.length > 0 && (
+              <optgroup label="State Govt Schemes">
+                {groupedSchemes.state.map((s) => (
+                  <option key={s.code} value={s.code}>
+                    {s.code} — {s.name}
+                  </option>
+                ))}
+              </optgroup>
+            )}
+          </select>
+
+          <Link
+            to={`/scheme/${encodeURIComponent(selectedScheme.code)}`}
+            className="btn btn-outline btn-sm"
+          >
+            <span>View Scheme Details →</span>
           </Link>
         </div>
+      </section>
+
+      {/* Primary Sequential Next-Step Bar */}
+      <div className="apply-next-steps-bar">
+        <Link
+          to={`/locator?scheme=${encodeURIComponent(selectedScheme.code)}`}
+          className="btn btn-secondary"
+        >
+          <Icon name="location" size={18} />
+          <span>{t("paths.findBanksForScheme")}</span>
+          <Icon name="arrow" size={17} />
+        </Link>
+
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={handleSaveAndTrack}
+          disabled={savingApp || loading}
+        >
+          <Icon name="track" size={17} />
+          <span>
+            {savingApp
+              ? "Saving..."
+              : refNo
+                ? `Track Saved Application (${refNo}) →`
+                : t("paths.saveAndTrack")}
+          </span>
+        </button>
+
+        <Link to="/documents" className="btn btn-outline">
+          <Icon name="document" size={17} />
+          <span>{t("nav.documents")} & PDF</span>
+        </Link>
       </div>
+
+      {saveNotice && (
+        <div className="error-banner" style={{ marginBottom: "1.25rem" }} role="status">
+          <Icon name="alert" size={18} />
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+            <p style={{ margin: 0 }}>{saveNotice}</p>
+            <Link to="/form" className="btn btn-outline btn-sm">
+              <span>{t("nav.find")}</span>
+            </Link>
+            <Link to="/documents" className="btn btn-outline btn-sm">
+              <span>{t("nav.documents")}</span>
+            </Link>
+            <Link to="/track" className="btn btn-outline btn-sm">
+              <span>{t("nav.track")}</span>
+            </Link>
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <div className="tracker-skeleton-card">
@@ -288,7 +506,9 @@ export default function ApplyPath() {
                 <span className="path-icon-box">
                   <Icon name={ch.icon} size={24} />
                 </span>
-                <span className={`path-status-pill ${ch.recommended ? "" : "secondary"}`}>{ch.tag}</span>
+                <span className={`path-status-pill ${ch.recommended ? "" : "secondary"}`}>
+                  {ch.tag}
+                </span>
               </div>
 
               <h2>{ch.title}</h2>
@@ -312,7 +532,12 @@ export default function ApplyPath() {
 
               <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: "8px" }}>
                 {ch.externalUrl && (
-                  <a className="btn btn-primary" href={ch.externalUrl} target="_blank" rel="noreferrer">
+                  <a
+                    className="btn btn-primary"
+                    href={ch.externalUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <span>{ch.externalLabel}</span>
                     <Icon name="external" size={16} />
                   </a>
@@ -327,7 +552,11 @@ export default function ApplyPath() {
                     <Icon name="arrow" size={18} />
                   </button>
                 )}
-                <button type="button" className="btn btn-outline" onClick={() => navigate("/documents")}>
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  onClick={() => navigate("/documents")}
+                >
                   <span>{t("nav.documents")} & PDF</span>
                   <Icon name="document" size={16} />
                 </button>
@@ -346,8 +575,11 @@ export default function ApplyPath() {
           <h2>{t("paths.askSarthiPrompt")}</h2>
           <p>{t("paths.askSarthiSub")}</p>
         </div>
-        <Link to="/documents" className="btn btn-secondary">
-          <span>{t("nav.documents")}</span>
+        <Link
+          to={`/locator?scheme=${encodeURIComponent(selectedScheme.code)}`}
+          className="btn btn-secondary"
+        >
+          <span>{t("detail.findBanksPortals")}</span>
           <Icon name="arrow" size={18} />
         </Link>
       </section>

@@ -241,6 +241,13 @@
     "askSarthiPrompt": "یقین نہیں کہ کون سا راستہ منتخب کریں؟",
     "askSarthiSub": "سارتھی آپ سے 3 آسان سوالات پوچھ کر بہترین راستہ بتا سکتا ہے۔",
     "askSarthiBtn": "سارتھی سے پوچھیں",
+    "selectSchemeTitle": "Select a Scheme First",
+    "selectSchemeDesc": "Official application channels, portals, and partner banks depend strictly on your chosen government scheme.",
+    "findEligibleFirstBtn": "Find Your Eligible Scheme First",
+    "applicationPathFor": "Application Path for:",
+    "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
+    "saveAndTrack": "Save Application & Get Tracking ID",
+    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "آدھار، ذات سرٹیفکیٹ اور پروجیکٹ کاغذات کی واضح تصاویر ساتھ رکھیں۔",
       "فون پر مشکل ہو تو کمپیوٹر پر بینک پورٹل کھولیں۔",

@@ -562,3 +562,18 @@ What failed or was missing: None (new labels queued for Bhumi's final 23-languag
 Did it follow the rules? Yes.
 Next prompt it led to: Bhumi's full-site 23-language translation & polish pass (P8b), Claude security review (P9), and Render deployment.
 Screenshot file names: `docs/05_Website_Screenshots/p7d_bank_locator_live_map.png`, `docs/05_Website_Screenshots/p7d_bank_portal_more_details.png`
+
+---
+
+### P7e | Antigravity | Scheme-Driven Application Path & Streamlined Navigation
+Date: 2026-11-26
+Run by: Bhumi (25bcon2360)
+Prompt (exact text): Remove "Application Paths" from the top navbar tabs and footer links in `Layout.jsx` so `/apply` follows the same scheme-driven sequence as `/locator`: require a selected scheme (`?scheme=<code>`), show a "Select a Scheme First" picker if opened directly without a scheme, and display only the official channels available for the selected scheme with direct links between `/scheme/:code`, `/apply?scheme=<code>`, and `/locator?scheme=<code>`.
+Output summary (3 lines):
+- Removed "Application Paths" from top navbar and footer in `Layout.jsx`, leaving a focused 5-tab navigation (`Home`, `Find Scheme`, `EMI Calculator`, `Documents`, `Track`).
+- Updated `ApplyPath.jsx` to require a selected scheme (`?scheme=<code>`), render a scheme selector when accessed directly, and filter application channels strictly to the active scheme's `available_channels`.
+- Synced all 23 translation bundles; all Django tests, Vite production build, and `collectstatic` passed.
+What worked: Eliminated generic unlinked application paths so users progress naturally from eligibility matching (`/results`) → scheme details (`/scheme/:code`) → valid application channels (`/apply?scheme=<code>`) → nearby partner banks (`/locator?scheme=<code>`).
+What failed or was missing: None (new labels queued for Bhumi's final 23-language translation pass in P8b).
+Did it follow the rules? Yes.
+Next prompt it led to: Bhumi's full-site 23-language translation & polish pass (P8b), Claude security review (P9), and deployment.

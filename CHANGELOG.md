@@ -2,6 +2,12 @@
 
 All notable changes to the Saksham Setu project will be documented in this file.
 
+## [Scheme-Driven Application Paths Navigation] - 2026-11-26
+### Changed
+- Removed `"Application Paths"` (`/apply`) from the top navigation bar and footer in `frontend/src/components/Layout.jsx`, keeping `Home`, `Find Scheme`, `EMI Calculator`, `Documents`, and `Track`.
+- Made `frontend/src/pages/ApplyPath.jsx` strictly scheme-driven: displays a `"Select a Scheme First"` card with a searchable/grouped 66-scheme dropdown and `"Find Your Eligible Scheme First"` CTA when no scheme is active; when a scheme is selected, renders an Active Scheme Context Banner, only that scheme's `available_channels`, `"Find Partner Banks & Official Portals for This Scheme"` (`/locator?scheme=<code>`), and `"Save Application & Get Tracking ID"` (`/track`).
+- Synced new `paths` and `locator.choose` i18n keys across `frontend/src/locales/en.json`, `hi.json`, and all 23 `core/translations/*.json` bundles.
+
 ## [Scheme-Driven Live Bank & Portal Locator] - 2026-11-25
 ### Added
 - Created `data/bank_portals_directory.json` with verified profiles, aliases, toll-free helplines, official URLs, processing times, collateral policies, and required documents for 12 Public Sector Banks, Regional Rural Banks, State Channelising Agencies, NBFC-MFIs, and 6 Official Government Application Portals.

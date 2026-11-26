@@ -3955,6 +3955,96 @@ tr:hover td {
   box-shadow: var(--shadow-sm);
 }
 
+.apply-scheme-context-banner {
+  background: linear-gradient(120deg, #0f172a 0%, #1e293b 100%);
+  color: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-md);
+}
+.apply-banner-left {
+  flex: 1;
+  min-width: 280px;
+}
+.apply-banner-badges {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.apply-banner-left h1 {
+  font-size: 26px;
+  line-height: 1.25;
+  color: #e2e8f0;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.apply-banner-left h1 strong {
+  color: #ffffff;
+  font-weight: 800;
+}
+.apply-banner-left p {
+  font-size: 14px;
+  color: #cbd5e1;
+}
+.apply-selected-bank-chip {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(21, 128, 61, 0.25);
+  border: 1px solid rgba(134, 239, 172, 0.4);
+  color: #dcfce7;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  font-size: 12.5px;
+}
+.apply-banner-right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+.apply-banner-right select {
+  min-height: 40px;
+  max-width: 320px;
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+}
+.apply-banner-right select option,
+.apply-banner-right select optgroup {
+  color: var(--navy);
+  background: #ffffff;
+}
+.apply-banner-right .btn-outline {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+.apply-banner-right .btn-outline:hover {
+  background: #ffffff;
+  color: var(--navy);
+}
+.apply-next-steps-bar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
 .path-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

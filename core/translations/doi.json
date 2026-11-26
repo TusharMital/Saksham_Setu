@@ -241,6 +241,13 @@
     "askSarthiPrompt": "पक्का नेईं जे केह्ड़ा विकल्प चुनना ऐ?",
     "askSarthiSub": "सारथी तुंदे कोला ३ सौखे सुआल पुच्छी यै सब थमां सौखा रस्ता दस्सी सकदा ऐ।",
     "askSarthiBtn": "सारथी गी पुच्छो",
+    "selectSchemeTitle": "Select a Scheme First",
+    "selectSchemeDesc": "Official application channels, portals, and partner banks depend strictly on your chosen government scheme.",
+    "findEligibleFirstBtn": "Find Your Eligible Scheme First",
+    "applicationPathFor": "Application Path for:",
+    "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
+    "saveAndTrack": "Save Application & Get Tracking ID",
+    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "आधार, जात सर्टिफिकेट ते प्रोजेक्ट कागजें दियां साफ फोटो रक्खो।",
       "फोन पर औखा लग्गै तां कंप्यूटर पर बैंक पोर्टल खोल्हो।",

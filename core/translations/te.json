@@ -241,6 +241,13 @@
     "askSarthiPrompt": "ఏ మార్గాన్ని ఎంచుకోవాలో తెలియడం లేదా?",
     "askSarthiSub": "సారథి మిమ్మల్ని 3 సులభమైన ప్రశ్నలు అడిగి ఉత్తమ మార్గాన్ని సూచిస్తుంది.",
     "askSarthiBtn": "సారథిని అడగండి",
+    "selectSchemeTitle": "Select a Scheme First",
+    "selectSchemeDesc": "Official application channels, portals, and partner banks depend strictly on your chosen government scheme.",
+    "findEligibleFirstBtn": "Find Your Eligible Scheme First",
+    "applicationPathFor": "Application Path for:",
+    "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
+    "saveAndTrack": "Save Application & Get Tracking ID",
+    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "ఆధార్, కుల ధృవీకరణ పత్రం మరియు ప్రాజెక్ట్ పత్రాల స్పష్టమైన ఫోటోలు ఉంచుకోండి.",
       "ఫోన్‌లో కష్టంగా ఉంటే కంప్యూటర్‌లో బ్యాంక్ పోర్టల్ తెరవండి.",

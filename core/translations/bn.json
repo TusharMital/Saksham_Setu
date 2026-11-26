@@ -241,6 +241,13 @@
     "askSarthiPrompt": "কোন বিকল্পটি বেছে নেবেন নিশ্চিত নন?",
     "askSarthiSub": "সারথি আপনাকে ৩টি সহজ প্রশ্ন করে সবচেয়ে সহজ পথটি বলে দিতে পারে।",
     "askSarthiBtn": "সারথিকে জিজ্ঞাসা করুন",
+    "selectSchemeTitle": "Select a Scheme First",
+    "selectSchemeDesc": "Official application channels, portals, and partner banks depend strictly on your chosen government scheme.",
+    "findEligibleFirstBtn": "Find Your Eligible Scheme First",
+    "applicationPathFor": "Application Path for:",
+    "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
+    "saveAndTrack": "Save Application & Get Tracking ID",
+    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "আধার, জাতি শংসাপত্র এবং প্রকল্পের কাগজপত্রের স্পষ্ট ছবি রাখুন।",
       "ফোনে কঠিন মনে হলে কম্পিউটারে ব্যাংক পোর্টাল খুলুন।",

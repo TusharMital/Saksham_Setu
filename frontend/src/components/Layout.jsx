@@ -267,7 +267,6 @@ export default function Layout({ children }) {
     { to: "/", label: t("nav.home"), icon: "home" },
     { to: "/form", label: t("nav.find"), icon: "search" },
     { to: "/calculator", label: t("nav.calculator"), icon: "calc" },
-    { to: "/apply", label: t("nav.paths"), icon: "building" },
     { to: "/documents", label: t("nav.documents"), icon: "document" },
     { to: "/track", label: t("nav.track"), icon: "track" },
   ];
@@ -444,7 +443,6 @@ export default function Layout({ children }) {
           <div className="footer-links">
             <Link to="/form">{t("nav.find")}</Link>
             <Link to="/calculator">{t("nav.calculator")}</Link>
-            <Link to="/apply">{t("nav.paths")}</Link>
             <Link to="/documents">{t("nav.documents")}</Link>
             <Link to="/track">{t("nav.track")}</Link>
           </div>

@@ -241,6 +241,13 @@
     "askSarthiPrompt": "یقیٖن نَہ زِ کُس اختیار ژھارِو؟",
     "askSarthiSub": "سارتھی ہؠکِہ تُہۍ 3 آسان سوال پٕژھِتھ بہترین وتھ ؤنِتھ۔",
     "askSarthiBtn": "سارتھیس پٕژھِو",
+    "selectSchemeTitle": "Select a Scheme First",
+    "selectSchemeDesc": "Official application channels, portals, and partner banks depend strictly on your chosen government scheme.",
+    "findEligibleFirstBtn": "Find Your Eligible Scheme First",
+    "applicationPathFor": "Application Path for:",
+    "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
+    "saveAndTrack": "Save Application & Get Tracking ID",
+    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "آدھار، ذات سرٹیفکیٹ تہٕ پروجیکٹ کاغذاتَن ہٕنٛز صاف فوٹو تھاوِو۔",
       "فونَس پؠٹھ مشکل لگہِ تیلہِ کمپیوٹرَس پؠٹھ بینک پورٹل کھولِو۔",

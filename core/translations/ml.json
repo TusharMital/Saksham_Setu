@@ -241,6 +241,13 @@
     "askSarthiPrompt": "ഏത് മാർഗം തിരഞ്ഞെടുക്കണമെന്ന് ഉറപ്പില്ലേ?",
     "askSarthiSub": "സാരഥി നിങ്ങളോട് 3 ലളിതമായ ചോദ്യങ്ങൾ ചോദിച്ച് എളുപ്പമുള്ള വഴി നിർദ്ദേശിക്കും.",
     "askSarthiBtn": "സാരഥിയോട് ചോദിക്കുക",
+    "selectSchemeTitle": "Select a Scheme First",
+    "selectSchemeDesc": "Official application channels, portals, and partner banks depend strictly on your chosen government scheme.",
+    "findEligibleFirstBtn": "Find Your Eligible Scheme First",
+    "applicationPathFor": "Application Path for:",
+    "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
+    "saveAndTrack": "Save Application & Get Tracking ID",
+    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "ആധാർ, ജാതി സർട്ടിഫിക്കറ്റ്, പ്രോജക്റ്റ് രേഖകൾ എന്നിവയുടെ വ്യക്തമായ ഫോട്ടോകൾ കരുതുക.",
       "ഫോണിൽ ബുദ്ധിമുട്ടാണെങ്കിൽ കമ്പ്യൂട്ടറിൽ ബാങ്ക് പോർട്ടൽ തുറക്കുക.",
