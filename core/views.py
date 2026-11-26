@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 from core.bank_locator import (
     live_search_banks_and_portals,
     resolve_coordinates_for_pin,
+    reverse_geocode_coords,
 )
 from core.category_verifier import verify_category_and_document
 from core.chatbot import chat_completion
@@ -382,15 +383,14 @@ class LiveBankSearchView(APIView):
                     {"detail": "Invalid 'lat' or 'lng' coordinates."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            resolved_location = {
-                "lat": round(user_lat, 6),
-                "lng": round(user_lng, 6),
-                "state": "",
-                "district": "",
-                "place": "Live GPS Location",
-                "pin": pin,
-                "source": "gps",
-            }
+            if not (-90.0 <= user_lat <= 90.0 and -180.0 <= user_lng <= 180.0) or (
+                abs(user_lat) < 1e-6 and abs(user_lng) < 1e-6
+            ):
+                return Response(
+                    {"detail": "Coordinates out of valid range."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            resolved_location = reverse_geocode_coords(user_lat, user_lng, pin=pin)
         elif pin:
             try:
                 resolved_location = resolve_coordinates_for_pin(pin)
@@ -415,6 +415,8 @@ class LiveBankSearchView(APIView):
             {
                 "scheme": LoanSchemeSerializer(scheme).data if scheme else None,
                 "location": resolved_location,
+                "location_label": resolved_location.get("location_label", ""),
+                "center": {"lat": resolved_location["lat"], "lng": resolved_location["lng"]},
                 "radius_km": radius_km,
                 **payload,
             },

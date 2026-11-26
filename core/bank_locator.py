@@ -4,21 +4,29 @@ import json
 import re
 from functools import lru_cache
 from pathlib import Path
+from urllib.parse import quote_plus
 
 import requests
 from django.conf import settings
 from django.core.cache import cache
 
 from core.geo import (
+    INDIAN_PIN_RE,
     coords_from_pin,
     haversine_km,
     health_checks,
     lookup_pin_details,
+    normalize_indian_state,
 )
 from core.models import Branch, LoanScheme
 
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
-OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+NOMINATIM_REVERSE_URL = "https://nominatim.openstreetmap.org/reverse"
+OVERPASS_MIRRORS = (
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
+    "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+)
 OSM_HEADERS = {"User-Agent": "SakshamSetu/1.0 (https://sakshamsetu.gov.in)"}
 
 # Approximate state/UT capital fallback coordinates so PIN resolution never fails offline
@@ -137,6 +145,135 @@ def match_institution(raw_name, directory=None, partner_type=None, state_hint=No
     return None
 
 
+def _normalize_india_coords(lat, lng):
+    """Validate India bounding box [6..38, 68..98], auto-swap if reversed, discard invalid/0,0."""
+    if lat is None or lng is None:
+        return None, None
+    try:
+        f_lat = float(lat)
+        f_lng = float(lng)
+    except (TypeError, ValueError):
+        return None, None
+    if abs(f_lat) < 1e-6 and abs(f_lng) < 1e-6:
+        return None, None
+    if 6.0 <= f_lat <= 38.0 and 68.0 <= f_lng <= 98.0:
+        return round(f_lat, 6), round(f_lng, 6)
+    if 6.0 <= f_lng <= 38.0 and 68.0 <= f_lat <= 98.0:
+        return round(f_lng, 6), round(f_lat, 6)
+    return None, None
+
+
+def _is_valid_coord_pair(lat, lng):
+    n_lat, n_lng = _normalize_india_coords(lat, lng)
+    return n_lat is not None and n_lng is not None
+
+
+def build_google_maps_directions_url(
+    source,
+    name,
+    address="",
+    lat=None,
+    lng=None,
+    user_lat=None,
+    user_lng=None,
+):
+    """Build a verified Google Maps Directions URL using validated branch coordinates."""
+    b_lat, b_lng = _normalize_india_coords(lat, lng)
+    if b_lat is not None and b_lng is not None:
+        u_lat, u_lng = _normalize_india_coords(user_lat, user_lng)
+        if u_lat is not None and u_lng is not None:
+            return (
+                f"https://www.google.com/maps/dir/?api=1"
+                f"&origin={u_lat},{u_lng}&destination={b_lat},{b_lng}&travelmode=driving"
+            )
+        return f"https://www.google.com/maps/dir/?api=1&destination={b_lat},{b_lng}"
+    query_text = ", ".join(part.strip() for part in (name or "", address or "") if part and part.strip())
+    return f"https://www.google.com/maps/search/?api=1&query={quote_plus(query_text or 'India')}"
+
+
+def reverse_geocode_coords(lat, lng, pin=""):
+    """Reverse-geocode live GPS coordinates via Nominatim so UI shows the real locality/city."""
+    r_lat = round(float(lat), 6)
+    r_lng = round(float(lng), 6)
+    cache_key = f"live-search-revgeo:{round(r_lat, 3)}:{round(r_lng, 3)}"
+    cached = cache.get(cache_key)
+    if cached:
+        return {**cached, "lat": r_lat, "lng": r_lng, "pin": pin or cached.get("pin", "")}
+
+    state = ""
+    district = ""
+    place = ""
+    detected_pin = str(pin or "").strip()
+
+    try:
+        resp = requests.get(
+            NOMINATIM_REVERSE_URL,
+            params={
+                "format": "json",
+                "lat": r_lat,
+                "lon": r_lng,
+                "zoom": 14,
+                "addressdetails": 1,
+            },
+            headers=OSM_HEADERS,
+            timeout=5,
+        )
+        if resp.status_code == 200:
+            payload = resp.json() or {}
+            addr = payload.get("address") or {}
+            raw_state = addr.get("state") or ""
+            state = normalize_indian_state(raw_state) if raw_state else ""
+            district = str(
+                addr.get("city")
+                or addr.get("town")
+                or addr.get("state_district")
+                or addr.get("county")
+                or addr.get("district")
+                or ""
+            ).strip()
+            locality = str(
+                addr.get("suburb")
+                or addr.get("neighbourhood")
+                or addr.get("village")
+                or addr.get("hamlet")
+                or addr.get("city_district")
+                or ""
+            ).strip()
+            place = ", ".join(p for p in (locality, district) if p and p != locality or p == locality)
+            if locality and district and locality.lower() != district.lower():
+                place = f"{locality}, {district}"
+            else:
+                place = locality or district or state
+            if not detected_pin and addr.get("postcode"):
+                cand_pin = re.sub(r"\s+", "", str(addr.get("postcode")))
+                if INDIAN_PIN_RE.match(cand_pin):
+                    detected_pin = cand_pin
+    except (requests.RequestException, ValueError, KeyError, TypeError):
+        pass
+
+    label_parts = [p for p in (place or district, state) if p]
+    location_label = (
+        ", ".join(dict.fromkeys(label_parts))
+        if label_parts
+        else "Your Live GPS Location"
+    )
+    if detected_pin:
+        location_label = f"{location_label} (PIN {detected_pin})"
+
+    resolved = {
+        "lat": r_lat,
+        "lng": r_lng,
+        "state": state,
+        "district": district,
+        "place": place or "Live GPS Location",
+        "pin": detected_pin,
+        "location_label": location_label,
+        "source": "gps",
+    }
+    cache.set(cache_key, resolved, 1800)
+    return resolved
+
+
 def resolve_coordinates_for_pin(pin):
     """Resolve 6-digit PIN -> district/state -> Nominatim lat/lng with local fallbacks."""
     code = str(pin or "").strip()
@@ -148,31 +285,40 @@ def resolve_coordinates_for_pin(pin):
     pin_details = lookup_pin_details(code)
     state = (pin_details or {}).get("state", "")
     district = (pin_details or {}).get("district", "")
-    place = (pin_details or {}).get("place") or district or state or f"PIN {code}"
+    post_offices = (pin_details or {}).get("post_offices") or []
+    post_office = str(post_offices[0]).strip() if post_offices else ""
+    place = (pin_details or {}).get("place") or post_office or district or state or f"PIN {code}"
 
     lat = None
     lng = None
     source = "fallback"
 
-    # Attempt Nominatim geocoding for "<district>, <state>, India"
-    query_parts = [p for p in (district, state, "India") if p]
-    if query_parts:
-        query = ", ".join(query_parts)
+    # Attempt Nominatim geocoding: post office -> district/state -> postalcode
+    nominatim_attempts = []
+    if post_office and district and state:
+        nominatim_attempts.append({"q": f"{post_office}, {district}, {state}, India", "format": "json", "limit": 1})
+    if district and state:
+        nominatim_attempts.append({"q": f"{district}, {state}, India", "format": "json", "limit": 1})
+    nominatim_attempts.append({"postalcode": code, "country": "India", "format": "json", "limit": 1})
+
+    for params in nominatim_attempts:
         try:
             resp = requests.get(
                 NOMINATIM_URL,
-                params={"q": query, "format": "json", "limit": 1},
+                params=params,
                 headers=OSM_HEADERS,
                 timeout=5,
             )
             if resp.status_code == 200:
                 payload = resp.json()
                 if isinstance(payload, list) and payload:
-                    lat = float(payload[0]["lat"])
-                    lng = float(payload[0]["lon"])
-                    source = "nominatim"
+                    cand_lat, cand_lng = _normalize_india_coords(payload[0].get("lat"), payload[0].get("lon"))
+                    if cand_lat is not None and cand_lng is not None:
+                        lat, lng = cand_lat, cand_lng
+                        source = "nominatim"
+                        break
         except (requests.RequestException, ValueError, KeyError, TypeError):
-            pass
+            continue
 
     # Fallback 1: exact local pin_lookup coordinates
     if (lat is None or lng is None) and pin_details:
@@ -199,13 +345,19 @@ def resolve_coordinates_for_pin(pin):
             lat, lng = 28.6139, 77.2090
             source = "india_default"
 
+    primary_place = post_office or district or place
+    area_parts = [p for p in (primary_place, state) if p]
+    location_label = f"{', '.join(dict.fromkeys(area_parts))} (PIN {code})" if area_parts else f"PIN {code}"
+
     resolved = {
         "pin": code,
         "lat": round(lat, 6),
         "lng": round(lng, 6),
         "state": state,
         "district": district,
+        "post_office": post_office,
         "place": place,
+        "location_label": location_label,
         "source": source,
     }
     cache.set(cache_key, resolved, 3600)
@@ -213,7 +365,7 @@ def resolve_coordinates_for_pin(pin):
 
 
 def fetch_overpass_banks(lat, lng, radius_km=10):
-    """Fetch real bank nodes/ways from OpenStreetMap Overpass API with memory cache."""
+    """Fetch real bank nodes/ways/relations from OpenStreetMap Overpass API mirrors with cache."""
     r_km = max(1, min(50, int(radius_km or 10)))
     cache_key = f"overpass-banks:{round(float(lat), 3)}:{round(float(lng), 3)}:{r_km}"
     cached = cache.get(cache_key)
@@ -222,45 +374,53 @@ def fetch_overpass_banks(lat, lng, radius_km=10):
 
     radius_m = r_km * 1000
     query = (
-        f"[out:json][timeout:8];"
+        f"[out:json][timeout:7];"
         f"("
         f'node["amenity"="bank"](around:{radius_m},{lat},{lng});'
         f'way["amenity"="bank"](around:{radius_m},{lat},{lng});'
+        f'relation["amenity"="bank"](around:{radius_m},{lat},{lng});'
         f");"
-        f"out center tags;"
+        f"out center body;"
     )
 
-    try:
-        resp = requests.post(
-            OVERPASS_URL,
-            data={"data": query},
-            headers=OSM_HEADERS,
-            timeout=8,
-        )
-        if resp.status_code != 200:
-            return [], False
-        payload = resp.json()
-        elements = payload.get("elements") or []
-    except (requests.RequestException, ValueError, KeyError, TypeError):
+    elements = None
+    for endpoint in OVERPASS_MIRRORS:
+        try:
+            resp = requests.post(
+                endpoint,
+                data={"data": query},
+                headers=OSM_HEADERS,
+                timeout=7,
+            )
+            if resp.status_code == 200:
+                payload = resp.json()
+                elements = payload.get("elements") or []
+                break
+        except (requests.RequestException, ValueError, KeyError, TypeError):
+            continue
+
+    if elements is None:
         return [], False
 
     parsed = []
     seen = set()
     for el in elements:
         tags = el.get("tags") or {}
-        name = str(
+        base_name = str(
             tags.get("name") or tags.get("brand") or tags.get("operator") or ""
         ).strip()
-        if not name:
+        if not base_name:
             continue
+        branch_tag = str(tags.get("branch") or "").strip()
+        name = (
+            f"{base_name} ({branch_tag})"
+            if branch_tag and branch_tag.lower() not in base_name.lower()
+            else base_name
+        )
         el_lat = el.get("lat") if el.get("lat") is not None else (el.get("center") or {}).get("lat")
         el_lng = el.get("lon") if el.get("lon") is not None else (el.get("center") or {}).get("lon")
-        if el_lat is None or el_lng is None:
-            continue
-        try:
-            b_lat = float(el_lat)
-            b_lng = float(el_lng)
-        except (TypeError, ValueError):
+        b_lat, b_lng = _normalize_india_coords(el_lat, el_lng)
+        if b_lat is None or b_lng is None:
             continue
 
         dedup_key = (name.lower(), round(b_lat, 4), round(b_lng, 4))
@@ -268,15 +428,19 @@ def fetch_overpass_banks(lat, lng, radius_km=10):
             continue
         seen.add(dedup_key)
 
-        addr_parts = [
-            tags.get("addr:housenumber"),
-            tags.get("addr:street"),
-            tags.get("addr:suburb") or tags.get("addr:neighbourhood"),
-            tags.get("addr:city") or tags.get("addr:town") or tags.get("addr:district"),
-            tags.get("addr:state"),
-            tags.get("addr:postcode"),
-        ]
-        address = ", ".join(str(p).strip() for p in addr_parts if p and str(p).strip())
+        addr_full = str(tags.get("addr:full") or "").strip()
+        if addr_full:
+            address = addr_full
+        else:
+            addr_parts = [
+                tags.get("addr:housenumber"),
+                tags.get("addr:street"),
+                tags.get("addr:suburb") or tags.get("addr:neighbourhood"),
+                tags.get("addr:city") or tags.get("addr:town") or tags.get("addr:district"),
+                tags.get("addr:state"),
+                tags.get("addr:postcode"),
+            ]
+            address = ", ".join(str(p).strip() for p in addr_parts if p and str(p).strip())
         phone = str(tags.get("phone") or tags.get("contact:phone") or "").strip()
 
         parsed.append(
@@ -285,7 +449,7 @@ def fetch_overpass_banks(lat, lng, radius_km=10):
                 "name": name,
                 "brand": str(tags.get("brand") or tags.get("operator") or "").strip(),
                 "address": address,
-                "district": str(tags.get("addr:city") or tags.get("addr:district") or "").strip(),
+                "district": str(tags.get("addr:city") or tags.get("addr:town") or tags.get("addr:district") or "").strip(),
                 "state": str(tags.get("addr:state") or "").strip(),
                 "pin_code": str(tags.get("addr:postcode") or "").strip(),
                 "phone": phone,
@@ -329,32 +493,20 @@ def _institution_label(inst_type):
     return labels.get(inst_type, "Partner Bank")
 
 
-def live_search_banks_and_portals(
+def _collect_local_branches_for_radius(
     user_lat,
     user_lng,
-    scheme=None,
-    radius_km=10,
-    resolved_location=None,
+    effective_radius,
+    scheme,
+    scheme_channels,
+    scheme_code,
+    directory,
+    db_branches,
+    loc_meta,
 ):
-    """Combine Overpass live branches, DB Branch catalog, and official portals with full cross-refs."""
-    r_km = max(1, min(50, int(radius_km or 10)))
-    directory = load_bank_portals_directory()
-    all_schemes = list(LoanScheme.objects.all())
-    scheme_channels = (
-        {str(c).lower() for c in (scheme.available_channels or [])}
-        if scheme is not None
-        else set()
-    )
-    scheme_code = scheme.code if scheme is not None else ""
-    loc_meta = resolved_location or {}
+    """Collect Overpass + directory branches strictly within effective_radius km."""
+    osm_branches, overpass_ok = fetch_overpass_banks(user_lat, user_lng, effective_radius)
 
-    # 1. Fetch Overpass live branches
-    osm_branches, overpass_ok = fetch_overpass_banks(user_lat, user_lng, r_km)
-
-    # 2. Load local DB Branch records
-    db_branches = list(Branch.objects.all())
-
-    # 3. Build unified candidate branch entries + per-institution branch catalog
     branches_by_inst = {}
     all_branch_records = []
     seen_coords = set()
@@ -372,8 +524,15 @@ def live_search_banks_and_portals(
         ):
             bucket.append(item_dict)
 
-    # Process Overpass branches
+    # Process Overpass branches (strictly distance_km <= effective_radius)
     for ob in osm_branches:
+        b_lat, b_lng = _normalize_india_coords(ob["lat"], ob["lng"])
+        if b_lat is None or b_lng is None:
+            continue
+        dist = round(haversine_km(user_lat, user_lng, b_lat, b_lng), 2)
+        if dist > effective_radius:
+            continue
+
         inst = match_institution(
             f"{ob['name']} {ob.get('brand', '')}".strip(),
             directory=directory,
@@ -381,7 +540,6 @@ def live_search_banks_and_portals(
         inst_id = inst["id"] if inst else f"osm_{re.sub(r'[^a-z0-9]+', '_', ob['name'].lower()).strip('_')}"
         inst_type = inst["institution_type"] if inst else "PSB"
         supported_channels = inst["supported_channels"] if inst else ["bank"]
-        dist = round(haversine_km(user_lat, user_lng, ob["lat"], ob["lng"]), 2)
 
         address = ob["address"]
         if not address:
@@ -395,11 +553,21 @@ def live_search_banks_and_portals(
         phone_source = "branch" if branch_phone else ("toll_free" if toll_free else "")
         tel_href = _format_tel_href(branch_phone or toll_free)
 
-        dedup = (ob["name"].lower(), round(ob["lat"], 4), round(ob["lng"], 4))
+        dedup = (ob["name"].lower(), round(b_lat, 4), round(b_lng, 4))
         seen_coords.add(dedup)
 
+        dir_url = build_google_maps_directions_url(
+            "osm_overpass",
+            ob["name"],
+            address,
+            b_lat,
+            b_lng,
+            user_lat,
+            user_lng,
+        )
         branch_summary = {
             "branch_name": ob["name"],
+            "source": "osm_overpass",
             "address": address,
             "district": ob["district"] or loc_meta.get("district", ""),
             "state": ob["state"] or loc_meta.get("state", ""),
@@ -407,8 +575,9 @@ def live_search_banks_and_portals(
             "distance_km": dist,
             "phone": phone_display,
             "tel_href": tel_href,
-            "lat": ob["lat"],
-            "lng": ob["lng"],
+            "lat": b_lat,
+            "lng": b_lng,
+            "directions_url": dir_url,
         }
         _register_inst_branch(inst_id, branch_summary)
 
@@ -422,13 +591,15 @@ def live_search_banks_and_portals(
                 "short_code": inst["short_code"] if inst else "BANK",
                 "institution_type": inst_type,
                 "institution_label": _institution_label(inst_type),
+                "out_of_local_radius": False,
                 "address": address,
                 "district": branch_summary["district"],
                 "state": branch_summary["state"],
                 "pin_code": branch_summary["pin_code"],
-                "lat": ob["lat"],
-                "lng": ob["lng"],
+                "lat": b_lat,
+                "lng": b_lng,
                 "distance_km": dist,
+                "directions_url": dir_url,
                 "branch_phone": branch_phone,
                 "toll_free_phone": toll_free,
                 "toll_free_display": toll_free_disp,
@@ -457,9 +628,13 @@ def live_search_banks_and_portals(
             }
         )
 
-    # Process DB Branch records (always populate all_branches; include in results if within radius or fallback)
-    db_candidates = []
+    # Process DB Branch records — STRICTLY filtered to distance_km <= effective_radius
     for db_b in db_branches:
+        b_lat, b_lng = _normalize_india_coords(db_b.lat, db_b.lng)
+        if b_lat is None or b_lng is None:
+            continue
+        dist = round(haversine_km(user_lat, user_lng, b_lat, b_lng), 2)
+
         inst = match_institution(
             db_b.name,
             directory=directory,
@@ -471,7 +646,6 @@ def live_search_banks_and_portals(
             "MFI" if db_b.partner_type == "NBFC" else db_b.partner_type
         )
         supported_channels = inst["supported_channels"] if inst else ["bank"]
-        dist = round(haversine_km(user_lat, user_lng, float(db_b.lat), float(db_b.lng)), 2)
 
         branch_phone = str(db_b.phone or "").strip()
         toll_free = inst.get("toll_free_phone", "") if inst else ""
@@ -479,9 +653,19 @@ def live_search_banks_and_portals(
         phone_display = branch_phone or toll_free_disp
         phone_source = "branch" if branch_phone else ("toll_free" if toll_free else "")
         tel_href = _format_tel_href(branch_phone or toll_free)
+        db_dir_url = build_google_maps_directions_url(
+            "directory_branch",
+            db_b.name,
+            db_b.address,
+            b_lat,
+            b_lng,
+            user_lat,
+            user_lng,
+        )
 
         branch_summary = {
             "branch_name": db_b.name,
+            "source": "directory_branch",
             "address": db_b.address,
             "district": db_b.city,
             "state": db_b.state,
@@ -489,10 +673,21 @@ def live_search_banks_and_portals(
             "distance_km": dist,
             "phone": phone_display,
             "tel_href": tel_href,
-            "lat": float(db_b.lat),
-            "lng": float(db_b.lng),
+            "lat": b_lat,
+            "lng": b_lng,
+            "directions_url": db_dir_url,
         }
-        _register_inst_branch(inst_id, branch_summary)
+        # Only register local or same-institution branches in all_branches when within 50 km
+        if dist <= 50:
+            _register_inst_branch(inst_id, branch_summary)
+
+        # NEVER include faraway branches (dist > effective_radius) in local search results
+        if dist > effective_radius:
+            continue
+
+        dedup = (db_b.name.lower(), round(b_lat, 4), round(b_lng, 4))
+        if dedup in seen_coords:
+            continue
 
         supported_codes = [str(s).upper() for s in (db_b.schemes_supported or [])]
         scheme_supported = (
@@ -508,96 +703,108 @@ def live_search_banks_and_portals(
             }
         )
 
-        dedup = (db_b.name.lower(), round(float(db_b.lat), 4), round(float(db_b.lng), 4))
-        if dedup in seen_coords:
-            continue
-
-        item = {
-            "id": f"db-{db_b.id}",
-            "source": "directory_branch",
-            "name": db_b.name,
-            "institution_id": inst_id,
-            "institution_name": inst["name"] if inst else db_b.name,
-            "short_code": inst["short_code"] if inst else db_b.partner_type,
-            "institution_type": inst_type,
-            "institution_label": _institution_label(inst_type),
-            "address": db_b.address,
-            "district": db_b.city,
-            "state": db_b.state,
-            "pin_code": "",
-            "lat": float(db_b.lat),
-            "lng": float(db_b.lng),
-            "distance_km": dist,
-            "branch_phone": branch_phone,
-            "toll_free_phone": toll_free,
-            "toll_free_display": toll_free_disp,
-            "phone": phone_display,
-            "phone_source": phone_source,
-            "tel_href": tel_href,
-            "official_url": inst.get("official_url", "") if inst else "",
-            "headquarters": inst.get("headquarters", "") if inst else db_b.state,
-            "overview": inst.get("overview", "") if inst else (db_b.notes or "Partner bank / SCA desk."),
-            "processing_time": inst.get("processing_time", "10–15 working days") if inst else "10–15 working days",
-            "collateral_policy": inst.get("collateral_policy", "As per scheme rules.") if inst else "As per scheme rules.",
-            "bank_required_documents": inst.get("bank_required_documents", []) if inst else [],
-            "helpline_hours": inst.get("helpline_hours", "Mon–Fri 10:00 AM – 5:00 PM") if inst else "Mon–Fri 10:00 AM – 5:00 PM",
-            "supported_channels": supported_channels,
-            "fund_quota_crore": db_b.fund_quota_crore,
-            "npa_percent": db_b.npa_percent,
-            "health": health,
-            "why": f"Partner {inst_type} desk ({dist} km away) • Fund quota ₹{db_b.fund_quota_crore} Cr • NPA {db_b.npa_percent}%.",
-        }
-        db_candidates.append(item)
-
-    # Include DB branches within radius_km, plus same-state SCA / nearest fallback desks if Overpass has < 5 branches
-    user_state_low = str(loc_meta.get("state") or "").strip().lower()
-    for item in sorted(db_candidates, key=lambda x: x["distance_km"]):
-        within_radius = item["distance_km"] <= r_km
-        is_state_sca = (
-            item["institution_type"] == "SCA"
-            and user_state_low
-            and item["state"].lower() == user_state_low
-            and (not scheme_channels or bool(set(item["supported_channels"]) & scheme_channels))
+        all_branch_records.append(
+            {
+                "id": f"db-{db_b.id}",
+                "source": "directory_branch",
+                "name": db_b.name,
+                "institution_id": inst_id,
+                "institution_name": inst["name"] if inst else db_b.name,
+                "short_code": inst["short_code"] if inst else db_b.partner_type,
+                "institution_type": inst_type,
+                "institution_label": _institution_label(inst_type),
+                "out_of_local_radius": False,
+                "address": db_b.address,
+                "district": db_b.city,
+                "state": db_b.state,
+                "pin_code": "",
+                "lat": b_lat,
+                "lng": b_lng,
+                "distance_km": dist,
+                "directions_url": db_dir_url,
+                "branch_phone": branch_phone,
+                "toll_free_phone": toll_free,
+                "toll_free_display": toll_free_disp,
+                "phone": phone_display,
+                "phone_source": phone_source,
+                "tel_href": tel_href,
+                "official_url": inst.get("official_url", "") if inst else "",
+                "headquarters": inst.get("headquarters", "") if inst else db_b.state,
+                "overview": inst.get("overview", "") if inst else (db_b.notes or "Partner bank / SCA desk."),
+                "processing_time": inst.get("processing_time", "10–15 working days") if inst else "10–15 working days",
+                "collateral_policy": inst.get("collateral_policy", "As per scheme rules.") if inst else "As per scheme rules.",
+                "bank_required_documents": inst.get("bank_required_documents", []) if inst else [],
+                "helpline_hours": inst.get("helpline_hours", "Mon–Fri 10:00 AM – 5:00 PM") if inst else "Mon–Fri 10:00 AM – 5:00 PM",
+                "supported_channels": supported_channels,
+                "fund_quota_crore": db_b.fund_quota_crore,
+                "npa_percent": db_b.npa_percent,
+                "health": health,
+                "why": f"Partner {inst_type} desk ({dist} km away) • Fund quota ₹{db_b.fund_quota_crore} Cr • NPA {db_b.npa_percent}%.",
+            }
         )
-        if within_radius or is_state_sca:
-            all_branch_records.append(item)
 
-    # Offline / sparse area fallback: ensure scheme-compatible banks & SCAs appear even if Overpass returns 0
-    if len(all_branch_records) < 3:
-        existing_ids = {b["id"] for b in all_branch_records}
-        compatible_fallback = [
-            item
-            for item in sorted(db_candidates, key=lambda x: x["distance_km"])
-            if item["id"] not in existing_ids
-            and item["health"]["funds_available"]
-            and (not scheme_channels or bool(set(item["supported_channels"]) & scheme_channels))
-        ]
-        all_branch_records.extend(compatible_fallback[:8])
-
-    # Filter branches strictly to scheme's available_channels if a scheme is selected
     if scheme_channels:
         filtered_branches = [
             b
             for b in all_branch_records
-            if (set(b.get("supported_channels") or []) & scheme_channels)
-            or b["health"].get("scheme_supported")
-        ]
-        # Keep only branches whose channels match scheme_channels
-        filtered_branches = [
-            b
-            for b in filtered_branches
             if set(b.get("supported_channels") or []) & scheme_channels
         ]
     else:
         filtered_branches = all_branch_records
 
-    # Sort branches: within radius / compatible first by distance
-    filtered_branches.sort(
-        key=lambda x: (
-            0 if x["health"]["funds_available"] else 1,
-            x["distance_km"],
-        )
+    filtered_branches.sort(key=lambda x: x["distance_km"])
+    return filtered_branches, overpass_ok, len(osm_branches), branches_by_inst
+
+
+def live_search_banks_and_portals(
+    user_lat,
+    user_lng,
+    scheme=None,
+    radius_km=10,
+    resolved_location=None,
+):
+    """Combine Overpass live branches, local DB branches, and official portals strictly within radius."""
+    r_km = max(1, min(50, int(radius_km or 10)))
+    directory = load_bank_portals_directory()
+    all_schemes = list(LoanScheme.objects.all())
+    scheme_channels = (
+        {str(c).lower() for c in (scheme.available_channels or [])}
+        if scheme is not None
+        else set()
     )
+    scheme_code = scheme.code if scheme is not None else ""
+    loc_meta = resolved_location or {}
+    db_branches = list(Branch.objects.all())
+
+    effective_radius = r_km
+    expanded_radius = False
+    filtered_branches, overpass_ok, osm_count, branches_by_inst = _collect_local_branches_for_radius(
+        user_lat,
+        user_lng,
+        effective_radius,
+        scheme,
+        scheme_channels,
+        scheme_code,
+        directory,
+        db_branches,
+        loc_meta,
+    )
+
+    # Auto-expand once to 25 km if 0 branches were found within 5 km or 10 km
+    if len(filtered_branches) == 0 and r_km < 25:
+        effective_radius = 25
+        expanded_radius = True
+        filtered_branches, overpass_ok, osm_count, branches_by_inst = _collect_local_branches_for_radius(
+            user_lat,
+            user_lng,
+            effective_radius,
+            scheme,
+            scheme_channels,
+            scheme_code,
+            directory,
+            db_branches,
+            loc_meta,
+        )
 
     # Sort each institution's all_branches by distance
     for inst_id, blist in branches_by_inst.items():
@@ -613,6 +820,7 @@ def live_search_banks_and_portals(
         b["all_branches"] = branches_by_inst.get(b["institution_id"], [
             {
                 "branch_name": b["name"],
+                "source": b["source"],
                 "address": b["address"],
                 "district": b["district"],
                 "state": b["state"],
@@ -622,8 +830,15 @@ def live_search_banks_and_portals(
                 "tel_href": b["tel_href"],
                 "lat": b["lat"],
                 "lng": b["lng"],
+                "directions_url": b["directions_url"],
             }
         ])
+
+    empty_message = (
+        "No physical bank branches mapped within 25 km of this PIN/location — you can apply directly via the Official Government Portals tab above"
+        if len(filtered_branches) == 0
+        else ""
+    )
 
     # 4. Build Official Application Portals strictly filtered to scheme's available_channels
     portals = []
@@ -665,6 +880,11 @@ def live_search_banks_and_portals(
                 "lat": None,
                 "lng": None,
                 "distance_km": None,
+                "directions_url": build_google_maps_directions_url(
+                    "official_portal",
+                    entry["name"],
+                    entry.get("headquarters", ""),
+                ),
                 "branch_phone": "",
                 "toll_free_phone": toll_free,
                 "toll_free_display": toll_free_disp,
@@ -693,7 +913,10 @@ def live_search_banks_and_portals(
 
     return {
         "overpass_live": overpass_ok,
-        "overpass_count": len(osm_branches),
+        "overpass_count": osm_count,
+        "effective_radius_km": effective_radius,
+        "expanded_radius": expanded_radius,
+        "empty_message": empty_message,
         "branches": filtered_branches,
         "portals": portals,
     }

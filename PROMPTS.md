@@ -604,3 +604,19 @@ Output summary (3 lines):
 What worked: Eliminated simulated/local application tracking so every navigation item maps directly to real scheme discovery, EMI calculation, and official portal/bank handoff.
 What failed or was missing: None.
 Did it follow the rules? Yes.
+
+---
+
+### P8a | Gemini & Antigravity | Bug Fix Round 1: Required Documents Cleanup & Interactive Sarthi 3-Question Advisor
+Date: 2026-11-26
+Run by: Tushar (25bcon2455) & Bhumi (25bcon2360)
+Prompt (exact text): Diagnosed two UI/UX bugs from screenshots on `/scheme/MLUPY` and `/apply?scheme=MLUPY` using Google Gemini and executed fixes in Antigravity: (1) replaced "Required Documents Checklist" (and interactive checkboxes) with a clean read-only "Required Documents" section on `/scheme/:code` and removed redundant checklist buttons from `/apply` cards; (2) replaced the wrong "Find Partner Banks" button on `/apply`'s Sarthi banner with an interactive trigger that opens the floating Sarthi AI popup and asks 3 guided questions to recommend the best application option for that scheme.
+Output summary (3 lines):
+- Updated `SchemeDetail.jsx`, `ApplyPath.jsx`, and `BranchLocator.jsx` to display a clean read-only "Required Documents" section without checkboxes or redundant checklist buttons.
+- Wired `/apply`'s dark banner CTA to open `Sarthi.jsx` and run an interactive 3-question Path Advisor (with quick-reply chips and scheme-channel filtering) that recommends and highlights the best application path.
+- Synced all 23 translation bundles; all Django tests, Vite production build, and `collectstatic` passed.
+What worked: Eliminated confusing non-functional checkboxes and turned the static Sarthi banner on `/apply` into a genuinely interactive 3-question advisor.
+What failed or was missing: None.
+Did it follow the rules? Yes (multi-AI screenshot triage with Gemini + structured execution in Antigravity).
+Next prompt it led to: Bug Fix Round 2 (P8b).
+Screenshot file names: `docs/04_Prompt_Improvements/p8a_antigravity_prompt.png`, `docs/05_Website_Screenshots/p8a_required_docs_clean.png`, `docs/05_Website_Screenshots/p8a_sarthi_3_questions_advisor.png`

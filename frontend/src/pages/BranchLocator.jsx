@@ -30,12 +30,37 @@ function formatCompactInr(val) {
   return `₹${n.toLocaleString("en-IN")}`;
 }
 
-function buildDirectionsUrl(item) {
-  if (item?.lat != null && item?.lng != null) {
-    return `https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.lng}`;
+const INDIA_CENTER = [22.5937, 78.9629];
+
+function isValidCoordPair(lat, lng) {
+  if (lat === null || lat === undefined || lng === null || lng === undefined) return false;
+  const fLat = Number(lat);
+  const fLng = Number(lng);
+  if (!Number.isFinite(fLat) || !Number.isFinite(fLng)) return false;
+  if (Math.abs(fLat) < 1e-6 && Math.abs(fLng) < 1e-6) return false;
+  return fLat >= -90 && fLat <= 90 && fLng >= -180 && fLng <= 180;
+}
+
+function buildDirectionsUrl(item, userCoords = null) {
+  if (
+    item?.directions_url &&
+    !String(item.directions_url).includes("destination=0,0") &&
+    !String(item.directions_url).includes("destination=0.0,0.0")
+  ) {
+    return item.directions_url;
   }
-  const query = [item?.name, item?.address].filter(Boolean).join(" ");
-  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query || "India")}`;
+  if (isValidCoordPair(item?.lat, item?.lng)) {
+    const fLat = Number(item.lat);
+    const fLng = Number(item.lng);
+    const bLat = fLat >= 68 && fLat <= 98 && fLng >= 6 && fLng <= 38 ? fLng : fLat;
+    const bLng = fLat >= 68 && fLat <= 98 && fLng >= 6 && fLng <= 38 ? fLat : fLng;
+    if (Array.isArray(userCoords) && isValidCoordPair(userCoords[0], userCoords[1])) {
+      return `https://www.google.com/maps/dir/?api=1&origin=${userCoords[0]},${userCoords[1]}&destination=${bLat},${bLng}&travelmode=driving`;
+    }
+    return `https://www.google.com/maps/dir/?api=1&destination=${bLat},${bLng}`;
+  }
+  const query = [item?.name || item?.branch_name, item?.address].filter(Boolean).join(", ");
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query || "India")}`;
 }
 
 function createBranchIcon(isSelected, healthColor, instType) {
@@ -73,19 +98,30 @@ function createUserPulseIcon() {
   });
 }
 
-function MapViewportController({ target, zoom }) {
+function MapViewportController({ target, zoom, flySeq, resultsKey }) {
   const map = useMap();
+
   useEffect(() => {
-    if (target && target.length === 2 && target[0] != null && target[1] != null) {
-      map.flyTo(target, zoom || 13, { duration: 0.9 });
+    const timer = setTimeout(() => map.invalidateSize(), 100);
+    return () => clearTimeout(timer);
+  }, [map, target, zoom, resultsKey]);
+
+  useEffect(() => {
+    if (target && target.length === 2 && isValidCoordPair(target[0], target[1])) {
+      map.flyTo(target, zoom || 5, { duration: 0.9 });
+      const timer = setTimeout(() => map.invalidateSize(), 100);
+      return () => clearTimeout(timer);
     }
-  }, [target, zoom, map]);
+    return undefined;
+  }, [target, zoom, flySeq, map]);
+
   return null;
 }
 
 function InstitutionDetailsModal({
   item,
   activeSchemeCode,
+  userCoords,
   onClose,
   onSelectAndApply,
   onCopyPhone,
@@ -122,7 +158,7 @@ function InstitutionDetailsModal({
   });
 
   const isPortal = item.institution_type === "PORTAL";
-  const directionsUrl = buildDirectionsUrl(item);
+  const directionsUrl = buildDirectionsUrl(item, userCoords);
 
   return (
     <div
@@ -369,12 +405,17 @@ function InstitutionDetailsModal({
                           </a>
                         )}
                         <a
-                          href={buildDirectionsUrl({
-                            lat: br.lat,
-                            lng: br.lng,
-                            name: br.branch_name,
-                            address: br.address,
-                          })}
+                          href={buildDirectionsUrl(
+                            {
+                              source: br.source || item.source,
+                              directions_url: br.directions_url,
+                              lat: br.lat,
+                              lng: br.lng,
+                              name: br.branch_name,
+                              address: br.address,
+                            },
+                            userCoords
+                          )}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="btn btn-outline btn-sm"
@@ -440,16 +481,19 @@ export default function BranchLocator() {
       : null
   );
 
-  // Location & search states
-  const [pinInput, setPinInput] = useState(() =>
-    /^[1-9][0-9]{5}$/.test(String(form.pin || "").trim()) ? String(form.pin).trim() : ""
-  );
+  // Location & search states: always start clean with pin="" centered on India
+  const [pinInput, setPinInput] = useState("");
   const [searchCoords, setSearchCoords] = useState(null); // { lat, lng } if GPS
-  const [userPinCoords, setUserPinCoords] = useState([26.9124, 75.7873]);
-  const [mapTarget, setMapTarget] = useState([26.9124, 75.7873]);
-  const [mapZoom, setMapZoom] = useState(12);
+  const [userPinCoords, setUserPinCoords] = useState(null);
+  const [mapTarget, setMapTarget] = useState(INDIA_CENTER);
+  const [mapZoom, setMapZoom] = useState(5);
+  const [flySeq, setFlySeq] = useState(0);
   const [resolvedLocation, setResolvedLocation] = useState(null);
   const [radiusKm, setRadiusKm] = useState(10);
+  const [effectiveRadiusKm, setEffectiveRadiusKm] = useState(10);
+  const [expandedRadius, setExpandedRadius] = useState(false);
+  const [emptyMessage, setEmptyMessage] = useState("");
+  const [hasSearchedLocation, setHasSearchedLocation] = useState(false);
 
   // Results & UI filters
   const [branches, setBranches] = useState([]);
@@ -509,10 +553,11 @@ export default function BranchLocator() {
   }, [activeSchemeCode, scheme, setScheme]);
 
   const runLiveSearch = useCallback(
-    async ({ pin, lat, lng, radius = radiusKm, schemeCode = activeSchemeCode }) => {
+    async ({ pin, lat, lng, radius = radiusKm, schemeCode = activeSchemeCode, targetZoom }) => {
       if (!schemeCode) return;
       setLoading(true);
       setError("");
+      setHasSearchedLocation(true);
       try {
         const res = await api.liveBanksSearch({
           scheme: schemeCode,
@@ -524,14 +569,20 @@ export default function BranchLocator() {
         setBranches(res.branches || []);
         setPortals(res.portals || []);
         setOverpassLive(Boolean(res.overpass_live));
+        setEffectiveRadiusKm(res.effective_radius_km || radius);
+        setExpandedRadius(Boolean(res.expanded_radius));
+        setEmptyMessage(res.empty_message || "");
         if (res.scheme) {
           setActiveScheme(res.scheme);
         }
-        if (res.location?.lat != null && res.location?.lng != null) {
-          const coords = [res.location.lat, res.location.lng];
+        const centerLoc = res.center || res.location;
+        if (centerLoc?.lat != null && centerLoc?.lng != null) {
+          const coords = [centerLoc.lat, centerLoc.lng];
+          const isGps = res.location?.source === "gps" || (lat !== undefined && lng !== undefined);
           setUserPinCoords(coords);
           setMapTarget(coords);
-          setMapZoom(radius >= 25 ? 11 : radius <= 5 ? 14 : 12);
+          setMapZoom(targetZoom || (isGps ? 14 : 13));
+          setFlySeq((s) => s + 1);
           setResolvedLocation(res.location);
         }
       } catch (err) {
@@ -543,7 +594,7 @@ export default function BranchLocator() {
     [activeSchemeCode, radiusKm]
   );
 
-  // Trigger initial search when a scheme becomes active
+  // When scheme changes while a location is already searched, re-query for the new scheme; otherwise stay cleanly on India prompt
   useEffect(() => {
     if (!activeSchemeCode) return;
     if (searchCoords) {
@@ -552,15 +603,14 @@ export default function BranchLocator() {
         lng: searchCoords.lng,
         radius: radiusKm,
         schemeCode: activeSchemeCode,
+        targetZoom: 14,
       });
-    } else {
-      const initialPin = /^[1-9][0-9]{5}$/.test(pinInput.trim())
-        ? pinInput.trim()
-        : "302001";
+    } else if (/^[1-9][0-9]{5}$/.test(pinInput.trim())) {
       runLiveSearch({
-        pin: initialPin,
+        pin: pinInput.trim(),
         radius: radiusKm,
         schemeCode: activeSchemeCode,
+        targetZoom: 13,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -584,18 +634,21 @@ export default function BranchLocator() {
     if (e) e.preventDefault();
     const cleaned = pinInput.trim();
     if (!/^[1-9][0-9]{5}$/.test(cleaned)) {
-      setError("Please enter a valid 6-digit Indian PIN code (e.g. 335001 or 302001).");
+      setError("Please enter a valid 6-digit Indian PIN code (e.g. 110001 or 302001).");
       pinInputRef.current?.focus();
       return;
     }
+    // Clear live GPS coordinates so the entered PIN takes strict priority
     setSearchCoords(null);
-    runLiveSearch({ pin: cleaned, radius: radiusKm, schemeCode: activeSchemeCode });
+    runLiveSearch({ pin: cleaned, radius: radiusKm, schemeCode: activeSchemeCode, targetZoom: 13 });
   };
 
   const handleUseLiveLocation = () => {
+    // Clear any typed PIN so PIN state never overrides live GPS coordinates
+    setPinInput("");
     if (!navigator.geolocation) {
       setError(
-        "Geolocation is not supported by your browser — enter any 6-digit Indian PIN code below to find banks near you."
+        "Geolocation is not supported by your browser — please enter your 6-digit Indian PIN code to find banks near you."
       );
       pinInputRef.current?.focus();
       return;
@@ -607,21 +660,33 @@ export default function BranchLocator() {
         setGpsLoading(false);
         const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         setSearchCoords(coords);
+        setUserPinCoords([coords.lat, coords.lng]);
+        setMapTarget([coords.lat, coords.lng]);
+        setMapZoom(14);
+        setFlySeq((s) => s + 1);
+        setResolvedLocation({
+          lat: coords.lat,
+          lng: coords.lng,
+          place: "Your Live GPS Location",
+          location_label: "Your Live GPS Location",
+          source: "gps",
+        });
         runLiveSearch({
           lat: coords.lat,
           lng: coords.lng,
           radius: radiusKm,
           schemeCode: activeSchemeCode,
+          targetZoom: 14,
         });
       },
       () => {
         setGpsLoading(false);
         setError(
-          "Location permission denied — enter any 6-digit Indian PIN code below to find banks near you"
+          "Browser GPS location was blocked or unavailable — please enter your 6-digit PIN code above to find nearby banks."
         );
         pinInputRef.current?.focus();
       },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
   };
 
@@ -634,13 +699,21 @@ export default function BranchLocator() {
         lng: searchCoords.lng,
         radius: nextRadius,
         schemeCode: activeSchemeCode,
+        targetZoom: 14,
       });
-    } else {
-      const activePin = /^[1-9][0-9]{5}$/.test(pinInput.trim()) ? pinInput.trim() : "302001";
+    } else if (/^[1-9][0-9]{5}$/.test(pinInput.trim())) {
       runLiveSearch({
-        pin: activePin,
+        pin: pinInput.trim(),
         radius: nextRadius,
         schemeCode: activeSchemeCode,
+        targetZoom: 13,
+      });
+    } else if (resolvedLocation?.pin && /^[1-9][0-9]{5}$/.test(resolvedLocation.pin)) {
+      runLiveSearch({
+        pin: resolvedLocation.pin,
+        radius: nextRadius,
+        schemeCode: activeSchemeCode,
+        targetZoom: 13,
       });
     }
   };
@@ -658,13 +731,14 @@ export default function BranchLocator() {
   };
 
   const handleViewOnMap = (item) => {
-    if (item?.lat == null || item?.lng == null) return;
+    if (!isValidCoordPair(item?.lat, item?.lng)) return;
     setSelectedItem(item);
     setMapTarget([item.lat, item.lng]);
-    setMapZoom(15);
+    setMapZoom(16);
+    setFlySeq((s) => s + 1);
     const marker = markerRefs.current[item.id];
     if (marker && typeof marker.openPopup === "function") {
-      setTimeout(() => marker.openPopup(), 250);
+      setTimeout(() => marker.openPopup(), 450);
     }
   };
 
@@ -809,8 +883,16 @@ export default function BranchLocator() {
           <h1>{t("locator.title")}</h1>
           <p>
             {resolvedLocation
-              ? `Centered near ${[resolvedLocation.district || resolvedLocation.place, resolvedLocation.state].filter(Boolean).join(", ")}${resolvedLocation.pin ? ` (PIN ${resolvedLocation.pin})` : ""} • ${overpassLive ? "Live OpenStreetMap branches active" : "Directory fallback active"}`
-              : t("locator.subtitle")}
+              ? `Showing real banks within ${effectiveRadiusKm} km of ${
+                  resolvedLocation.location_label ||
+                  `${[
+                    resolvedLocation.post_office || resolvedLocation.district || resolvedLocation.place,
+                    resolvedLocation.state,
+                  ]
+                    .filter(Boolean)
+                    .join(", ")}${resolvedLocation.pin ? ` (PIN ${resolvedLocation.pin})` : ""}`
+                }`
+              : "Click 'Use My Live Location' or enter your 6-digit PIN code to find real banks near you"}
           </p>
         </div>
 
@@ -820,7 +902,7 @@ export default function BranchLocator() {
             <input
               ref={pinInputRef}
               aria-label="6-digit Indian PIN code"
-              placeholder="Enter 6-digit Indian PIN (e.g. 335001)"
+              placeholder="Enter 6-digit Indian PIN (e.g. 110001)"
               value={pinInput}
               maxLength={6}
               onChange={(e) => setPinInput(e.target.value.replace(/[^\d]/g, ""))}
@@ -932,27 +1014,37 @@ export default function BranchLocator() {
       <div className="locator-split-layout">
         <div className="locator-map-panel">
           <MapContainer
-            center={userPinCoords}
+            center={userPinCoords || INDIA_CENTER}
             zoom={mapZoom}
             scrollWheelZoom={true}
             style={{ height: "100%", width: "100%" }}
           >
             <TileLayer
-              attribution="&copy; OpenStreetMap contributors"
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              maxZoom={19}
+              attribution="Tiles &copy; Esri &mdash; Source: Esri, HERE, Garmin, USGS, Intermap, INCREMENT P, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom"
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
+              maxZoom={18}
             />
-            <MapViewportController target={mapTarget} zoom={mapZoom} />
+            <MapViewportController
+              target={mapTarget}
+              zoom={mapZoom}
+              flySeq={flySeq}
+              resultsKey={`${branches.length}-${portals.length}`}
+            />
 
             {/* Blue "You are here" Pulse Marker */}
             {userPinCoords && (
               <Marker position={userPinCoords} icon={createUserPulseIcon()}>
                 <Popup>
                   <div style={{ padding: "2px 4px" }}>
-                    <strong style={{ color: "#1d4ed8" }}>You are here</strong>
+                    <strong style={{ color: "#1d4ed8" }}>
+                      {resolvedLocation?.source === "gps"
+                        ? "You are here (Live GPS)"
+                        : "You are here"}
+                    </strong>
                     <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#475569" }}>
-                      {resolvedLocation?.place || "Search Center"}
-                      {resolvedLocation?.pin ? ` (${resolvedLocation.pin})` : ""}
+                      {resolvedLocation?.location_label ||
+                        resolvedLocation?.place ||
+                        "Search Center"}
                     </p>
                   </div>
                 </Popup>
@@ -986,12 +1078,12 @@ export default function BranchLocator() {
                         {b.distance_km} km away
                       </span>
                       <a
-                        href={buildDirectionsUrl(b)}
+                        href={buildDirectionsUrl(b, userPinCoords)}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{ color: "#ea580c", fontWeight: 700 }}
                       >
-                        Directions →
+                        Get Directions →
                       </a>
                     </div>
                   </div>
@@ -1024,16 +1116,43 @@ export default function BranchLocator() {
                 {filteredItems.length} Partner Banks & Portals
               </strong>
               <span>
-                Within {radiusKm} km radius • {activeSchemeCode} eligible channels
+                Within {effectiveRadiusKm} km radius • {activeSchemeCode} eligible channels
               </span>
             </div>
             <span className="live-funds-pill">
               <i className="status-dot-pulse" />
-              {overpassLive ? "OSM Live" : "Directory Active"}
+              {overpassLive ? "OSM Live" : hasSearchedLocation ? "Local Search" : "Ready"}
             </span>
           </div>
 
-          {loading ? (
+          {expandedRadius && (
+            <div className="rank-reason-box" style={{ marginBottom: "12px" }}>
+              <Icon name="location" size={15} />
+              <div>
+                <strong>Radius expanded to {effectiveRadiusKm} km</strong>
+                <p>
+                  No physical bank branches were mapped within {radiusKm} km, so we automatically expanded your search to {effectiveRadiusKm} km.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {!hasSearchedLocation && !loading ? (
+            <div className="empty-tab-card">
+              <p style={{ marginBottom: "12px" }}>
+                Click &lsquo;Use My Live Location&rsquo; or enter your 6-digit PIN code to find real banks near you.
+              </p>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={handleUseLiveLocation}
+                disabled={gpsLoading}
+              >
+                <Icon name="location" size={15} />
+                <span>{gpsLoading ? "Detecting..." : t("locator.useMyLiveLocation")}</span>
+              </button>
+            </div>
+          ) : loading ? (
             <div className="tracker-skeleton-card">
               <div className="skeleton-line w-40" />
               <div className="skeleton-line w-80" />
@@ -1042,16 +1161,26 @@ export default function BranchLocator() {
           ) : filteredItems.length === 0 ? (
             <div className="empty-tab-card">
               <p>
-                No banks or portals match the selected filter within {radiusKm} km. Try expanding
-                the radius to 25 km or switching to &ldquo;All&rdquo;.
+                {emptyMessage ||
+                  `No banks or portals match the selected filter within ${effectiveRadiusKm} km. Try expanding the radius to 25 km or switching to "Official Govt Portals".`}
               </p>
+              {portals.length > 0 && typeFilter !== "PORTAL" && (
+                <button
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  style={{ marginTop: "10px" }}
+                  onClick={() => setTypeFilter("PORTAL")}
+                >
+                  <span>View Official Govt Portals ({portals.length})</span>
+                </button>
+              )}
             </div>
           ) : (
             <div className="branch-cards-stack">
               {filteredItems.map((item, idx) => {
                 const isSelected = selectedItem?.id === item.id;
                 const isPortal = item.institution_type === "PORTAL";
-                const directionsUrl = buildDirectionsUrl(item);
+                const directionsUrl = buildDirectionsUrl(item, userPinCoords);
                 const phoneNumber = item.phone || item.toll_free_display || "";
 
                 return (
@@ -1232,6 +1361,7 @@ export default function BranchLocator() {
         <InstitutionDetailsModal
           item={modalItem}
           activeSchemeCode={activeSchemeCode}
+          userCoords={userPinCoords}
           onClose={() => setModalItem(null)}
           onSelectAndApply={handleSelectAndApply}
           onCopyPhone={handleCopyPhone}

@@ -982,7 +982,11 @@ class LiveBankLocatorTests(TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertFalse(res.data["overpass_live"])
         self.assertEqual(res.data["location"]["district"], "Sri Ganganagar")
-        self.assertTrue(len(res.data["branches"]) >= 1)
+        # Strict locality filter: never inject 300+ km away Jaipur demo branches
+        self.assertEqual(res.data["branches"], [])
+        self.assertTrue(res.data["expanded_radius"])
+        self.assertEqual(res.data["effective_radius_km"], 25)
+        self.assertIn("25 km", res.data["empty_message"])
         self.assertEqual({p["id"] for p in res.data["portals"]}, {"portal_pmsuraj"})
 
         # Missing location -> 400; unknown scheme -> 404
@@ -990,6 +994,151 @@ class LiveBankLocatorTests(TestCase):
         self.assertEqual(bad_loc.status_code, 400)
         bad_scheme = self.client.get("/api/banks/live-search/?scheme=INVALID_CODE&pin=335001")
         self.assertEqual(bad_scheme.status_code, 404)
+
+    @patch("core.bank_locator.requests.post")
+    @patch("core.bank_locator.requests.get")
+    def test_live_search_mlupy_gps_prioritizes_lat_lng_sorted_and_valid_directions(
+        self, mock_get, mock_overpass_post
+    ):
+        rev_resp = MagicMock()
+        rev_resp.status_code = 200
+        rev_resp.json.return_value = {
+            "address": {
+                "suburb": "C-Scheme",
+                "city": "Jaipur",
+                "state": "Rajasthan",
+                "postcode": "302001",
+            }
+        }
+        mock_get.return_value = rev_resp
+
+        overpass_resp = MagicMock()
+        overpass_resp.status_code = 200
+        overpass_resp.json.return_value = {
+            "elements": [
+                {
+                    "type": "node",
+                    "id": 2001,
+                    "lat": 26.9350,
+                    "lon": 75.8150,
+                    "tags": {"amenity": "bank", "name": "Bank of Baroda", "addr:city": "Jaipur"},
+                },
+                {
+                    "type": "node",
+                    "id": 2002,
+                    "lat": 26.9140,
+                    "lon": 75.7890,
+                    "tags": {"amenity": "bank", "name": "State Bank of India", "addr:city": "Jaipur"},
+                },
+            ]
+        }
+        mock_overpass_post.return_value = overpass_resp
+
+        # Pass pin=335001 alongside lat/lng to verify lat/lng takes strict priority
+        res = self.client.get("/api/banks/live-search/?scheme=MLUPY&lat=26.9124&lng=75.7873&pin=335001&radius_km=10")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.data["location"]["source"], "gps")
+        self.assertAlmostEqual(res.data["center"]["lat"], 26.9124, places=4)
+        self.assertAlmostEqual(res.data["center"]["lng"], 75.7873, places=4)
+        self.assertIn("Jaipur", res.data["location_label"])
+
+        branches = res.data["branches"]
+        self.assertTrue(len(branches) >= 2)
+        distances = [b["distance_km"] for b in branches]
+        self.assertEqual(distances, sorted(distances))
+        self.assertTrue(all(d <= 10 for d in distances))
+        for b in branches:
+            self.assertIn("directions_url", b)
+            self.assertIn("origin=26.9124,75.7873", b["directions_url"])
+            self.assertIn(f"destination={b['lat']},{b['lng']}", b["directions_url"])
+            self.assertNotIn("0,0", b["directions_url"])
+
+    @patch("core.bank_locator.requests.post")
+    @patch("core.bank_locator.requests.get")
+    @patch("core.geo.requests.get")
+    def test_live_search_mlupy_pin_335001_excludes_faraway_jaipur_branches(
+        self, mock_geo_get, mock_nom_get, mock_overpass_post
+    ):
+        import requests as req_lib
+
+        mock_geo_get.side_effect = req_lib.RequestException("offline")
+
+        nom_resp = MagicMock()
+        nom_resp.status_code = 200
+        nom_resp.json.return_value = [{"lat": "29.9038", "lon": "73.8772"}]
+        mock_nom_get.return_value = nom_resp
+
+        overpass_resp = MagicMock()
+        overpass_resp.status_code = 200
+        overpass_resp.json.return_value = {
+            "elements": [
+                {
+                    "type": "node",
+                    "id": 3001,
+                    "lat": 29.9060,
+                    "lon": 73.8790,
+                    "tags": {
+                        "amenity": "bank",
+                        "name": "State Bank of India",
+                        "addr:city": "Sri Ganganagar",
+                        "addr:state": "Rajasthan",
+                    },
+                },
+            ]
+        }
+        mock_overpass_post.return_value = overpass_resp
+
+        res = self.client.get("/api/banks/live-search/?scheme=MLUPY&pin=335001&radius_km=10")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.data["location"]["district"], "Sri Ganganagar")
+        self.assertAlmostEqual(res.data["center"]["lat"], 29.9038, places=3)
+        self.assertTrue(len(res.data["branches"]) >= 1)
+        self.assertTrue(all(b["distance_km"] <= 10 for b in res.data["branches"]))
+        self.assertFalse(any("jaipur" in (b.get("district") or "").lower() for b in res.data["branches"]))
+
+    @patch("core.bank_locator.requests.post")
+    @patch("core.bank_locator.requests.get")
+    @patch("core.geo.requests.get")
+    def test_live_search_auto_expands_to_25km_when_10km_empty_and_validates_coords(
+        self, mock_geo_get, mock_nom_get, mock_overpass_post
+    ):
+        import requests as req_lib
+
+        mock_geo_get.side_effect = req_lib.RequestException("offline")
+        nom_resp = MagicMock()
+        nom_resp.status_code = 200
+        nom_resp.json.return_value = [{"lat": "29.9038", "lon": "73.8772"}]
+        mock_nom_get.return_value = nom_resp
+
+        empty_resp = MagicMock()
+        empty_resp.status_code = 200
+        empty_resp.json.return_value = {"elements": []}
+
+        expanded_resp = MagicMock()
+        expanded_resp.status_code = 200
+        expanded_resp.json.return_value = {
+            "elements": [
+                {
+                    "type": "node",
+                    "id": 4001,
+                    # Swapped coordinates in OSM data -> should auto-swap cleanly
+                    "lat": 73.9500,
+                    "lon": 30.0200,
+                    "tags": {"amenity": "bank", "name": "Punjab National Bank"},
+                },
+            ]
+        }
+        mock_overpass_post.side_effect = [empty_resp, expanded_resp]
+
+        res = self.client.get("/api/banks/live-search/?scheme=MLUPY&pin=335001&radius_km=10")
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(res.data["expanded_radius"])
+        self.assertEqual(res.data["effective_radius_km"], 25)
+        self.assertEqual(len(res.data["branches"]), 1)
+        b = res.data["branches"][0]
+        self.assertAlmostEqual(b["lat"], 30.0200, places=4)
+        self.assertAlmostEqual(b["lng"], 73.9500, places=4)
+        self.assertLessEqual(b["distance_km"], 25)
 
 
 class AllSchemesCatalogTests(TestCase):
