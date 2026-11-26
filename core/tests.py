@@ -520,12 +520,18 @@ class I18nApiAndValidatorTests(TestCase):
     def test_validate_bundle_passes_for_all_23_translation_files(self):
         translations_dir = Path(__file__).resolve().parent / "translations"
         en_bundle = json.loads((translations_dir / "en.json").read_text(encoding="utf-8"))
+        self.assertEqual(en_bundle["detail"]["docsTitle"], "Required Documents")
         for code in SUPPORTED_LANGUAGES:
             path = translations_dir / f"{code}.json"
             self.assertTrue(path.exists(), f"Missing translation file: {path}")
             target = json.loads(path.read_text(encoding="utf-8"))
             errors = validate_bundle(en_bundle, target)
             self.assertEqual(errors, [], f"Validation failed for {code}: {errors}")
+            docs_title = target["detail"]["docsTitle"]
+            self.assertNotIn("Checklist", docs_title)
+            self.assertNotIn("चेकलिस्ट", docs_title)
+            if code == "hi":
+                self.assertEqual(docs_title, "आवश्यक दस्तावेज़")
 
     def test_placeholder_extraction_and_single_key_fallback(self):
         self.assertEqual(extract_placeholders("{done} of {total} ready"), ["{done}", "{total}"])
@@ -984,6 +990,73 @@ class LiveBankLocatorTests(TestCase):
         self.assertEqual(bad_loc.status_code, 400)
         bad_scheme = self.client.get("/api/banks/live-search/?scheme=INVALID_CODE&pin=335001")
         self.assertEqual(bad_scheme.status_code, 404)
+
+
+class AllSchemesCatalogTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        call_command("seed_data")
+
+    def test_schemes_list_returns_all_66_schemes_with_full_metadata(self):
+        res = self.client.get("/api/schemes/")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.data["schemes"]), 66)
+        self.assertEqual(res.data["count"], 66)
+
+        required_fields = (
+            "code",
+            "name",
+            "level",
+            "agency",
+            "applicable_states",
+            "eligible_categories",
+            "women_only",
+            "max_income",
+            "min_loan",
+            "max_loan",
+            "interest_rate",
+            "interest_rate_note",
+            "subsidy_note",
+            "tenure_months",
+            "moratorium_months",
+            "description",
+            "available_channels",
+            "official_portal_url",
+        )
+        for item in res.data["schemes"]:
+            for field in required_fields:
+                self.assertIn(field, item, f"Missing {field} in scheme {item.get('code')}")
+
+    def test_schemes_list_server_filters_and_sorting(self):
+        # Exclusive state filter for Rajasthan returns only Rajasthan state schemes
+        rj_only = self.client.get("/api/schemes/?state=Rajasthan&state_exclusive=true")
+        self.assertEqual(rj_only.status_code, 200)
+        rj_codes = {s["code"] for s in rj_only.data["schemes"]}
+        self.assertEqual(rj_codes, {"BRUPY", "MLUPY"})
+
+        # Inclusive state filter returns Central + Rajasthan schemes
+        rj_all = self.client.get("/api/schemes/?state=Rajasthan")
+        self.assertEqual(rj_all.status_code, 200)
+        self.assertGreater(len(rj_all.data["schemes"]), 40)
+
+        # Women-only filter
+        women_res = self.client.get("/api/schemes/?women_only=true")
+        self.assertEqual(women_res.status_code, 200)
+        self.assertTrue(len(women_res.data["schemes"]) >= 4)
+        self.assertTrue(all(s["women_only"] for s in women_res.data["schemes"]))
+
+        # Custom desired loan + max interest rate + sort by rate ascending
+        filtered = self.client.get("/api/schemes/?desired_loan=300000&max_rate=5&sort=rate_asc")
+        self.assertEqual(filtered.status_code, 200)
+        rates = [s["interest_rate"] for s in filtered.data["schemes"]]
+        self.assertEqual(rates, sorted(rates))
+        self.assertTrue(all(r <= 5.0 for r in rates))
+
+        # SPA route /schemes renders index
+        spa_res = self.client.get("/schemes")
+        self.assertEqual(spa_res.status_code, 200)
+        self.assertIn(b"id=\"root\"", spa_res.content)
+
 
 
 

@@ -29,10 +29,189 @@ from core.validation import validate_applicant, validate_emi_payload
 STAGES = ["Submitted", "Document Verification", "Field/Police Verification", "Decision"]
 
 
+def _matches_sector_purpose(scheme, sector_key):
+    key = sector_key.strip().lower()
+    if not key or key == "all":
+        return True
+    sectors = [str(s).lower() for s in (scheme.sectors or [])]
+    text = " ".join(
+        [
+            scheme.code or "",
+            scheme.name or "",
+            scheme.overview or "",
+            scheme.description or "",
+        ]
+    ).lower()
+    channels = [str(c).lower() for c in (scheme.available_channels or [])]
+
+    if key in ("business", "business_msme"):
+        return any(s in sectors for s in ("manufacturing", "trade", "service", "transport")) and scheme.code != "PMAY_U_ISS"
+    if key in ("microfinance", "micro_finance"):
+        max_loan = float(scheme.max_loan) if scheme.max_loan is not None else float("inf")
+        return (
+            max_loan <= 300000
+            or "mfi" in channels
+            or any(k in text for k in ("micro", "svanidhi", "street vendor", "shg", "mahila samriddhi", "aajeevika"))
+        )
+    if key == "education":
+        return "education" in sectors
+    if key in ("agriculture", "agriculture_solar_rural"):
+        return "agriculture" in sectors or any(
+            k in text for k in ("solar", "surya", "kusum", "kisan", "livestock", "fisheries", "nrlm", "rural")
+        )
+    if key == "housing":
+        return any(k in text for k in ("pmay", "housing", "awas", "home"))
+    if key in ("sanitation", "sanitation_artisan"):
+        return any(
+            k in text for k in ("sanitation", "namaste", "nskfdc", "artisan", "vishwakarma", "shilpi", "weaver", "handloom", "virasat")
+        )
+    return key in sectors
+
+
+def _matches_channel_filter(scheme, channel_key):
+    key = channel_key.strip().lower()
+    if not key or key == "all":
+        return True
+    channels = {str(c).lower() for c in (scheme.available_channels or [])}
+    if key in ("direct_portal", "direct"):
+        return bool(channels & {"state_portal", "kviconline", "standupmitra", "pmvishwakarma"})
+    return key in channels
+
+
+def _filter_and_sort_schemes(schemes, params):
+    items = list(schemes)
+
+    q = (params.get("q") or params.get("search") or "").strip().lower()
+    if q:
+        items = [
+            s
+            for s in items
+            if q in " ".join(
+                [
+                    s.code or "",
+                    s.name or "",
+                    s.agency or "",
+                    s.overview or "",
+                    s.description or "",
+                    s.subsidy_margin_note or "",
+                    s.interest_rate_note or "",
+                    " ".join(s.applicable_states or []),
+                ]
+            ).lower()
+        ]
+
+    level = (params.get("level") or "").strip().lower()
+    if level in ("central", "state"):
+        items = [s for s in items if (s.level or "central").lower() == level]
+
+    state = (params.get("state") or "").strip()
+    state_exclusive = str(params.get("state_exclusive") or "").strip().lower() in ("1", "true", "yes")
+    if state and state.upper() != "ALL":
+        state_low = state.lower()
+        if state_exclusive:
+            items = [
+                s
+                for s in items
+                if any(st.lower() == state_low for st in (s.applicable_states or []))
+                and not any(st.upper() == "ALL" for st in (s.applicable_states or []))
+            ]
+        else:
+            items = [
+                s
+                for s in items
+                if any(st.upper() == "ALL" or st.lower() == state_low for st in (s.applicable_states or []))
+            ]
+
+    category = (params.get("category") or "").strip()
+    if category and category.lower() != "all":
+        wanted = [c.strip().lower() for c in category.split(",") if c.strip()]
+        expanded = set()
+        for c in wanted:
+            if c in ("ews_general", "ews / general", "ews/general"):
+                expanded.update({"ews", "general"})
+            else:
+                expanded.add(c)
+        items = [
+            s
+            for s in items
+            if any(str(cat).lower() in expanded for cat in (s.eligible_categories or []))
+        ]
+
+    women_only = str(params.get("women_only") or "").strip().lower() in ("1", "true", "yes")
+    if women_only:
+        items = [s for s in items if s.women_only]
+
+    sector = (params.get("sector") or "").strip()
+    if sector and sector.lower() != "all":
+        items = [s for s in items if _matches_sector_purpose(s, sector)]
+
+    channel = (params.get("channel") or "").strip()
+    if channel and channel.lower() != "all":
+        items = [s for s in items if _matches_channel_filter(s, channel)]
+
+    raw_loan = params.get("desired_loan")
+    if raw_loan not in (None, ""):
+        try:
+            desired = float(raw_loan)
+            if desired > 0:
+                items = [
+                    s
+                    for s in items
+                    if (s.min_loan is None or float(s.min_loan) <= desired)
+                    and (s.max_loan is None or float(s.max_loan) >= desired)
+                ]
+        except (TypeError, ValueError):
+            pass
+
+    raw_rate = params.get("max_rate")
+    if raw_rate not in (None, ""):
+        try:
+            max_rate = float(raw_rate)
+            items = [s for s in items if float(s.interest_rate or 0) <= max_rate]
+        except (TypeError, ValueError):
+            pass
+
+    raw_income = params.get("income")
+    if raw_income not in (None, ""):
+        try:
+            income = float(raw_income)
+            if income > 0:
+                items = [
+                    s
+                    for s in items
+                    if s.max_income is None or float(s.max_income) == 0 or float(s.max_income) >= income
+                ]
+        except (TypeError, ValueError):
+            pass
+
+    sort_key = (params.get("sort") or "default").strip().lower()
+    if sort_key == "name_asc":
+        items.sort(key=lambda s: (s.name or "").lower())
+    elif sort_key == "name_desc":
+        items.sort(key=lambda s: (s.name or "").lower(), reverse=True)
+    elif sort_key == "rate_asc":
+        items.sort(key=lambda s: (float(s.interest_rate or 0), (s.name or "").lower()))
+    elif sort_key == "rate_desc":
+        items.sort(key=lambda s: (-float(s.interest_rate or 0), (s.name or "").lower()))
+    elif sort_key == "loan_desc":
+        items.sort(
+            key=lambda s: (float(s.max_loan) if s.max_loan is not None else float("inf")),
+            reverse=True,
+        )
+    elif sort_key == "loan_asc":
+        items.sort(key=lambda s: (float(s.max_loan) if s.max_loan is not None else float("inf")))
+    elif sort_key == "tenure_desc":
+        items.sort(key=lambda s: (-int(s.tenure_months or 0), (s.name or "").lower()))
+
+    return items
+
+
 class SchemeListView(APIView):
     def get(self, request):
         qs = LoanScheme.objects.all()
-        return Response({"demo": True, "schemes": LoanSchemeSerializer(qs, many=True).data})
+        filtered = _filter_and_sort_schemes(qs, request.query_params)
+        data = LoanSchemeSerializer(filtered, many=True).data
+        return Response({"demo": True, "count": len(data), "schemes": data})
 
 
 def _default_scheme_amount(scheme):

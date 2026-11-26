@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
 const KEY = "ss-form";
 const VOICE_KEY = "ss-voice-guide";
@@ -43,6 +43,7 @@ export function AppStateProvider({ children }) {
   const [scheme, setScheme] = useState(null);
   const [branch, setBranch] = useState(null);
   const [refNo, setRefNo] = useState("");
+  const [sarthiRecommendedChannel, setSarthiRecommendedChannel] = useState(null);
   const [voiceGuideEnabled, setVoiceGuideEnabledState] = useState(() => {
     try {
       return localStorage.getItem(VOICE_KEY) === "true";
@@ -73,6 +74,14 @@ export function AppStateProvider({ children }) {
     setVoiceGuideEnabled((prev) => (typeof forceState === "boolean" ? forceState : !prev));
   };
 
+  const startSarthiPathAdvisor = useCallback((payload) => {
+    window.dispatchEvent(
+      new CustomEvent("sarthi:start-path-advisor", {
+        detail: payload || {},
+      })
+    );
+  }, []);
+
   const value = useMemo(
     () => ({
       form,
@@ -88,8 +97,11 @@ export function AppStateProvider({ children }) {
       voiceGuideEnabled,
       setVoiceGuideEnabled,
       toggleVoiceGuide,
+      sarthiRecommendedChannel,
+      setSarthiRecommendedChannel,
+      startSarthiPathAdvisor,
     }),
-    [form, result, scheme, branch, refNo, voiceGuideEnabled]
+    [form, result, scheme, branch, refNo, voiceGuideEnabled, sarthiRecommendedChannel, startSarthiPathAdvisor]
   );
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
 }

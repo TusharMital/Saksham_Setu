@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout.jsx";
+import AllSchemes from "./pages/AllSchemes.jsx";
 import ApplyPath from "./pages/ApplyPath.jsx";
 import Calculator from "./pages/Calculator.jsx";
 import Form from "./pages/Form.jsx";
@@ -13,6 +14,7 @@ export default function App() {
     <Layout>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/schemes" element={<AllSchemes />} />
         <Route path="/form" element={<Form />} />
         <Route path="/results" element={<Results />} />
         <Route path="/scheme/:code" element={<SchemeDetail />} />

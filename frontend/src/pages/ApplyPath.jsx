@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "../components/Icon.jsx";
 import { api } from "../api.js";
@@ -74,7 +74,7 @@ function buildChannelConfig(channelKey, scheme) {
       desc: "Apply offline at a nearby Public Sector Bank or Regional Rural Bank branch with funds and scheme support.",
       steps: [
         "Find a high-health partner bank branch near your PIN code.",
-        "Complete your document checklist and download your project summary PDF.",
+        "Keep your required documents ready and download your project summary PDF.",
         "Meet the branch loan officer to submit the official bank form.",
       ],
       internalRoute: `/locator${schemeQuery}`,
@@ -169,9 +169,16 @@ function buildChannelConfig(channelKey, scheme) {
 
 export default function ApplyPath() {
   const { t } = useI18n();
-  const { scheme, setScheme, branch } = useAppState();
+  const {
+    scheme,
+    setScheme,
+    branch,
+    sarthiRecommendedChannel,
+    startSarthiPathAdvisor,
+  } = useAppState();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const cardRefs = useRef({});
 
   const queryCode = (searchParams.get("scheme") || "").trim();
   const activeCode = queryCode || scheme?.code || "";
@@ -261,6 +268,20 @@ export default function ApplyPath() {
     if (!code) return;
     navigate(`/apply?scheme=${encodeURIComponent(code)}`);
   };
+
+  useEffect(() => {
+    if (
+      sarthiRecommendedChannel?.channelKey &&
+      sarthiRecommendedChannel?.schemeCode?.toUpperCase() === activeCode.toUpperCase()
+    ) {
+      const el = cardRefs.current[sarthiRecommendedChannel.channelKey];
+      if (el && typeof el.scrollIntoView === "function") {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 120);
+      }
+    }
+  }, [sarthiRecommendedChannel, activeCode]);
 
   // Gate when NO scheme is selected
   if (!activeCode || (!loading && !loadedScheme)) {
@@ -445,68 +466,81 @@ export default function ApplyPath() {
                   : undefined,
           }}
         >
-          {channels.map((ch) => (
-            <article key={ch.key} className={`path-card ${ch.recommended ? "recommended" : ""}`}>
-              <div className="path-card-top">
-                <span className="path-icon-box">
-                  <Icon name={ch.icon} size={24} />
-                </span>
-                <span className={`path-status-pill ${ch.recommended ? "" : "secondary"}`}>
-                  {ch.tag}
-                </span>
-              </div>
+          {channels.map((ch) => {
+            const isSarthiPicked =
+              sarthiRecommendedChannel?.schemeCode?.toUpperCase() === selectedScheme.code?.toUpperCase() &&
+              sarthiRecommendedChannel?.channelKey === ch.key;
+            return (
+              <article
+                key={ch.key}
+                id={`channel-card-${ch.key}`}
+                ref={(el) => {
+                  cardRefs.current[ch.key] = el;
+                }}
+                className={`path-card ${ch.recommended ? "recommended" : ""} ${isSarthiPicked ? "sarthi-picked" : ""}`}
+              >
+                <div className="path-card-top">
+                  <span className="path-icon-box">
+                    <Icon name={ch.icon} size={24} />
+                  </span>
+                  <div className="path-card-badges">
+                    {isSarthiPicked && (
+                      <span className="sarthi-rec-badge">
+                        <Icon name="sparkles" size={12} />
+                        <span>Recommended by Sarthi</span>
+                      </span>
+                    )}
+                    <span className={`path-status-pill ${ch.recommended ? "" : "secondary"}`}>
+                      {ch.tag}
+                    </span>
+                  </div>
+                </div>
 
-              <h2>{ch.title}</h2>
-              <p>{ch.desc}</p>
+                <h2>{ch.title}</h2>
+                <p>{ch.desc}</p>
 
-              <div className="time-est-badge">
-                <Icon name="track" size={16} />
-                <span>
-                  Typical time: <strong>{ch.time}</strong>
-                </span>
-              </div>
+                <div className="time-est-badge">
+                  <Icon name="track" size={16} />
+                  <span>
+                    Typical time: <strong>{ch.time}</strong>
+                  </span>
+                </div>
 
-              <ul className="path-steps-list">
-                {ch.steps.map((step) => (
-                  <li key={step}>
-                    <Icon name="checkCircle" size={16} />
-                    <span>{step}</span>
-                  </li>
-                ))}
-              </ul>
+                <ul className="path-steps-list">
+                  {ch.steps.map((step) => (
+                    <li key={step}>
+                      <Icon name="checkCircle" size={16} />
+                      <span>{step}</span>
+                    </li>
+                  ))}
+                </ul>
 
-              <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: "8px" }}>
-                {ch.externalUrl && (
-                  <a
-                    className="btn btn-primary"
-                    href={ch.externalUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <span>{ch.externalLabel}</span>
-                    <Icon name="external" size={16} />
-                  </a>
-                )}
-                {ch.internalRoute && (
-                  <button
-                    type="button"
-                    className={ch.externalUrl ? "btn btn-outline" : "btn btn-primary"}
-                    onClick={() => navigate(ch.internalRoute)}
-                  >
-                    <span>{ch.internalLabel}</span>
-                    <Icon name="arrow" size={18} />
-                  </button>
-                )}
-                <Link
-                  to={`/scheme/${encodeURIComponent(selectedScheme.code)}`}
-                  className="btn btn-outline"
-                >
-                  <Icon name="document" size={16} />
-                  <span>{t("detail.docsTitle")}</span>
-                </Link>
-              </div>
-            </article>
-          ))}
+                <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {ch.externalUrl && (
+                    <a
+                      className="btn btn-primary"
+                      href={ch.externalUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <span>{ch.externalLabel}</span>
+                      <Icon name="external" size={16} />
+                    </a>
+                  )}
+                  {ch.internalRoute && (
+                    <button
+                      type="button"
+                      className={ch.externalUrl ? "btn btn-outline" : "btn btn-primary"}
+                      onClick={() => navigate(ch.internalRoute)}
+                    >
+                      <span>{ch.internalLabel}</span>
+                      <Icon name="arrow" size={18} />
+                    </button>
+                  )}
+                </div>
+              </article>
+            );
+          })}
         </div>
       )}
 
@@ -519,13 +553,20 @@ export default function ApplyPath() {
           <h2>{t("paths.askSarthiPrompt")}</h2>
           <p>{t("paths.askSarthiSub")}</p>
         </div>
-        <Link
-          to={`/locator?scheme=${encodeURIComponent(selectedScheme.code)}`}
-          className="btn btn-secondary"
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() =>
+            startSarthiPathAdvisor({
+              schemeCode: selectedScheme.code,
+              schemeName: selectedScheme.name,
+              availableChannels: channels.map((c) => c.key),
+            })
+          }
         >
-          <span>{t("detail.findBanksPortals")}</span>
-          <Icon name="arrow" size={18} />
-        </Link>
+          <Icon name="sparkles" size={17} />
+          <span>{t("paths.askSarthiBtn")} →</span>
+        </button>
       </section>
     </div>
   );

@@ -265,6 +265,7 @@ export default function Layout({ children }) {
 
   const navItems = [
     { to: "/", label: t("nav.home"), icon: "home" },
+    { to: "/schemes", label: t("nav.allSchemes"), icon: "bank" },
     { to: "/form", label: t("nav.find"), icon: "search" },
     { to: "/calculator", label: t("nav.calculator"), icon: "calc" },
   ];
@@ -439,6 +440,8 @@ export default function Layout({ children }) {
           </div>
 
           <div className="footer-links">
+            <Link to="/">{t("nav.home")}</Link>
+            <Link to="/schemes">{t("nav.allSchemes")}</Link>
             <Link to="/form">{t("nav.find")}</Link>
             <Link to="/calculator">{t("nav.calculator")}</Link>
           </div>

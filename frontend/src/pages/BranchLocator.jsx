@@ -262,7 +262,7 @@ function InstitutionDetailsModal({
               </div>
 
               <div className="modal-docs-card">
-                <h3>Bank / Portal Required Documents</h3>
+                <h3>{t("detail.docsTitle")}</h3>
                 <ul className="modal-doc-list">
                   {(item.bank_required_documents || []).map((doc, idx) => (
                     <li key={idx}>

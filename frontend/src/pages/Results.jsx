@@ -1,68 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../components/Icon.jsx";
-import { api } from "../api.js";
+import SchemeCompareBarAndModal from "../components/SchemeCompareBarAndModal.jsx";
 import { useAppState } from "../state.jsx";
 import { useI18n } from "../i18n.jsx";
-
-function computeClientEmi(principal, annualRate, tenureMonths, moratoriumMonths = 0) {
-  const p = Number(principal || 0);
-  const nTotal = Math.max(1, Number(tenureMonths || 60));
-  const m = Math.max(0, Math.min(Number(moratoriumMonths || 0), nTotal - 1));
-  const n = Math.max(1, nTotal - m);
-  const r = Number(annualRate || 0) / 12 / 100;
-  if (p <= 0) return { monthlyEmi: 0, totalInterest: 0, totalPayable: 0 };
-  const pAfterMoratorium = m > 0 ? p * Math.pow(1 + r, m) : p;
-  const emi = r === 0 ? pAfterMoratorium / n : (pAfterMoratorium * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-  // Accurate capitalization during moratorium
-  let balance = p;
-  let totalInterest = 0;
-  for (let month = 1; month <= nTotal; month++) {
-    const interest = balance * r;
-    totalInterest += interest;
-    if (month <= m) {
-      balance += interest;
-    } else {
-      const principalPaid = month === nTotal ? balance : Math.min(emi - interest, balance);
-      balance = Math.max(0, balance - principalPaid);
-    }
-  }
-  return {
-    monthlyEmi: Math.round(emi),
-    totalInterest: Math.round(totalInterest),
-    totalPayable: Math.round(p + totalInterest),
-  };
-}
-
-function getSchemeDefaultPrincipal(scheme, userLoanAmount) {
-  const req = Number(userLoanAmount || 0);
-  if (req > 0) return req;
-  const minLoan = Number(scheme.min_loan || 0);
-  const maxLoan = scheme.max_loan !== null && scheme.max_loan !== undefined ? Number(scheme.max_loan) : null;
-  let base = 500000;
-  if (maxLoan && maxLoan > 0) base = Math.min(base, maxLoan);
-  if (minLoan > base) base = minLoan;
-  return Math.max(10000, base);
-}
-
-function formatMoney(val) {
-  if (val === null || val === undefined) return "No fixed cap";
-  const num = Number(val);
-  if (Number.isNaN(num)) return "—";
-  return `₹${num.toLocaleString("en-IN")}`;
-}
-
-const CHANNEL_LABELS = {
-  pmsuraj: "PM-SURAJ",
-  jansamarth: "JanSamarth",
-  sca: "State SCA",
-  bank: "Bank Branch",
-  mfi: "NBFC-MFI",
-  kviconline: "KVIC PMEGP",
-  standupmitra: "Stand-Up Mitra",
-  pmvishwakarma: "PM Vishwakarma",
-  state_portal: "State Portal",
-};
+import {
+  computeClientEmi,
+  formatMoney,
+  getSchemeDefaultPrincipal,
+} from "../utils/schemeHelpers.js";
 
 export default function Results() {
   const { t } = useI18n();
@@ -71,8 +17,6 @@ export default function Results() {
   const [compareCodes, setCompareCodes] = useState([]);
   const [compareNotice, setCompareNotice] = useState("");
   const [compareOpen, setCompareOpen] = useState(false);
-  const [compareDetails, setCompareDetails] = useState({});
-  const [compareLoading, setCompareLoading] = useState(false);
   const [showRejected, setShowRejected] = useState(false);
   const navigate = useNavigate();
 
@@ -93,32 +37,6 @@ export default function Results() {
     () => compareCodes.map((code) => matched.find((s) => s.code === code)).filter(Boolean),
     [compareCodes, matched]
   );
-
-  // Fetch authoritative EMI breakdown from backend when Split-Window Comparison opens
-  useEffect(() => {
-    if (!compareOpen || comparedSchemes.length === 0) return;
-    let cancelled = false;
-    setCompareLoading(true);
-    Promise.all(
-      comparedSchemes.map((s) =>
-        api
-          .schemeDetail(s.code, form.loan_amount || undefined)
-          .then((data) => [s.code, data])
-          .catch(() => [s.code, null])
-      )
-    ).then((entries) => {
-      if (cancelled) return;
-      const map = {};
-      for (const [code, data] of entries) {
-        if (data) map[code] = data;
-      }
-      setCompareDetails(map);
-      setCompareLoading(false);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [compareOpen, comparedSchemes, form.loan_amount]);
 
   const toggleCompare = (code) => {
     setCompareNotice("");
@@ -419,253 +337,18 @@ export default function Results() {
         </section>
       )}
 
-      {/* Sticky Compare Bar */}
-      {compareCodes.length > 0 && (
-        <div className="sticky-compare-bar" role="region" aria-label="Scheme Comparison Bar">
-          <div className="sticky-compare-inner">
-            <div className="compare-selected-pills">
-              <strong className="compare-bar-title">
-                {t("results.compareSelected", { count: String(compareCodes.length) })}
-              </strong>
-              <div className="compare-chips-row">
-                {comparedSchemes.map((cs) => (
-                  <span key={cs.code} className="compare-chip">
-                    <b>{cs.code}</b>
-                    <button
-                      type="button"
-                      onClick={() => toggleCompare(cs.code)}
-                      aria-label={`Remove ${cs.name} from comparison`}
-                    >
-                      <Icon name="close" size={12} />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="compare-bar-actions">
-              <button
-                type="button"
-                className="btn btn-ghost"
-                onClick={() => {
-                  setCompareCodes([]);
-                  setCompareOpen(false);
-                  setCompareNotice("");
-                }}
-              >
-                {t("results.clearCompare")}
-              </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                disabled={compareCodes.length < 2}
-                title={compareCodes.length < 2 ? "Select at least 2 schemes to compare" : undefined}
-                onClick={() => setCompareOpen(true)}
-              >
-                <span>{t("results.compareSelected", { count: String(compareCodes.length) })}</span>
-                <Icon name="arrow" size={16} />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Full-Width Split-Window Comparison View (2 or 3 equal side-by-side columns) */}
-      {compareOpen && comparedSchemes.length >= 2 && (
-        <div className="split-compare-overlay" role="dialog" aria-modal="true" aria-label="Scheme Side-by-Side Comparison">
-          <div className="split-compare-window">
-            <header className="split-compare-header">
-              <div>
-                <span className="eyebrow">SIDE-BY-SIDE SCHEME COMPARISON</span>
-                <h2>Comparing {comparedSchemes.length} Schemes for Your Profile</h2>
-                <p>
-                  Loan Basis:{" "}
-                  <strong>
-                    ₹{Number(form.loan_amount || 500000).toLocaleString("en-IN")}
-                  </strong>{" "}
-                  • {form.state} ({form.caste_category || "General"})
-                </p>
-              </div>
-              <button
-                type="button"
-                className="btn btn-outline"
-                onClick={() => setCompareOpen(false)}
-              >
-                <Icon name="close" size={18} />
-                <span>{t("results.closeCompare")}</span>
-              </button>
-            </header>
-
-            <div
-              className="split-compare-columns"
-              style={{ "--compare-cols": comparedSchemes.length }}
-            >
-              {comparedSchemes.map((s) => {
-                const detail = compareDetails[s.code];
-                const principal = detail?.emi?.principal || getSchemeDefaultPrincipal(s, form.loan_amount);
-                const fallbackCalc = computeClientEmi(
-                  principal,
-                  s.interest_rate,
-                  s.tenure_months,
-                  s.moratorium_months
-                );
-                const monthlyEmi = detail?.monthly_emi ?? fallbackCalc.monthlyEmi;
-                const totalInterest = detail?.total_interest ?? fallbackCalc.totalInterest;
-                const totalPayable = detail?.total_payable ?? fallbackCalc.totalPayable;
-                const principalPct = totalPayable > 0 ? Math.round((principal / totalPayable) * 100) : 100;
-                const interestPct = Math.max(0, 100 - principalPct);
-                const isState = s.level === "state";
-
-                return (
-                  <article key={s.code} className="split-col-card">
-                    <div className={`split-col-top ${isState ? "saffron" : "navy"}`}>
-                      <div className="split-col-badges">
-                        <span className="scheme-badge-code">{s.code}</span>
-                        <span className={`level-badge ${isState ? "state" : "central"}`}>
-                          {isState ? t("results.stateBadge") : t("results.centralBadge")}
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        className="split-col-remove"
-                        onClick={() => {
-                          const next = compareCodes.filter((c) => c !== s.code);
-                          setCompareCodes(next);
-                          if (next.length < 2) setCompareOpen(false);
-                        }}
-                        aria-label={`Remove ${s.code}`}
-                      >
-                        <Icon name="close" size={14} />
-                      </button>
-                    </div>
-
-                    <div className="split-col-body">
-                      <h3>{s.name}</h3>
-                      <small className="split-col-agency">{s.agency}</small>
-
-                      {/* Section 1: Summary */}
-                      <section className="split-section">
-                        <h4>Summary</h4>
-                        <dl className="split-kv-list">
-                          <div>
-                            <dt>Match Score</dt>
-                            <dd><strong>{s.score || "—"}%</strong></dd>
-                          </div>
-                          <div>
-                            <dt>Interest Rate</dt>
-                            <dd className="text-forest"><strong>{s.interest_rate}% p.a.</strong></dd>
-                          </div>
-                          <div>
-                            <dt>Max Loan Limit</dt>
-                            <dd><strong>{formatMoney(s.max_loan)}</strong></dd>
-                          </div>
-                          <div>
-                            <dt>Tenure & Moratorium</dt>
-                            <dd>{s.tenure_months}m ({s.moratorium_months}m moratorium)</dd>
-                          </div>
-                        </dl>
-                        <p className="split-sub-note">
-                          <strong>Subsidy / Margin:</strong> {s.subsidy_margin_note || `${s.subsidy_percent}%`}
-                        </p>
-                        {s.interest_rate_note && (
-                          <p className="split-sub-note">
-                            <strong>Rate Terms:</strong> {s.interest_rate_note}
-                          </p>
-                        )}
-                      </section>
-
-                      {/* Section 2: EMI Details */}
-                      <section className="split-section">
-                        <h4>
-                          EMI Details {compareLoading && !detail ? "(updating…)" : ""}
-                        </h4>
-                        <div className="split-emi-kpis">
-                          <div>
-                            <small>Monthly EMI</small>
-                            <strong className="text-saffron">₹{Number(monthlyEmi).toLocaleString("en-IN")}</strong>
-                          </div>
-                          <div>
-                            <small>Total Interest</small>
-                            <strong>₹{Number(totalInterest).toLocaleString("en-IN")}</strong>
-                          </div>
-                          <div>
-                            <small>Total Payable</small>
-                            <strong>₹{Number(totalPayable).toLocaleString("en-IN")}</strong>
-                          </div>
-                        </div>
-
-                        {/* Principal vs Interest Ratio Bar */}
-                        <div className="ratio-bar-wrap" aria-label="Principal vs Interest Ratio">
-                          <div className="ratio-bar-labels">
-                            <span>Principal {principalPct}%</span>
-                            <span>Interest {interestPct}%</span>
-                          </div>
-                          <div className="ratio-bar-track">
-                            <div className="ratio-bar-principal" style={{ width: `${principalPct}%` }} />
-                            <div className="ratio-bar-interest" style={{ width: `${interestPct}%` }} />
-                          </div>
-                        </div>
-                      </section>
-
-                      {/* Section 3: Important Notes */}
-                      <section className="split-section">
-                        <h4>Important Notes & Channels</h4>
-                        {s.key_highlights?.length > 0 && (
-                          <ul className="split-notes-list highlights">
-                            {s.key_highlights.slice(0, 3).map((h, i) => (
-                              <li key={i}>{h}</li>
-                            ))}
-                          </ul>
-                        )}
-                        {s.important_notes?.length > 0 && (
-                          <ul className="split-notes-list warnings">
-                            {s.important_notes.map((w, i) => (
-                              <li key={i}>{w}</li>
-                            ))}
-                          </ul>
-                        )}
-                        <div className="split-channel-pills">
-                          {(s.available_channels || []).map((ch) => (
-                            <span key={ch} className="channel-mini-pill">
-                              {CHANNEL_LABELS[ch] || ch}
-                            </span>
-                          ))}
-                        </div>
-                      </section>
-
-                      <div className="split-col-footer">
-                        <button
-                          type="button"
-                          className="btn btn-outline"
-                          onClick={() => {
-                            setScheme(s);
-                            setCompareOpen(false);
-                            navigate(`/scheme/${encodeURIComponent(s.code)}`);
-                          }}
-                        >
-                          <span>{t("results.moreDetails")}</span>
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-primary"
-                          onClick={() => {
-                            setScheme(s);
-                            setCompareOpen(false);
-                            navigate(`/apply?scheme=${encodeURIComponent(s.code)}`);
-                          }}
-                        >
-                          <span>{t("results.applyBtn")}</span>
-                          <Icon name="arrow" size={16} />
-                        </button>
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
+      <SchemeCompareBarAndModal
+        compareCodes={compareCodes}
+        comparedSchemes={comparedSchemes}
+        compareOpen={compareOpen}
+        setCompareOpen={setCompareOpen}
+        setCompareCodes={setCompareCodes}
+        setCompareNotice={setCompareNotice}
+        onToggleCompare={toggleCompare}
+        loanAmountBasis={form.loan_amount || 500000}
+        profileSummary={`${form.state || "All India"} (${form.caste_category || "General"})`}
+        setScheme={setScheme}
+      />
     </div>
   );
 }

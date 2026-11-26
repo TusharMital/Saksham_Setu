@@ -176,6 +176,16 @@ export default function Icon({ name, size = 20, className = "" }) {
         <line x1="3" y1="10" x2="21" y2="10" />
       </>
     ),
+    filter: (
+      <>
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+      </>
+    ),
+    sort: (
+      <>
+        <path d="M3 6h18M6 12h12M10 18h4" />
+      </>
+    ),
   };
 
   const path = iconPaths[name] || iconPaths.help;

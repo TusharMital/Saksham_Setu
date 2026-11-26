@@ -4,6 +4,8 @@ from core.models import Application, Branch, LoanScheme
 
 
 class LoanSchemeSerializer(serializers.ModelSerializer):
+    subsidy_note = serializers.CharField(source="subsidy_margin_note", read_only=True)
+
     class Meta:
         model = LoanScheme
         fields = "__all__"

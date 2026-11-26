@@ -248,7 +248,6 @@ export default function SchemeDetail() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [checkedDocs, setCheckedDocs] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -447,34 +446,27 @@ export default function SchemeDetail() {
         <EmiSvgVisuals emi={emi} scheme={data} />
       </section>
 
-      {/* 2-Column Lower Section: Required Documents Checklist + Important Notes */}
+      {/* 2-Column Lower Section: Required Documents + Important Notes */}
       <div className="detail-lower-grid">
         <section className="detail-docs-card">
           <div className="detail-card-head">
             <Icon name="document" size={20} />
             <div>
               <h2>{t("detail.docsTitle")}</h2>
-              <small>Scheme-specific checklist for {data.code}</small>
+              <small>Documents required to apply for this scheme</small>
             </div>
           </div>
-          <div className="detail-doc-list">
-            {docs.map((doc, idx) => {
-              const checked = !!checkedDocs[idx];
-              return (
-                <label key={idx} className={`detail-doc-row ${checked ? "checked" : ""}`}>
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={() => setCheckedDocs((p) => ({ ...p, [idx]: !p[idx] }))}
-                  />
-                  <span className="check-box-icon">
-                    <Icon name="check" size={14} />
-                  </span>
-                  <span>{doc}</span>
-                </label>
-              );
-            })}
-          </div>
+          <ol className="detail-doc-list detail-doc-list-readonly">
+            {docs.map((doc, idx) => (
+              <li key={idx} className="detail-doc-row readonly">
+                <span className="doc-index-badge" aria-hidden="true">
+                  {idx + 1}
+                </span>
+                <Icon name="document" size={16} className="doc-row-icon" />
+                <span>{doc}</span>
+              </li>
+            ))}
+          </ol>
         </section>
 
         <aside className="detail-notes-card">
