@@ -577,3 +577,19 @@ What worked: Eliminated generic unlinked application paths so users progress nat
 What failed or was missing: None (new labels queued for Bhumi's final 23-language translation pass in P8b).
 Did it follow the rules? Yes.
 Next prompt it led to: Bhumi's full-site 23-language translation & polish pass (P8b), Claude security review (P9), and deployment.
+
+---
+
+### P7f | Antigravity | Remove Standalone Documents Page & References Across Site
+Date: 2026-11-26
+Run by: Tushar (25bcon2455) & Bhumi (25bcon2360)
+Prompt (exact text): Find every occurrence of the standalone `/documents` page, `Documents.jsx`, navbar tab, footer link, and internal route references across the entire website and delete them completely, since scheme-specific document checklists are now integrated directly into `/scheme/:code` and `/locator`.
+Output summary (3 lines):
+- Deleted `frontend/src/pages/Documents.jsx` and removed `/documents` from `App.jsx`, the top navbar, and the footer in `Layout.jsx`.
+- Removed all internal links and references to `/documents` across frontend pages and backend references while keeping scheme-specific checklists intact on `/scheme/:code`.
+- All Django tests, Vite production build, and `collectstatic` passed.
+What worked: Streamlined navigation down to 4 focused top-level items (`Home`, `Find Scheme`, `EMI Calculator`, `Track`) with zero dead links.
+What failed or was missing: None.
+Did it follow the rules? Yes.
+Next prompt it led to: Bhumi's final full-site 23-language translation & polish pass (P8b) and Claude security review (P9).
+Screenshot file names: `docs/05_Website_Screenshots/p7f_removed_documents_nav.png`

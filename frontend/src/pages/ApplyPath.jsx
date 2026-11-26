@@ -459,9 +459,12 @@ export default function ApplyPath() {
           </span>
         </button>
 
-        <Link to="/documents" className="btn btn-outline">
+        <Link
+          to={`/scheme/${encodeURIComponent(selectedScheme.code)}`}
+          className="btn btn-outline"
+        >
           <Icon name="document" size={17} />
-          <span>{t("nav.documents")} & PDF</span>
+          <span>{t("detail.docsTitle")}</span>
         </Link>
       </div>
 
@@ -472,9 +475,6 @@ export default function ApplyPath() {
             <p style={{ margin: 0 }}>{saveNotice}</p>
             <Link to="/form" className="btn btn-outline btn-sm">
               <span>{t("nav.find")}</span>
-            </Link>
-            <Link to="/documents" className="btn btn-outline btn-sm">
-              <span>{t("nav.documents")}</span>
             </Link>
             <Link to="/track" className="btn btn-outline btn-sm">
               <span>{t("nav.track")}</span>
@@ -552,14 +552,13 @@ export default function ApplyPath() {
                     <Icon name="arrow" size={18} />
                   </button>
                 )}
-                <button
-                  type="button"
+                <Link
+                  to={`/scheme/${encodeURIComponent(selectedScheme.code)}`}
                   className="btn btn-outline"
-                  onClick={() => navigate("/documents")}
                 >
-                  <span>{t("nav.documents")} & PDF</span>
                   <Icon name="document" size={16} />
-                </button>
+                  <span>{t("detail.docsTitle")}</span>
+                </Link>
               </div>
             </article>
           ))}
