@@ -849,5 +849,142 @@ class AllIndiaSchemePortalTests(TestCase):
         self.assertAlmostEqual(res.data["yearly_schedule"][-1]["ending_balance"], 0.0, delta=5.0)
 
 
+class LiveBankLocatorTests(TestCase):
+    def setUp(self):
+        cache.clear()
+        self.client = APIClient()
+        call_command("seed_data")
+
+    def test_bank_portals_directory_has_valid_profiles(self):
+        from core.bank_locator import load_bank_portals_directory
+
+        load_bank_portals_directory.cache_clear()
+        directory = load_bank_portals_directory()
+        self.assertGreaterEqual(len(directory), 20)
+        ids = set()
+        for entry in directory:
+            self.assertIn(entry["institution_type"], {"PSB", "RRB", "SCA", "MFI", "PORTAL"})
+            self.assertNotIn(entry["id"], ids)
+            ids.add(entry["id"])
+            self.assertTrue(entry["name"])
+            self.assertTrue(entry["short_code"])
+            self.assertIsInstance(entry["aliases"], list)
+            self.assertTrue(len(entry["aliases"]) >= 1)
+            self.assertRegex(entry["toll_free_phone"], r"^\d{8,13}$")
+            self.assertTrue(entry["official_url"].startswith("https://"))
+            self.assertIsInstance(entry["supported_channels"], list)
+            self.assertTrue(len(entry["supported_channels"]) >= 1)
+            self.assertIsInstance(entry["bank_required_documents"], list)
+            self.assertTrue(len(entry["bank_required_documents"]) >= 3)
+
+    @patch("core.bank_locator.requests.post")
+    @patch("core.bank_locator.requests.get")
+    @patch("core.geo.requests.get")
+    def test_live_search_gbs_pin_335001_with_mocked_osm_and_cross_refs(
+        self, mock_geo_get, mock_nom_get, mock_overpass_post
+    ):
+        import requests as req_lib
+
+        # India Post falls back gracefully to local pin_lookup (335001 -> Sri Ganganagar, Rajasthan)
+        mock_geo_get.side_effect = req_lib.RequestException("offline")
+
+        nom_resp = MagicMock()
+        nom_resp.status_code = 200
+        nom_resp.json.return_value = [{"lat": "29.9038", "lon": "73.8772"}]
+        mock_nom_get.return_value = nom_resp
+
+        overpass_resp = MagicMock()
+        overpass_resp.status_code = 200
+        overpass_resp.json.return_value = {
+            "elements": [
+                {
+                    "type": "node",
+                    "id": 1001,
+                    "lat": 29.9085,
+                    "lon": 73.8791,
+                    "tags": {
+                        "amenity": "bank",
+                        "name": "State Bank of India",
+                        "addr:street": "Station Road",
+                        "addr:city": "Sri Ganganagar",
+                        "addr:state": "Rajasthan",
+                        "addr:postcode": "335001",
+                        "phone": "0154-2441100",
+                    },
+                },
+                {
+                    "type": "way",
+                    "id": 1002,
+                    "center": {"lat": 29.9110, "lon": 73.8820},
+                    "tags": {
+                        "amenity": "bank",
+                        "name": "Punjab National Bank",
+                        "addr:street": "Sukhadia Circle",
+                        "addr:city": "Sri Ganganagar",
+                        "addr:state": "Rajasthan",
+                    },
+                },
+            ]
+        }
+        mock_overpass_post.return_value = overpass_resp
+
+        res = self.client.get("/api/banks/live-search/?scheme=GBS&pin=335001&radius_km=10")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.data["scheme"]["code"], "GBS")
+        self.assertAlmostEqual(res.data["location"]["lat"], 29.9038, places=3)
+        self.assertAlmostEqual(res.data["location"]["lng"], 73.8772, places=3)
+        self.assertTrue(res.data["overpass_live"])
+
+        # GBS channels: ['pmsuraj', 'sca', 'bank'] -> only PM-SURAJ portal should appear
+        portal_ids = {p["id"] for p in res.data["portals"]}
+        self.assertEqual(portal_ids, {"portal_pmsuraj"})
+        self.assertTrue(len(res.data["portals"][0]["provided_schemes"]) >= 1)
+
+        # Live branches matched to SBI & PNB with provided_schemes + all_branches
+        branches = res.data["branches"]
+        self.assertTrue(len(branches) >= 2)
+        sbi_item = next((b for b in branches if b["institution_id"] == "sbi"), None)
+        self.assertIsNotNone(sbi_item)
+        self.assertEqual(sbi_item["phone_source"], "branch")
+        self.assertIn("provided_schemes", sbi_item)
+        self.assertTrue(any(s["code"] == "GBS" for s in sbi_item["provided_schemes"]))
+        self.assertIn("all_branches", sbi_item)
+        self.assertTrue(len(sbi_item["all_branches"]) >= 1)
+        first_br = sbi_item["all_branches"][0]
+        for key in ("branch_name", "address", "district", "state", "distance_km", "phone", "lat", "lng"):
+            self.assertIn(key, first_br)
+
+        # PNB node lacked direct phone -> falls back to verified toll-free helpline
+        pnb_item = next((b for b in branches if b["institution_id"] == "pnb"), None)
+        self.assertIsNotNone(pnb_item)
+        self.assertEqual(pnb_item["phone_source"], "toll_free")
+        self.assertEqual(pnb_item["toll_free_phone"], "18001800")
+
+    @patch("core.bank_locator.requests.post")
+    @patch("core.bank_locator.requests.get")
+    @patch("core.geo.requests.get")
+    def test_live_search_offline_fallback_and_validation(
+        self, mock_geo_get, mock_nom_get, mock_overpass_post
+    ):
+        import requests as req_lib
+
+        mock_geo_get.side_effect = req_lib.RequestException("offline")
+        mock_nom_get.side_effect = req_lib.RequestException("offline")
+        mock_overpass_post.side_effect = req_lib.RequestException("offline")
+
+        res = self.client.get("/api/banks/live-search/?scheme=GBS&pin=335001")
+        self.assertEqual(res.status_code, 200)
+        self.assertFalse(res.data["overpass_live"])
+        self.assertEqual(res.data["location"]["district"], "Sri Ganganagar")
+        self.assertTrue(len(res.data["branches"]) >= 1)
+        self.assertEqual({p["id"] for p in res.data["portals"]}, {"portal_pmsuraj"})
+
+        # Missing location -> 400; unknown scheme -> 404
+        bad_loc = self.client.get("/api/banks/live-search/?scheme=GBS")
+        self.assertEqual(bad_loc.status_code, 400)
+        bad_scheme = self.client.get("/api/banks/live-search/?scheme=INVALID_CODE&pin=335001")
+        self.assertEqual(bad_scheme.status_code, 404)
+
+
 
 

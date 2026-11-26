@@ -9,6 +9,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.bank_locator import (
+    live_search_banks_and_portals,
+    resolve_coordinates_for_pin,
+)
 from core.category_verifier import verify_category_and_document
 from core.chatbot import chat_completion
 from core.emi import calculate_emi
@@ -164,6 +168,78 @@ class BranchListView(APIView):
                 "user": {"lat": user_lat, "lng": user_lng},
                 "branches": ranked,
             }
+        )
+
+
+class LiveBankSearchView(APIView):
+    def get(self, request):
+        scheme_code = (request.query_params.get("scheme") or "").strip()
+        scheme = None
+        if scheme_code:
+            scheme = LoanScheme.objects.filter(code__iexact=scheme_code).first()
+            if not scheme:
+                return Response(
+                    {"detail": f"Scheme '{scheme_code}' not found."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+        raw_radius = request.query_params.get("radius_km", "10")
+        try:
+            radius_km = max(1, min(50, int(float(raw_radius))))
+        except (TypeError, ValueError):
+            radius_km = 10
+
+        raw_lat = request.query_params.get("lat")
+        raw_lng = request.query_params.get("lng")
+        pin = (request.query_params.get("pin") or "").strip()
+
+        resolved_location = None
+        if raw_lat not in (None, "") and raw_lng not in (None, ""):
+            try:
+                user_lat = float(raw_lat)
+                user_lng = float(raw_lng)
+            except (TypeError, ValueError):
+                return Response(
+                    {"detail": "Invalid 'lat' or 'lng' coordinates."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            resolved_location = {
+                "lat": round(user_lat, 6),
+                "lng": round(user_lng, 6),
+                "state": "",
+                "district": "",
+                "place": "Live GPS Location",
+                "pin": pin,
+                "source": "gps",
+            }
+        elif pin:
+            try:
+                resolved_location = resolve_coordinates_for_pin(pin)
+            except ValueError as exc:
+                return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+            user_lat = resolved_location["lat"]
+            user_lng = resolved_location["lng"]
+        else:
+            return Response(
+                {"detail": "Please provide live GPS coordinates (lat, lng) or a 6-digit Indian PIN code."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        payload = live_search_banks_and_portals(
+            user_lat=user_lat,
+            user_lng=user_lng,
+            scheme=scheme,
+            radius_km=radius_km,
+            resolved_location=resolved_location,
+        )
+        return Response(
+            {
+                "scheme": LoanSchemeSerializer(scheme).data if scheme else None,
+                "location": resolved_location,
+                "radius_km": radius_km,
+                **payload,
+            },
+            status=status.HTTP_200_OK,
         )
 
 

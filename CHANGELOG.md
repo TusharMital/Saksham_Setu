@@ -2,6 +2,22 @@
 
 All notable changes to the Saksham Setu project will be documented in this file.
 
+## [Scheme-Driven Live Bank & Portal Locator] - 2026-11-25
+### Added
+- Created `data/bank_portals_directory.json` with verified profiles, aliases, toll-free helplines, official URLs, processing times, collateral policies, and required documents for 12 Public Sector Banks, Regional Rural Banks, State Channelising Agencies, NBFC-MFIs, and 6 Official Government Application Portals.
+- Added `core/bank_locator.py` and `GET /api/banks/live-search/` (`LiveBankSearchView` in `core/views.py` and `core/urls.py`) resolving live GPS or 6-digit Indian PIN coordinates via `core/geo.py` + Nominatim (with offline fallbacks), querying OpenStreetMap Overpass API for real nearby bank branches, filtering official portals by scheme `available_channels`, and attaching cross-referenced `provided_schemes` and `all_branches` to every institution.
+- Overhauled `frontend/src/pages/BranchLocator.jsx` into a scheme-driven live locator with a `"Select a Scheme First"` gate when unlinked, Active Scheme Context Banner, `"Use My Live Location"` GPS button with blue pulse marker, 6-digit PIN search, type/radius/keyword filters, Google Maps `"Get Directions"`, `"View on Map"`, `tel:` phone calling + `"Copy Number"`, and a tabbed `"More Details"` modal showing Overview & Docs, all `provided_schemes`, and `all_branches`.
+- Removed `"Find Bank"` from the top navigation bar and footer in `frontend/src/components/Layout.jsx` and added `"Find Partner Banks & Official Portals"` links inside `SchemeDetail.jsx` and `ApplyPath.jsx`.
+- Synced new `locator` and `detail` i18n keys across `frontend/src/locales/en.json`, `hi.json`, and all 23 `core/translations/*.json` bundles, updated `openapi.yaml`, and added `LiveBankLocatorTests` in `core/tests.py`.
+
+## [Dual-Mode EMI Calculator Upgrade] - 2026-11-25
+### Added
+- Rebuilt `frontend/src/pages/Calculator.jsx` into a dual-mode financial calculator supporting **Mode A (General / Custom Market Loan)** with 7 realistic market loan presets (`Mudra`, `MSME`, `Education`, `Home / Affordable Housing`, `Agriculture / KCC / Solar Pump`, `Commercial Vehicle / E-Rickshaw`, `Personal / General Unsecured`) and **Mode B (Locked Government Scheme)** triggered via `/calculator?scheme=<CODE>` or the 66-scheme `"Load Govt Scheme"` selector.
+- Added Amazon-style dual controls (fine-step range sliders + live direct numeric input fields with `Months / Years` toggle) for Loan Amount, Interest Rate, Tenure, and Moratorium, with full control locking and `"Unlock & Switch to Custom Market Loan"` reset in Mode B.
+- Added high-contrast Hero EMI readout, Principal vs. Interest % ratio, automatic Govt Scheme vs. `11.0%` Bank Market Loan savings callout, two interactive custom SVG charts (Principal vs. Interest Donut Chart and Year-by-Year Stacked Repayment + Remaining Balance Graph with moratorium shading and year inspector), and an expandable Year-by-Year Amortization Schedule table with per-year monthly drilldown.
+- Added `"View in Locked EMI Calculator"` quick links to `/calculator?scheme=<code>` on `frontend/src/pages/SchemeDetail.jsx`.
+- Synced new `calc` and `detail` locale keys across `frontend/src/locales/en.json`, `hi.json`, and all 23 `core/translations/*.json` bundles.
+
 ## [All-India Central + State Portal Upgrade] - 2026-11-25
 ### Added
 - Expanded `data/schemes.json` to 66 verified Central, State, Social-Justice Corporation, and NSFDC schemes with enriched metadata (`level`, `applicable_states`, `agency`, `eligible_categories`, `interest_rate_note`, `subsidy_margin_note`, `overview`, `key_highlights`, `required_documents`, `important_notes`, `available_channels`, `official_portal_url`).

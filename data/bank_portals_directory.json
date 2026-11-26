@@ -1,0 +1,804 @@
+[
+  {
+    "id": "sbi",
+    "name": "State Bank of India (SBI)",
+    "short_code": "SBI",
+    "aliases": [
+      "State Bank of India",
+      "SBI",
+      "State Bank",
+      "S.B.I.",
+      "SBI Branch"
+    ],
+    "institution_type": "PSB",
+    "toll_free_phone": "18001234",
+    "toll_free_display": "1800-1234",
+    "official_url": "https://www.onlinesbi.sbi/",
+    "supported_channels": [
+      "bank",
+      "jansamarth",
+      "pmsuraj",
+      "kviconline",
+      "standupmitra",
+      "pmvishwakarma"
+    ],
+    "headquarters": "Mumbai, Maharashtra",
+    "overview": "India's largest Public Sector Bank with dedicated MSME, Mudra, Stand-Up India, and SC/ST concessional credit desks across urban and rural branches.",
+    "processing_time": "7–14 working days after complete DPR & KYC verification",
+    "collateral_policy": "Collateral-free up to ₹10 lakh under PMMY/CGTMSE; Stand-Up India covered under CGSSI guarantee.",
+    "bank_required_documents": [
+      "Aadhaar Card & PAN Card",
+      "Caste / Category Certificate (SC/ST/OBC/EWS where applicable)",
+      "Udyam Registration or Enterprise Proof",
+      "Project Report / Quotation for machinery or working capital",
+      "Last 6 months Bank Passbook / Statement",
+      "2 Passport-size Photographs"
+    ],
+    "helpline_hours": "24x7 Toll-Free Customer Care • Branch Desk: Mon–Sat 10:00 AM – 4:00 PM (closed 2nd & 4th Sat)"
+  },
+  {
+    "id": "pnb",
+    "name": "Punjab National Bank (PNB)",
+    "short_code": "PNB",
+    "aliases": [
+      "Punjab National Bank",
+      "PNB",
+      "P.N.B."
+    ],
+    "institution_type": "PSB",
+    "toll_free_phone": "18001800",
+    "toll_free_display": "1800-1800",
+    "official_url": "https://www.pnbindia.in/",
+    "supported_channels": [
+      "bank",
+      "jansamarth",
+      "pmsuraj",
+      "kviconline",
+      "standupmitra",
+      "pmvishwakarma"
+    ],
+    "headquarters": "New Delhi",
+    "overview": "Leading North & Pan-India Public Sector Bank participating actively in JanSamarth, PMEGP, Stand-Up India, PM-SURAJ, and NSFDC channel lending.",
+    "processing_time": "10–15 working days",
+    "collateral_policy": "Zero collateral up to ₹10 lakh under Mudra & PM Vishwakarma; CGTMSE coverage for higher MSME limits.",
+    "bank_required_documents": [
+      "Aadhaar Card & PAN Card",
+      "Valid Caste / Income Certificate",
+      "Quotations & Detailed Project Report (DPR)",
+      "Shop/Unit Rent Agreement or Ownership Proof",
+      "Bank Account Passbook (6 months)"
+    ],
+    "helpline_hours": "24x7 Toll-Free • Branch Hours: 10:00 AM – 4:00 PM"
+  },
+  {
+    "id": "bob",
+    "name": "Bank of Baroda (BOB)",
+    "short_code": "BOB",
+    "aliases": [
+      "Bank of Baroda",
+      "BOB",
+      "B.O.B.",
+      "Baroda Bank"
+    ],
+    "institution_type": "PSB",
+    "toll_free_phone": "18005700",
+    "toll_free_display": "1800-5700",
+    "official_url": "https://www.bankofbaroda.in/",
+    "supported_channels": [
+      "bank",
+      "jansamarth",
+      "pmsuraj",
+      "kviconline",
+      "standupmitra",
+      "pmvishwakarma"
+    ],
+    "headquarters": "Vadodara, Gujarat",
+    "overview": "Major Public Sector Bank with Baroda Swarojgar Vikas Sansthan (BSVS) entrepreneurship training & fast-track JanSamarth Mudra/Stand-Up desks.",
+    "processing_time": "7–15 working days",
+    "collateral_policy": "No collateral required for Mudra (up to ₹10L) and PM Vishwakarma; CGTMSE guarantee for eligible MSME units.",
+    "bank_required_documents": [
+      "Aadhaar & PAN KYC",
+      "Category / Domicile Certificate",
+      "Skill / EDP Training Certificate (if applicable)",
+      "Project Cost Estimate & Vendor Proforma Invoice",
+      "Recent Bank Statements"
+    ],
+    "helpline_hours": "24x7 Toll-Free • Branch Hours: 10:00 AM – 4:00 PM"
+  },
+  {
+    "id": "canara",
+    "name": "Canara Bank",
+    "short_code": "CANARA",
+    "aliases": [
+      "Canara Bank",
+      "Canara",
+      "Syndicate Bank"
+    ],
+    "institution_type": "PSB",
+    "toll_free_phone": "18001030",
+    "toll_free_display": "1800-1030",
+    "official_url": "https://canarabank.com/",
+    "supported_channels": [
+      "bank",
+      "jansamarth",
+      "pmsuraj",
+      "kviconline",
+      "standupmitra",
+      "pmvishwakarma"
+    ],
+    "headquarters": "Bengaluru, Karnataka",
+    "overview": "Public Sector Bank with strong RSETI rural self-employment linkages, women SHG credit, PMEGP, and Mudra loan desks nationwide.",
+    "processing_time": "10–14 working days",
+    "collateral_policy": "Collateral-free up to ₹10 lakh under PMMY; guarantee coverage for Stand-Up India and PMEGP loans.",
+    "bank_required_documents": [
+      "Aadhaar Card, PAN Card & Voter ID",
+      "Caste / Disability / Women-Led Proof",
+      "RSETI / PMKVY Skill Certificate (preferred)",
+      "Project Report & Equipment Quotation",
+      "6-month Bank Statement"
+    ],
+    "helpline_hours": "24x7 Toll-Free • Branch Hours: 10:00 AM – 4:00 PM"
+  },
+  {
+    "id": "union",
+    "name": "Union Bank of India",
+    "short_code": "UBI",
+    "aliases": [
+      "Union Bank of India",
+      "Union Bank",
+      "Andhra Bank",
+      "Corporation Bank"
+    ],
+    "institution_type": "PSB",
+    "toll_free_phone": "1800222244",
+    "toll_free_display": "1800-22-2244",
+    "official_url": "https://www.unionbankofindia.co.in/",
+    "supported_channels": [
+      "bank",
+      "jansamarth",
+      "pmsuraj",
+      "kviconline",
+      "standupmitra",
+      "pmvishwakarma"
+    ],
+    "headquarters": "Mumbai, Maharashtra",
+    "overview": "Pan-India Public Sector Bank offering Union Mudra, Stand-Up India, PM SVANidhi, PMEGP, and women/SC priority MSME finance.",
+    "processing_time": "10–15 working days",
+    "collateral_policy": "No third-party collateral for Mudra & CGTMSE-covered loans; margin money varies 0%–10% by scheme.",
+    "bank_required_documents": [
+      "Aadhaar, PAN & Address Proof",
+      "Category / Income Certificate",
+      "Udyam Registration Certificate",
+      "Business Plan & Capital Requirement Breakdown",
+      "Bank Passbook Copy"
+    ],
+    "helpline_hours": "24x7 Toll-Free • Branch Hours: 10:00 AM – 4:00 PM"
+  },
+  {
+    "id": "indianbank",
+    "name": "Indian Bank",
+    "short_code": "IND",
+    "aliases": [
+      "Indian Bank",
+      "Allahabad Bank"
+    ],
+    "institution_type": "PSB",
+    "toll_free_phone": "180042500000",
+    "toll_free_display": "1800-425-00000",
+    "official_url": "https://www.indianbank.in/",
+    "supported_channels": [
+      "bank",
+      "jansamarth",
+      "pmsuraj",
+      "kviconline",
+      "standupmitra",
+      "pmvishwakarma"
+    ],
+    "headquarters": "Chennai, Tamil Nadu",
+    "overview": "Public Sector Bank with strong presence across South, East, and North India supporting SHG linkages, Mudra, PMEGP, and Stand-Up India.",
+    "processing_time": "10–15 working days",
+    "collateral_policy": "Collateral-free micro & small enterprise credit under Mudra and CGTMSE norms.",
+    "bank_required_documents": [
+      "Aadhaar & PAN Card",
+      "SHG/Individual Resolution or Caste Certificate",
+      "Project Quotation & Cash Flow Sheet",
+      "Recent Photograph & Passbook"
+    ],
+    "helpline_hours": "24x7 Toll-Free • Branch Hours: 10:00 AM – 4:00 PM"
+  },
+  {
+    "id": "centralbank",
+    "name": "Central Bank of India",
+    "short_code": "CBI",
+    "aliases": [
+      "Central Bank of India",
+      "Central Bank"
+    ],
+    "institution_type": "PSB",
+    "toll_free_phone": "1800221911",
+    "toll_free_display": "1800-22-1911",
+    "official_url": "https://www.centralbankofindia.co.in/",
+    "supported_channels": [
+      "bank",
+      "jansamarth",
+      "pmsuraj",
+      "kviconline",
+      "standupmitra",
+      "pmvishwakarma"
+    ],
+    "headquarters": "Mumbai, Maharashtra",
+    "overview": "Public Sector Bank serving semi-urban and rural entrepreneurs under PMMY, PMEGP, Cent-Kalyani (women), and NSFDC-linked schemes.",
+    "processing_time": "10–18 working days",
+    "collateral_policy": "Collateral-free up to ₹10L (Mudra) and ₹1 Cr (Cent-Kalyani/CGTMSE eligible units).",
+    "bank_required_documents": [
+      "Aadhaar & PAN Card",
+      "Community / Income Certificate",
+      "Business Premises Proof",
+      "Machinery / Stock Quotation"
+    ],
+    "helpline_hours": "24x7 Toll-Free • Branch Hours: 10:00 AM – 4:00 PM"
+  },
+  {
+    "id": "boi",
+    "name": "Bank of India (BOI)",
+    "short_code": "BOI",
+    "aliases": [
+      "Bank of India",
+      "BOI",
+      "B.O.I."
+    ],
+    "institution_type": "PSB",
+    "toll_free_phone": "18001031906",
+    "toll_free_display": "1800-103-1906",
+    "official_url": "https://bankofindia.co.in/",
+    "supported_channels": [
+      "bank",
+      "jansamarth",
+      "pmsuraj",
+      "kviconline",
+      "standupmitra",
+      "pmvishwakarma"
+    ],
+    "headquarters": "Mumbai, Maharashtra",
+    "overview": "Public Sector Bank offering Star Mudra, Stand-Up India, PMEGP, and Star Mahila Gold concessional enterprise credit.",
+    "processing_time": "10–15 working days",
+    "collateral_policy": "Zero collateral under PMMY & PM Vishwakarma; CGTMSE coverage for Stand-Up India & PMEGP.",
+    "bank_required_documents": [
+      "Aadhaar Card & PAN Card",
+      "Caste / Domicile Certificate",
+      "Udyam Code & Project DPR",
+      "Bank Statement (6 months)"
+    ],
+    "helpline_hours": "24x7 Toll-Free • Branch Hours: 10:00 AM – 4:00 PM"
+  },
+  {
+    "id": "psb",
+    "name": "Punjab & Sind Bank",
+    "short_code": "PSB",
+    "aliases": [
+      "Punjab & Sind Bank",
+      "Punjab and Sind Bank",
+      "P&SB"
+    ],
+    "institution_type": "PSB",
+    "toll_free_phone": "18004198300",
+    "toll_free_display": "1800-419-8300",
+    "official_url": "https://punjabandsindbank.co.in/",
+    "supported_channels": [
+      "bank",
+      "jansamarth",
+      "pmsuraj",
+      "kviconline",
+      "standupmitra",
+      "pmvishwakarma"
+    ],
+    "headquarters": "New Delhi",
+    "overview": "Public Sector Bank with strong coverage in Punjab, Haryana, Rajasthan, Delhi, and UP for agriculture, dairy, transport, and MSME loans.",
+    "processing_time": "10–14 working days",
+    "collateral_policy": "Collateral-free up to ₹10 lakh under PMMY; CGTMSE guarantee for eligible priority sector MSMEs.",
+    "bank_required_documents": [
+      "Aadhaar & PAN KYC",
+      "Caste / Income Certificate",
+      "Project Estimate / Vehicle Quotation",
+      "Bank Passbook & Photographs"
+    ],
+    "helpline_hours": "24x7 Toll-Free • Branch Hours: 10:00 AM – 4:00 PM"
+  },
+  {
+    "id": "uco",
+    "name": "UCO Bank",
+    "short_code": "UCO",
+    "aliases": [
+      "UCO Bank",
+      "Uco Bank",
+      "United Commercial Bank"
+    ],
+    "institution_type": "PSB",
+    "toll_free_phone": "18001030123",
+    "toll_free_display": "1800-103-0123",
+    "official_url": "https://www.ucobank.com/",
+    "supported_channels": [
+      "bank",
+      "jansamarth",
+      "pmsuraj",
+      "kviconline",
+      "standupmitra",
+      "pmvishwakarma"
+    ],
+    "headquarters": "Kolkata, West Bengal",
+    "overview": "Public Sector Bank supporting PMMY, PMEGP, Stand-Up India, and state-sponsored self-employment schemes across Eastern, Northern, and Western India.",
+    "processing_time": "10–15 working days",
+    "collateral_policy": "Collateral-free under PMMY and CGTMSE-backed schemes.",
+    "bank_required_documents": [
+      "Aadhaar & PAN Card",
+      "Category / Residence Proof",
+      "DPR & Supplier Quotations",
+      "6-month Bank Account Statement"
+    ],
+    "helpline_hours": "24x7 Toll-Free • Branch Hours: 10:00 AM – 4:00 PM"
+  },
+  {
+    "id": "mahabank",
+    "name": "Bank of Maharashtra",
+    "short_code": "BOM",
+    "aliases": [
+      "Bank of Maharashtra",
+      "Mahabank",
+      "BOM"
+    ],
+    "institution_type": "PSB",
+    "toll_free_phone": "18002334526",
+    "toll_free_display": "1800-233-4526",
+    "official_url": "https://bankofmaharashtra.in/",
+    "supported_channels": [
+      "bank",
+      "jansamarth",
+      "pmsuraj",
+      "kviconline",
+      "standupmitra",
+      "pmvishwakarma"
+    ],
+    "headquarters": "Pune, Maharashtra",
+    "overview": "Public Sector Bank with deep penetration in Maharashtra and national Lead Bank responsibilities for Mudra, PMEGP, and women SHG loans.",
+    "processing_time": "7–14 working days",
+    "collateral_policy": "Collateral-free under Mudra/PM Vishwakarma; CGTMSE guarantee for MSME term loans.",
+    "bank_required_documents": [
+      "Aadhaar & PAN Card",
+      "Caste & Income Certificate",
+      "Udyam Registration & Project Report",
+      "Bank Passbook"
+    ],
+    "helpline_hours": "24x7 Toll-Free • Branch Hours: 10:00 AM – 4:00 PM"
+  },
+  {
+    "id": "iob",
+    "name": "Indian Overseas Bank (IOB)",
+    "short_code": "IOB",
+    "aliases": [
+      "Indian Overseas Bank",
+      "IOB",
+      "I.O.B."
+    ],
+    "institution_type": "PSB",
+    "toll_free_phone": "18008904445",
+    "toll_free_display": "1800-890-4445",
+    "official_url": "https://www.iob.in/",
+    "supported_channels": [
+      "bank",
+      "jansamarth",
+      "pmsuraj",
+      "kviconline",
+      "standupmitra",
+      "pmvishwakarma"
+    ],
+    "headquarters": "Chennai, Tamil Nadu",
+    "overview": "Public Sector Bank supporting Mudra, PMEGP, Stand-Up India, PM-SURAJ, and artisan/micro-enterprise financing.",
+    "processing_time": "10–15 working days",
+    "collateral_policy": "Collateral-free up to ₹10L under PMMY; CGTMSE cover available for higher limits.",
+    "bank_required_documents": [
+      "Aadhaar & PAN Card",
+      "Caste / Income / Domicile Proof",
+      "Project Report & Equipment Quote",
+      "Bank Passbook"
+    ],
+    "helpline_hours": "24x7 Toll-Free • Branch Hours: 10:00 AM – 4:00 PM"
+  },
+  {
+    "id": "rrb",
+    "name": "Regional Rural Banks (RRBs / Gramin Banks)",
+    "short_code": "RRB",
+    "aliases": [
+      "Regional Rural Bank",
+      "Gramin Bank",
+      "Grameen Bank",
+      "Rajasthan Marudhara Gramin Bank",
+      "RMGB",
+      "Aryavart Bank",
+      "Baroda UP Bank",
+      "Prathama UP Gramin Bank",
+      "Sarva Haryana Gramin Bank",
+      "Punjab Gramin Bank",
+      "Pallavan Grama Bank",
+      "Karnataka Gramin Bank",
+      "Maharashtra Gramin Bank",
+      "Madhya Pradesh Gramin Bank",
+      "Bangiya Gramin Vikash Bank"
+    ],
+    "institution_type": "RRB",
+    "toll_free_phone": "18001801111",
+    "toll_free_display": "1800-180-1111",
+    "official_url": "https://www.nabard.org/",
+    "supported_channels": [
+      "bank",
+      "jansamarth",
+      "pmsuraj",
+      "pmvishwakarma",
+      "kviconline"
+    ],
+    "headquarters": "State-Sponsored RRB Circles across India",
+    "overview": "Sponsored by Public Sector Banks and State Governments to deliver rural Mudra, SHG, KCC, dairy, and artisan micro-credit in villages and tehsils.",
+    "processing_time": "7–14 working days",
+    "collateral_policy": "Collateral-free for Mudra, SHG-JLG, and small rural livelihood loans under RBI priority sector norms.",
+    "bank_required_documents": [
+      "Aadhaar Card & Jan Dhan / Savings Passbook",
+      "Caste / Income Certificate",
+      "Local Gram Panchayat / Ward Residence Proof",
+      "Activity Estimate / Livestock or Tool Quote"
+    ],
+    "helpline_hours": "Mon–Sat 10:00 AM – 4:00 PM (closed 2nd & 4th Sat)"
+  },
+  {
+    "id": "sca_rajasthan",
+    "name": "Rajasthan SC/ST Finance & Dev. Corp (RSFDC / ANUPEKSHA)",
+    "short_code": "RSFDC",
+    "aliases": [
+      "ANUPEKSHA",
+      "RSFDC",
+      "Rajasthan SC/ST Corp",
+      "Rajasthan Scheduled Caste",
+      "Anuja Nigam"
+    ],
+    "institution_type": "SCA",
+    "toll_free_phone": "18001806127",
+    "toll_free_display": "1800-180-6127",
+    "official_url": "https://sje.rajasthan.gov.in/",
+    "supported_channels": [
+      "sca",
+      "pmsuraj",
+      "state_portal"
+    ],
+    "headquarters": "Jaipur, Rajasthan",
+    "overview": "Designated State Channelising Agency (SCA) in Rajasthan implementing NSFDC concessional schemes (MCF, MSY, TL, ELS, LVY) and state SC/ST subsidy loans.",
+    "processing_time": "15–30 working days (district committee & SCA quota approval)",
+    "collateral_policy": "Hypothecation of assets created + guarantor/security norms per loan slab.",
+    "bank_required_documents": [
+      "Jan Aadhaar & Aadhaar Card",
+      "Rajasthan SC/ST Caste Certificate",
+      "Annual Family Income Certificate",
+      "Project Proposal & Bhamashah/SSO ID"
+    ],
+    "helpline_hours": "Mon–Fri 9:30 AM – 6:00 PM (Rajasthan Govt Working Days)"
+  },
+  {
+    "id": "sca_up",
+    "name": "UP SC Finance & Development Corporation (UPSCFDC)",
+    "short_code": "UPSCFDC",
+    "aliases": [
+      "UPSCFDC",
+      "UP SC Finance Corp",
+      "Uttar Pradesh Scheduled Castes Finance"
+    ],
+    "institution_type": "SCA",
+    "toll_free_phone": "18001805131",
+    "toll_free_display": "1800-180-5131",
+    "official_url": "https://upscfdc.up.gov.in/",
+    "supported_channels": [
+      "sca",
+      "pmsuraj",
+      "state_portal"
+    ],
+    "headquarters": "Lucknow, Uttar Pradesh",
+    "overview": "Official Uttar Pradesh State Channelising Agency delivering NSFDC concessional credit, Pt. Deen Dayal Upadhyay Swarojgar Yojana, and Safai Karmachari schemes.",
+    "processing_time": "15–30 working days",
+    "collateral_policy": "Subsidy-linked margin money up to ₹10,000–₹50,000; standard guarantor norms above ₹1 lakh.",
+    "bank_required_documents": [
+      "Aadhaar Card & UP Domicile Certificate",
+      "Digital SC Caste & Income Certificate (e-District UP)",
+      "Project Report & Quotations",
+      "Bank Account Passbook"
+    ],
+    "helpline_hours": "Mon–Fri 10:00 AM – 5:00 PM"
+  },
+  {
+    "id": "sca_punjab",
+    "name": "Punjab SC Land Dev. & Finance Corp (PSCFC / PSCLDFC)",
+    "short_code": "PSCFC",
+    "aliases": [
+      "PSCFC",
+      "PSCLDFC",
+      "Punjab SC Corp",
+      "Punjab Scheduled Castes Land"
+    ],
+    "institution_type": "SCA",
+    "toll_free_phone": "01722700001",
+    "toll_free_display": "0172-2700001",
+    "official_url": "https://pscfc.punjab.gov.in/",
+    "supported_channels": [
+      "sca",
+      "pmsuraj",
+      "state_portal"
+    ],
+    "headquarters": "Chandigarh, Punjab",
+    "overview": "Punjab's official State Channelising Agency for NSFDC term loans, dairy/agriculture allied loans, and state SC self-employment subsidies.",
+    "processing_time": "15–30 working days",
+    "collateral_policy": "Direct SCA lending up to slab limit with guarantor or bank tie-up for higher term loans.",
+    "bank_required_documents": [
+      "Aadhaar Card & Punjab Residence Proof",
+      "SC Caste Certificate & Income Affidavit",
+      "Project Report & Training Certificate"
+    ],
+    "helpline_hours": "Mon–Fri 9:00 AM – 5:00 PM"
+  },
+  {
+    "id": "sca_delhi",
+    "name": "Delhi SC/ST/OBC/Minorities Finance Corp (DSFDC)",
+    "short_code": "DSFDC",
+    "aliases": [
+      "DSFDC",
+      "Delhi DSFDC",
+      "Delhi SC/ST Corp"
+    ],
+    "institution_type": "SCA",
+    "toll_free_phone": "01123379050",
+    "toll_free_display": "011-23379050",
+    "official_url": "https://dsfdc.delhi.gov.in/",
+    "supported_channels": [
+      "sca",
+      "pmsuraj",
+      "state_portal"
+    ],
+    "headquarters": "New Delhi",
+    "overview": "Government of NCT of Delhi State Channelising Agency offering NSFDC/NBCFDC/NSKFDC composite loans, commercial vehicle finance, and education loans.",
+    "processing_time": "15–30 working days",
+    "collateral_policy": "Hypothecation of vehicle/equipment + govt servant or income-tax payee guarantor as per DSFDC slab.",
+    "bank_required_documents": [
+      "Aadhaar, PAN & Delhi Residence Proof (min 5 yrs)",
+      "SC/ST/OBC Certificate issued by SDM Delhi",
+      "Family Income Certificate",
+      "Driving Licence (for transport/e-rickshaw)"
+    ],
+    "helpline_hours": "Mon–Fri 9:30 AM – 6:00 PM"
+  },
+  {
+    "id": "sca_national",
+    "name": "State Channelising Agencies (TAHDCO / MPBCDC / Ambedkar Corp / State SC-ST Corps)",
+    "short_code": "SCA",
+    "aliases": [
+      "TAHDCO",
+      "MPBCDC",
+      "Ambedkar Development Corporation",
+      "State Channelising Agency",
+      "State SCA",
+      "West Bengal SCA",
+      "Kerala SCA"
+    ],
+    "institution_type": "SCA",
+    "toll_free_phone": "1800112001",
+    "toll_free_display": "1800-11-2001",
+    "official_url": "https://nsfdc.nic.in/",
+    "supported_channels": [
+      "sca",
+      "pmsuraj",
+      "state_portal"
+    ],
+    "headquarters": "State Capitals across India",
+    "overview": "Designated State Scheduled Caste / Backward Class Finance & Development Corporations channelling NSFDC, NSKFDC, and state-level margin money schemes.",
+    "processing_time": "15–30 working days",
+    "collateral_policy": "Concessional state-backed guarantee and asset hypothecation per NSFDC guidelines.",
+    "bank_required_documents": [
+      "Aadhaar Card & State Domicile",
+      "Caste & Income Certificate",
+      "Detailed Project Report (DPR)",
+      "Bank Passbook"
+    ],
+    "helpline_hours": "Mon–Fri 10:00 AM – 5:00 PM"
+  },
+  {
+    "id": "mfi",
+    "name": "Empanelled NBFC-MFIs (Asirvad / CreditAccess / Satin / Spandana)",
+    "short_code": "MFI",
+    "aliases": [
+      "Asirvad",
+      "CreditAccess",
+      "Satin",
+      "Spandana",
+      "NBFC-MFI",
+      "Microfinance",
+      "Muthoot Microfin"
+    ],
+    "institution_type": "MFI",
+    "toll_free_phone": "18004252525",
+    "toll_free_display": "1800-425-2525",
+    "official_url": "https://mfinindia.org/",
+    "supported_channels": [
+      "mfi"
+    ],
+    "headquarters": "Pan-India Field Centres",
+    "overview": "RBI-regulated Microfinance Institutions partnering for doorstep micro-credit, SHG/JLG group lending, and Aajeevika Microfinance Yojana (AMFY).",
+    "processing_time": "3–7 working days",
+    "collateral_policy": "100% collateral-free Joint Liability Group (JLG) or SHG peer guarantee.",
+    "bank_required_documents": [
+      "Aadhaar Card & Voter ID",
+      "SHG / JLG Group Membership Card",
+      "Active Bank Passbook (DBT seeded)"
+    ],
+    "helpline_hours": "Mon–Sat 9:30 AM – 6:00 PM"
+  },
+  {
+    "id": "portal_jansamarth",
+    "name": "JanSamarth Portal (National Credit-Linked Govt Portal)",
+    "short_code": "JANSAMARTH",
+    "aliases": [
+      "JanSamarth",
+      "Jan Samarth"
+    ],
+    "institution_type": "PORTAL",
+    "toll_free_phone": "18001025918",
+    "toll_free_display": "1800-102-5918",
+    "official_url": "https://www.jansamarth.in/",
+    "supported_channels": [
+      "jansamarth"
+    ],
+    "headquarters": "Digital Portal — Ministry of Finance & MoSJE",
+    "overview": "Unified Government of India digital portal connecting applicants to 200+ lender banks for Mudra, Stand-Up India, PM SVANidhi, Education, and Agri credit-linked subsidy schemes.",
+    "processing_time": "Instant digital eligibility check; 7–14 days bank sanction",
+    "collateral_policy": "Follows underlying scheme norms (zero collateral for Mudra & CGTMSE-eligible loans).",
+    "bank_required_documents": [
+      "Aadhaar Card (mobile OTP linked)",
+      "PAN Card",
+      "Udyam Registration Number (for business loans)",
+      "Bank Account & ITR / Income Details (if available)"
+    ],
+    "helpline_hours": "24x7 Online Portal • Helpline: Mon–Sat 9:30 AM – 6:00 PM"
+  },
+  {
+    "id": "portal_pmsuraj",
+    "name": "PM-SURAJ National Portal (MoSJE)",
+    "short_code": "PM-SURAJ",
+    "aliases": [
+      "PM-SURAJ",
+      "PM SURAJ",
+      "pmsuraj"
+    ],
+    "institution_type": "PORTAL",
+    "toll_free_phone": "1800112001",
+    "toll_free_display": "1800-11-2001",
+    "official_url": "https://pmsuraj.dosje.gov.in/",
+    "supported_channels": [
+      "pmsuraj"
+    ],
+    "headquarters": "New Delhi — Ministry of Social Justice & Empowerment",
+    "overview": "Pradhan Mantri Samajik Utthan evam Rozgar Adharit Jankalyan (PM-SURAJ) national portal for direct concessional loans from NSFDC, NSKFDC, and NBCFDC.",
+    "processing_time": "10–21 working days via linked Bank / SCA",
+    "collateral_policy": "Concessional interest rates (4%–6% p.a.) with capital subsidy up to ₹15,000–₹50,000 under eligible schemes.",
+    "bank_required_documents": [
+      "Aadhaar Card & Mobile OTP",
+      "Verified Caste Certificate (SC / OBC / Safai Karamchari)",
+      "Family Income Certificate",
+      "Project Proposal & Bank Account"
+    ],
+    "helpline_hours": "24x7 Online Portal • MoSJE Helpline: Mon–Fri 9:30 AM – 6:00 PM"
+  },
+  {
+    "id": "portal_kvic",
+    "name": "KVIC PMEGP e-Portal",
+    "short_code": "KVIC-PMEGP",
+    "aliases": [
+      "KVIC",
+      "PMEGP",
+      "kviconline"
+    ],
+    "institution_type": "PORTAL",
+    "toll_free_phone": "180030000034",
+    "toll_free_display": "1800-3000-0034",
+    "official_url": "https://www.kviconline.gov.in/pmegpeportal/",
+    "supported_channels": [
+      "kviconline"
+    ],
+    "headquarters": "Mumbai — Khadi & Village Industries Commission (MoMSME)",
+    "overview": "Official Ministry of MSME portal for Prime Minister's Employment Generation Programme (PMEGP) providing 15%–35% margin money subsidy for new manufacturing & service enterprises.",
+    "processing_time": "15–30 working days (KVIC/KVIB/DIC forwarding + Bank sanction)",
+    "collateral_policy": "Mandatory 5%–10% beneficiary contribution; loans up to ₹10L (or ₹20L under CGTMSE) without third-party collateral.",
+    "bank_required_documents": [
+      "Aadhaar Card & PAN Card",
+      "SC/ST/OBC/Women/Rural Certificate (for 25%–35% higher subsidy)",
+      "Detailed Project Report (DPR)",
+      "Educational / EDP Training Certificate",
+      "Population Certificate (for Rural area 35% subsidy)"
+    ],
+    "helpline_hours": "24x7 Online Portal • KVIC Support: Mon–Fri 10:00 AM – 5:30 PM"
+  },
+  {
+    "id": "portal_standupmitra",
+    "name": "Stand-Up Mitra Portal (SIDBI)",
+    "short_code": "STANDUP",
+    "aliases": [
+      "Stand-Up Mitra",
+      "StandUp Mitra",
+      "SIDBI"
+    ],
+    "institution_type": "PORTAL",
+    "toll_free_phone": "18001801111",
+    "toll_free_display": "1800-180-1111",
+    "official_url": "https://www.standupmitra.in/",
+    "supported_channels": [
+      "standupmitra"
+    ],
+    "headquarters": "Lucknow — Small Industries Development Bank of India (SIDBI)",
+    "overview": "Dedicated digital handholding and bank-matching portal for SC, ST, and Women entrepreneurs setting up greenfield enterprises from ₹10 lakh to ₹1 crore.",
+    "processing_time": "15–25 working days",
+    "collateral_policy": "Covered under Credit Guarantee Fund for Stand-Up India (CGSSI) with composite loan up to 85% of project cost.",
+    "bank_required_documents": [
+      "Aadhaar, PAN & Business Address Proof",
+      "SC/ST Caste Certificate or Women Ownership Proof (>=51% stake)",
+      "Greenfield Project Report (DPR)",
+      "No-Default Declaration & Bank Statement"
+    ],
+    "helpline_hours": "24x7 Online Portal • SIDBI Contact Centre: Mon–Sat 9:30 AM – 6:00 PM"
+  },
+  {
+    "id": "portal_pmvishwakarma",
+    "name": "PM Vishwakarma Portal (CSC Biometric Registration)",
+    "short_code": "VISHWAKARMA",
+    "aliases": [
+      "PM Vishwakarma",
+      "Vishwakarma"
+    ],
+    "institution_type": "PORTAL",
+    "toll_free_phone": "18002677777",
+    "toll_free_display": "1800-267-7777",
+    "official_url": "https://pmvishwakarma.gov.in/",
+    "supported_channels": [
+      "pmvishwakarma"
+    ],
+    "headquarters": "New Delhi — Ministry of Micro, Small & Medium Enterprises",
+    "overview": "Official portal for 18 traditional artisan & craftsperson trades offering PM Vishwakarma Certificate, ₹15,000 toolkit e-voucher, skill stipend, and 5% concessional collateral-free loans.",
+    "processing_time": "3-tier Gram Panchayat/ULB + District + Bank verification (~15–21 days)",
+    "collateral_policy": "100% collateral-free (Tranche 1: ₹1 lakh; Tranche 2: ₹2 lakh) at capped 5% p.a. interest rate.",
+    "bank_required_documents": [
+      "Aadhaar Card (with biometric e-KYC at CSC)",
+      "Ration Card / Family ID",
+      "Active Savings Bank Account (Aadhaar-seeded)",
+      "Trade Self-Declaration"
+    ],
+    "helpline_hours": "24x7 Portal • Helpline: 8:00 AM – 8:00 PM Daily"
+  },
+  {
+    "id": "portal_state",
+    "name": "State Government Single-Window Credit & Subsidy Portals",
+    "short_code": "STATE-PORTAL",
+    "aliases": [
+      "State Portal",
+      "Single Window",
+      "Mukhyamantri",
+      "State Govt Portal"
+    ],
+    "institution_type": "PORTAL",
+    "toll_free_phone": "1800111555",
+    "toll_free_display": "1800-11-1555",
+    "official_url": "https://services.india.gov.in/",
+    "supported_channels": [
+      "state_portal"
+    ],
+    "headquarters": "State Industries / Social Justice Departments",
+    "overview": "Official State Government portals for state-specific interest subvention, margin money grants, youth self-employment, and SC/ST/OBC/Women entrepreneurship schemes.",
+    "processing_time": "15–30 working days via District Industries Centre (DIC) / Social Welfare",
+    "collateral_policy": "State subsidy/subvention applied after bank sanction as per state scheme guidelines.",
+    "bank_required_documents": [
+      "Aadhaar Card & State Domicile Certificate",
+      "Category & Family Income Certificate",
+      "Project Report & Bank Consent Letter"
+    ],
+    "helpline_hours": "24x7 Online Portal • State Helpline: Mon–Fri 10:00 AM – 5:00 PM"
+  }
+]

@@ -216,7 +216,8 @@
     "docsTitle": "आवश्यक दस्तावेज़ चेकलिस्ट",
     "notesTitle": "महत्वपूर्ण नोट्स और चेतावनियाँ",
     "applyCta": "इस योजना के लिए आवेदन करें",
-    "viewInCalc": "लॉक्ड EMI कैलकुलेटर में देखें"
+    "viewInCalc": "लॉक्ड EMI कैलकुलेटर में देखें",
+    "findBanksPortals": "साझेदार बैंक और आधिकारिक पोर्टल खोजें"
   },
   "paths": {
     "title": "आवेदन के तीन रास्ते — जो आपको आसान लगे चुनें",
@@ -276,7 +277,21 @@
     "branchesFound": "साझेदार शाखाएँ मिलीं",
     "within": "आपके 15 किमी के दायरे में",
     "searchPlaceholder": "पिन कोड या क्षेत्र, जैसे 302001 / अंधेरी पूर्व",
-    "nextApply": "आगे: आवेदन का रास्ता चुनें"
+    "nextApply": "आगे: आवेदन का रास्ता चुनें",
+    "selectSchemeTitle": "पहले एक योजना चुनें",
+    "selectSchemeDesc": "साझेदार बैंक, राज्य चैनलाइजिंग एजेंसियाँ (SCA) और आधिकारिक पोर्टल आपकी चुनी हुई योजना पर निर्भर करते हैं।",
+    "findSchemeFirstBtn": "पहले अपनी योजना खोजें",
+    "useMyLiveLocation": "मेरा लाइव स्थान उपयोग करें",
+    "searchPinBtn": "पिन खोजें",
+    "moreDetails": "अधिक विवरण",
+    "schemesProvided": "इस बैंक द्वारा दी जाने वाली योजनाएँ",
+    "allBranchesTab": "सभी शाखाएँ",
+    "tollFreeHelpline": "टोल-फ्री हेल्पलाइन",
+    "branchPhone": "शाखा फ़ोन",
+    "copyNumber": "नंबर कॉपी करें",
+    "viewOnMap": "मानचित्र पर देखें",
+    "processingTime": "प्रोसेसिंग समय",
+    "getDirectionsMaps": "दिशा-निर्देश (Google Maps)"
   },
   "calc": {
     "title": "EMI कैलकुलेटर",

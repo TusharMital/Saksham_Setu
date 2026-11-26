@@ -216,7 +216,8 @@
     "docsTitle": "Required Documents Checklist",
     "notesTitle": "Important Notes & Warnings",
     "applyCta": "Apply for This Scheme",
-    "viewInCalc": "View in Locked EMI Calculator"
+    "viewInCalc": "View in Locked EMI Calculator",
+    "findBanksPortals": "Find Partner Banks & Official Portals"
   },
   "paths": {
     "title": "त्रयः मार्गाः। यः उचितः भाति तं चिनोतु।",
@@ -276,7 +277,21 @@
     "branchesFound": "सहभागिशाखाः प्राप्ताः",
     "within": "भवतः १५ कि.मी. परिधौ",
     "searchPlaceholder": "पिन वा क्षेत्रम्, यथा 302001",
-    "nextApply": "अग्रिमम्: आवेदनविधिं चिनोतु"
+    "nextApply": "अग्रिमम्: आवेदनविधिं चिनोतु",
+    "selectSchemeTitle": "Select a Scheme First",
+    "selectSchemeDesc": "Partner banks, State Channelising Agencies, and official portals depend on the scheme you choose.",
+    "findSchemeFirstBtn": "Find Your Scheme First",
+    "useMyLiveLocation": "Use My Live Location",
+    "searchPinBtn": "Search PIN",
+    "moreDetails": "More Details",
+    "schemesProvided": "Schemes Provided by This Bank",
+    "allBranchesTab": "All Branches",
+    "tollFreeHelpline": "Toll-Free Helpline",
+    "branchPhone": "Branch Phone",
+    "copyNumber": "Copy Number",
+    "viewOnMap": "View on Map",
+    "processingTime": "Processing Time",
+    "getDirectionsMaps": "Get Directions (Google Maps)"
   },
   "calc": {
     "title": "EMI गणकः",

@@ -216,7 +216,8 @@
     "docsTitle": "Required Documents Checklist",
     "notesTitle": "Important Notes & Warnings",
     "applyCta": "Apply for This Scheme",
-    "viewInCalc": "View in Locked EMI Calculator"
+    "viewInCalc": "View in Locked EMI Calculator",
+    "findBanksPortals": "Find Partner Banks & Official Portals"
   },
   "paths": {
     "title": "ત્રણ રસ્તા. તમને જે યોગ્ય લાગે તે પસંદ કરો.",
@@ -276,7 +277,21 @@
     "branchesFound": "ભાગીદાર શાખાઓ મળી",
     "within": "તમારા ૧૫ કિમીની અંદર",
     "searchPlaceholder": "પિન અથવા વિસ્તાર, જેમ કે 380001",
-    "nextApply": "આગળ: અરજી કરવાની રીત પસંદ કરો"
+    "nextApply": "આગળ: અરજી કરવાની રીત પસંદ કરો",
+    "selectSchemeTitle": "Select a Scheme First",
+    "selectSchemeDesc": "Partner banks, State Channelising Agencies, and official portals depend on the scheme you choose.",
+    "findSchemeFirstBtn": "Find Your Scheme First",
+    "useMyLiveLocation": "Use My Live Location",
+    "searchPinBtn": "Search PIN",
+    "moreDetails": "More Details",
+    "schemesProvided": "Schemes Provided by This Bank",
+    "allBranchesTab": "All Branches",
+    "tollFreeHelpline": "Toll-Free Helpline",
+    "branchPhone": "Branch Phone",
+    "copyNumber": "Copy Number",
+    "viewOnMap": "View on Map",
+    "processingTime": "Processing Time",
+    "getDirectionsMaps": "Get Directions (Google Maps)"
   },
   "calc": {
     "title": "EMI કેલ્ક્યુલેટર",

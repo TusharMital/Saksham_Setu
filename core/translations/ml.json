@@ -216,7 +216,8 @@
     "docsTitle": "Required Documents Checklist",
     "notesTitle": "Important Notes & Warnings",
     "applyCta": "Apply for This Scheme",
-    "viewInCalc": "View in Locked EMI Calculator"
+    "viewInCalc": "View in Locked EMI Calculator",
+    "findBanksPortals": "Find Partner Banks & Official Portals"
   },
   "paths": {
     "title": "മൂന്ന് വഴികൾ. നിങ്ങൾക്ക് ഉചിതമായത് തിരഞ്ഞെടുക്കുക.",
@@ -276,7 +277,21 @@
     "branchesFound": "പങ്കാളി ശാഖകൾ കണ്ടെത്തി",
     "within": "നിങ്ങളുടെ 15 കി.മീ ചുറ്റളവിൽ",
     "searchPlaceholder": "പിൻ അല്ലെങ്കിൽ പ്രദേശം, ഉദാ. 682001",
-    "nextApply": "അടുത്തത്: അപേക്ഷാ രീതി തിരഞ്ഞെടുക്കുക"
+    "nextApply": "അടുത്തത്: അപേക്ഷാ രീതി തിരഞ്ഞെടുക്കുക",
+    "selectSchemeTitle": "Select a Scheme First",
+    "selectSchemeDesc": "Partner banks, State Channelising Agencies, and official portals depend on the scheme you choose.",
+    "findSchemeFirstBtn": "Find Your Scheme First",
+    "useMyLiveLocation": "Use My Live Location",
+    "searchPinBtn": "Search PIN",
+    "moreDetails": "More Details",
+    "schemesProvided": "Schemes Provided by This Bank",
+    "allBranchesTab": "All Branches",
+    "tollFreeHelpline": "Toll-Free Helpline",
+    "branchPhone": "Branch Phone",
+    "copyNumber": "Copy Number",
+    "viewOnMap": "View on Map",
+    "processingTime": "Processing Time",
+    "getDirectionsMaps": "Get Directions (Google Maps)"
   },
   "calc": {
     "title": "EMI കാൽക്കുലേറ്റർ",

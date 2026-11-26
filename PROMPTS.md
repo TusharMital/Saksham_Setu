@@ -546,3 +546,19 @@ What failed or was missing: None (new labels queued for Bhumi's final 23-languag
 Did it follow the rules? Yes.
 Next prompt it led to: Any final feature additions, followed by Bhumi's full-site 23-language translation & polish pass (P8b) and Claude security review (P9).
 Screenshot file names: `docs/05_Website_Screenshots/p7c_emi_calc_custom_slider_graph.png`, `docs/05_Website_Screenshots/p7c_emi_calc_scheme_locked.png`
+
+---
+
+### P7d | Antigravity | Scheme-Driven Live Bank & Portal Locator (Overpass + Nominatim + Leaflet)
+Date: 2026-11-25
+Run by: Bhumi (25bcon2360 — UI & bank/portal research) & Mousam (25bcon2411 — full-stack coding)
+Prompt (exact text): Remove "Find Bank" from navbar tabs and footer so `/locator` is strictly scheme-driven (accessed from `/scheme/:code` or `/apply?scheme=<code>`); integrate free zero-API-key OpenStreetMap Overpass API + Nominatim geocoding + Leaflet maps to fix live GPS location, 6-digit Indian PIN code bank discovery (`335001`, etc.), Google Maps turn-by-turn directions, and `tel:` calling; add full bank & official portal directory (`data/bank_portals_directory.json`), category/radius filters, and a rich "More Details" modal showing every bank's policies, all government schemes it provides, and all its branches.
+Output summary (3 lines):
+- Removed "Find Bank" from navbar and footer in `Layout.jsx` and wired scheme-specific entry points from `SchemeDetail.jsx` and `ApplyPath.jsx`.
+- Created `data/bank_portals_directory.json` and `GET /api/banks/live-search/` combining live OpenStreetMap Overpass bank branches, Nominatim/India Post PIN geocoding, cross-referenced `provided_schemes`, and `all_branches` per bank.
+- Rebuilt `BranchLocator.jsx` with working live GPS, PIN search, Google Maps directions, `tel:` calling, type/radius filters, and a rich "More Details" modal listing each bank's schemes and branches; all tests, Vite build, and `collectstatic` passed.
+What worked: Free zero-API-key live bank discovery for any Indian PIN/GPS, accurate directions & calling, and complete visibility into each bank's supported schemes and branches.
+What failed or was missing: None (new labels queued for Bhumi's final 23-language translation pass in P8b).
+Did it follow the rules? Yes.
+Next prompt it led to: Bhumi's full-site 23-language translation & polish pass (P8b), Claude security review (P9), and Render deployment.
+Screenshot file names: `docs/05_Website_Screenshots/p7d_bank_locator_live_map.png`, `docs/05_Website_Screenshots/p7d_bank_portal_more_details.png`

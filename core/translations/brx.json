@@ -216,7 +216,8 @@
     "docsTitle": "Required Documents Checklist",
     "notesTitle": "Important Notes & Warnings",
     "applyCta": "Apply for This Scheme",
-    "viewInCalc": "View in Locked EMI Calculator"
+    "viewInCalc": "View in Locked EMI Calculator",
+    "findBanksPortals": "Find Partner Banks & Official Portals"
   },
   "paths": {
     "title": "मोनथाम लामा। नोंनो जेखौ मोजां मोनो सायख'।",
@@ -276,7 +277,21 @@
     "branchesFound": "बाहागि दालाइफोर मोनबाय",
     "within": "नोंनि १५ कि.मि. सिङाव",
     "searchPlaceholder": "पिन एबा जायगा, जेरै 783370",
-    "nextApply": "उननि: आरज खालामनाय राहा सायख'"
+    "nextApply": "उननि: आरज खालामनाय राहा सायख'",
+    "selectSchemeTitle": "Select a Scheme First",
+    "selectSchemeDesc": "Partner banks, State Channelising Agencies, and official portals depend on the scheme you choose.",
+    "findSchemeFirstBtn": "Find Your Scheme First",
+    "useMyLiveLocation": "Use My Live Location",
+    "searchPinBtn": "Search PIN",
+    "moreDetails": "More Details",
+    "schemesProvided": "Schemes Provided by This Bank",
+    "allBranchesTab": "All Branches",
+    "tollFreeHelpline": "Toll-Free Helpline",
+    "branchPhone": "Branch Phone",
+    "copyNumber": "Copy Number",
+    "viewOnMap": "View on Map",
+    "processingTime": "Processing Time",
+    "getDirectionsMaps": "Get Directions (Google Maps)"
   },
   "calc": {
     "title": "EMI सानखौरां",

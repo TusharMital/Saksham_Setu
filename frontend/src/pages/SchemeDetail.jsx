@@ -354,6 +354,26 @@ export default function SchemeDetail() {
               Loan Range: {formatFullInr(data.min_loan || 0)} – {formatFullInr(data.max_loan)}
             </span>
           </div>
+
+          <div className="detail-hero-actions">
+            <Link
+              to={`/locator?scheme=${encodeURIComponent(data.code)}`}
+              className="btn btn-secondary"
+              onClick={() => setScheme(data)}
+            >
+              <Icon name="location" size={18} />
+              <span>{t("detail.findBanksPortals")}</span>
+              <Icon name="arrow" size={17} />
+            </Link>
+            <Link
+              to={`/calculator?scheme=${encodeURIComponent(data.code)}`}
+              className="btn btn-outline"
+              onClick={() => setScheme(data)}
+            >
+              <Icon name="calc" size={17} />
+              <span>{t("detail.viewInCalc")}</span>
+            </Link>
+          </div>
         </div>
 
         <aside className="detail-hero-highlights">
@@ -483,6 +503,15 @@ export default function SchemeDetail() {
             >
               <span>{t("detail.applyCta")}</span>
               <Icon name="arrow" size={18} />
+            </Link>
+            <Link
+              to={`/locator?scheme=${encodeURIComponent(data.code)}`}
+              className="btn btn-secondary full"
+              style={{ marginTop: "10px" }}
+              onClick={() => setScheme(data)}
+            >
+              <Icon name="location" size={17} />
+              <span>{t("detail.findBanksPortals")}</span>
             </Link>
             <Link
               to={`/calculator?scheme=${encodeURIComponent(data.code)}`}

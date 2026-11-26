@@ -7,6 +7,7 @@ urlpatterns = [
     path("schemes/", views.SchemeListView.as_view()),
     path("schemes/<str:code>/", views.SchemeDetailView.as_view()),
     path("branches/", views.BranchListView.as_view()),
+    path("banks/live-search/", views.LiveBankSearchView.as_view()),
     path("emi/", views.EmiView.as_view()),
     path("applications/<str:ref>/", views.ApplicationDetailView.as_view()),
     path("applications/<str:ref>/pdf/", views.ApplicationPdfView.as_view()),

@@ -64,6 +64,37 @@ paths:
       responses:
         '200':
           description: Ranked branches with health checks.
+  /api/banks/live-search/:
+    get:
+      summary: Live scheme-driven search for nearby bank branches (Overpass/Nominatim) and official portals
+      parameters:
+        - name: scheme
+          in: query
+          schema:
+            type: string
+        - name: pin
+          in: query
+          schema:
+            type: string
+        - name: lat
+          in: query
+          schema:
+            type: number
+        - name: lng
+          in: query
+          schema:
+            type: number
+        - name: radius_km
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Resolved coordinates, nearby live/directory branches, official portals, provided_schemes, and all_branches.
+        '400':
+          description: Missing or invalid location parameters.
+        '404':
+          description: Scheme not found.
   /api/emi/:
     post:
       summary: Calculate loan EMI and amortization schedule

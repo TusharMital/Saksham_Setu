@@ -216,7 +216,8 @@
     "docsTitle": "Required Documents Checklist",
     "notesTitle": "Important Notes & Warnings",
     "applyCta": "Apply for This Scheme",
-    "viewInCalc": "View in Locked EMI Calculator"
+    "viewInCalc": "View in Locked EMI Calculator",
+    "findBanksPortals": "Find Partner Banks & Official Portals"
   },
   "paths": {
     "title": "তিনটি পথ। আপনার সুবিধামতো বেছে নিন।",
@@ -276,7 +277,21 @@
     "branchesFound": "অংশীদার শাখা পাওয়া গেছে",
     "within": "আপনার ১৫ কিমির মধ্যে",
     "searchPlaceholder": "পিন বা এলাকা, যেমন 700001",
-    "nextApply": "পরবর্তী: আবেদনের পথ বেছে নিন"
+    "nextApply": "পরবর্তী: আবেদনের পথ বেছে নিন",
+    "selectSchemeTitle": "Select a Scheme First",
+    "selectSchemeDesc": "Partner banks, State Channelising Agencies, and official portals depend on the scheme you choose.",
+    "findSchemeFirstBtn": "Find Your Scheme First",
+    "useMyLiveLocation": "Use My Live Location",
+    "searchPinBtn": "Search PIN",
+    "moreDetails": "More Details",
+    "schemesProvided": "Schemes Provided by This Bank",
+    "allBranchesTab": "All Branches",
+    "tollFreeHelpline": "Toll-Free Helpline",
+    "branchPhone": "Branch Phone",
+    "copyNumber": "Copy Number",
+    "viewOnMap": "View on Map",
+    "processingTime": "Processing Time",
+    "getDirectionsMaps": "Get Directions (Google Maps)"
   },
   "calc": {
     "title": "EMI ক্যালকুলেটর",

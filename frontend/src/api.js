@@ -26,6 +26,13 @@ export const api = {
     const q = new URLSearchParams(params).toString();
     return request(`/branches/?${q}`);
   },
+  liveBanksSearch: (params) => {
+    const clean = Object.fromEntries(
+      Object.entries(params || {}).filter(([, v]) => v !== undefined && v !== null && v !== "")
+    );
+    const q = new URLSearchParams(clean).toString();
+    return request(`/banks/live-search/?${q}`);
+  },
   emi: (body) => request("/emi/", { method: "POST", body: JSON.stringify(body) }),
   application: (ref) => request(`/applications/${encodeURIComponent(ref)}/`),
   createApplication: (body) => request("/applications/", { method: "POST", body: JSON.stringify(body) }),

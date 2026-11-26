@@ -5,7 +5,7 @@ import Calculator from "./pages/Calculator.jsx";
 import Documents from "./pages/Documents.jsx";
 import Form from "./pages/Form.jsx";
 import Landing from "./pages/Landing.jsx";
-import Locator from "./pages/Locator.jsx";
+import BranchLocator from "./pages/BranchLocator.jsx";
 import Results from "./pages/Results.jsx";
 import SchemeDetail from "./pages/SchemeDetail.jsx";
 import Tracker from "./pages/Tracker.jsx";
@@ -19,7 +19,7 @@ export default function App() {
         <Route path="/results" element={<Results />} />
         <Route path="/scheme/:code" element={<SchemeDetail />} />
         <Route path="/apply" element={<ApplyPath />} />
-        <Route path="/locator" element={<Locator />} />
+        <Route path="/locator" element={<BranchLocator />} />
         <Route path="/calculator" element={<Calculator />} />
         <Route path="/documents" element={<Documents />} />
         <Route path="/track" element={<Tracker />} />

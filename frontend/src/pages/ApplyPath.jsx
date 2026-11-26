@@ -55,7 +55,7 @@ function buildChannelConfig(channelKey, scheme) {
         "Prepare your caste, income, residence, and project report papers.",
         "Submit physical or state-portal application for concessional SCA quota.",
       ],
-      internalRoute: "/locator",
+      internalRoute: scheme?.code ? `/locator?scheme=${encodeURIComponent(scheme.code)}` : "/locator",
       internalLabel: "Find SCA / Partner Office",
       externalUrl: officialUrl,
       externalLabel: "Visit Corporation Website",
@@ -73,7 +73,7 @@ function buildChannelConfig(channelKey, scheme) {
         "Complete your document checklist and download your project summary PDF.",
         "Meet the branch loan officer to submit the official bank form.",
       ],
-      internalRoute: "/locator",
+      internalRoute: scheme?.code ? `/locator?scheme=${encodeURIComponent(scheme.code)}` : "/locator",
       internalLabel: tLabelFallback("Find My Branch"),
       externalUrl: bankUrl || undefined,
       externalLabel: bankUrl ? "Open Bank Portal" : undefined,
@@ -91,7 +91,7 @@ function buildChannelConfig(channelKey, scheme) {
         "Note that MFI interest rates are higher than SCA or JanSamarth bank channels.",
         "Keep Aadhaar, caste/group KYC, and bank passbook ready.",
       ],
-      internalRoute: "/locator",
+      internalRoute: scheme?.code ? `/locator?scheme=${encodeURIComponent(scheme.code)}` : "/locator",
       internalLabel: "Find MFI / Micro Desk",
     },
     kviconline: {
@@ -248,6 +248,20 @@ export default function ApplyPath() {
               View Scheme Details →
             </Link>
           )}
+        </div>
+        <div style={{ marginTop: "14px", display: "flex", gap: "12px", flexWrap: "wrap" }}>
+          <Link
+            to={
+              selectedScheme.code && selectedScheme.code !== "GENERAL"
+                ? `/locator?scheme=${encodeURIComponent(selectedScheme.code)}`
+                : "/locator"
+            }
+            className="btn btn-secondary"
+          >
+            <Icon name="location" size={18} />
+            <span>{t("detail.findBanksPortals")}</span>
+            <Icon name="arrow" size={17} />
+          </Link>
         </div>
       </div>
 
