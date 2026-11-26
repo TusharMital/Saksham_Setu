@@ -503,12 +503,12 @@ def chat_completion(message, history, language, client_ip="unknown"):
     system = f"{system_header}{grounding}{SYSTEM_FOOTER}"
     messages = [{"role": "system", "content": system}, *memory, {"role": "user", "content": text}]
     primary_model = (
-        getattr(settings, "GROQ_MODEL", "") or os.getenv("GROQ_MODEL", "") or "llama-3.3-70b-versatile"
+        getattr(settings, "GROQ_MODEL", "") or os.getenv("GROQ_MODEL", "") or "openai/gpt-oss-120b"
     ).strip()
     alt_model = (
-        "llama-3.3-70b-versatile"
-        if primary_model == "llama-3.1-8b-instant"
-        else "llama-3.1-8b-instant"
+        "qwen/qwen3.8-27b"
+        if primary_model == "openai/gpt-oss-20b"
+        else "openai/gpt-oss-20b"
     )
     timeout = max(12, int(getattr(settings, "GROQ_TIMEOUT_SECONDS", 12) or 12))
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
@@ -529,9 +529,9 @@ def chat_completion(message, history, language, client_ip="unknown"):
                 json=_build_groq_payload(alt_model, messages),
                 timeout=timeout,
             )
-            if resp.status_code == 404 and primary_model not in ("llama-3.3-70b-versatile", "llama-3.1-8b-instant"):
-                for org_alt in ("qwen/qwen3.8-27b", "openai/gpt-oss-20b"):
-                    if org_alt == primary_model:
+            if resp.status_code in (429, 404):
+                for org_alt in ("qwen/qwen3.8-27b", "llama-3.1-8b-instant"):
+                    if org_alt in (primary_model, alt_model):
                         continue
                     resp = requests.post(
                         "https://api.groq.com/openai/v1/chat/completions",

@@ -601,7 +601,7 @@ class ChatApiTests(TestCase):
         mock_sleep.assert_called_once_with(1.2)
         self.assertEqual(
             mock_post.call_args_list[1].kwargs["json"]["model"],
-            "llama-3.1-8b-instant",
+            "openai/gpt-oss-20b",
         )
 
 
