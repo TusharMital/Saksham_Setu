@@ -24,6 +24,8 @@ DEFAULT_REJECTION_TEMPLATES = {
     "pwdOnly": "PwD-only scheme: this scheme is reserved for persons with certified disability.",
     "notSpecified": "not specified",
     "matchedSummary": "Matched: score {score}/100 (interest {interest}, subsidy {subsidy}, loan fit {loanFit}, special {special}).",
+    "rejectedPrefix": "Rejected: ",
+    "acceptedSummary": "Accepted: you meet the state, category, income, age, loan, and applicant-type rules for {name}.",
 }
 
 
@@ -165,7 +167,7 @@ def layer1_evaluate(applicant, scheme, lang="en"):
             rejection_reasons.append(
                 _fmt_tpl(
                     tpl["supiRule"],
-                    category=applicant.get("caste_category") or "General",
+                    category=applicant.get("caste_category") or tpl["notSpecified"],
                 )
             )
     elif caste_cat and caste_cat not in cats_upper:
@@ -263,11 +265,11 @@ def layer1_evaluate(applicant, scheme, lang="en"):
         rejection_reasons.append(tpl["pwdOnly"])
 
     if rejection_reasons:
-        return False, "Rejected: " + " ".join(rejection_reasons), rejection_reasons
+        return False, tpl["rejectedPrefix"] + " ".join(rejection_reasons), rejection_reasons
 
     return (
         True,
-        f"Accepted: you meet the state, category, income, age, loan, and applicant-type rules for {scheme['name']}.",
+        _fmt_tpl(tpl["acceptedSummary"], name=scheme["name"]),
         [],
     )
 

@@ -130,7 +130,7 @@ export function speak(text, speechLocale, options = {}) {
   }
 }
 
-export function extractReadableText(el, lang = "en") {
+export function extractReadableText(el, lang = "en", labels = {}) {
   if (!el) return "";
 
   const dataSpeak = el.getAttribute?.("data-speak");
@@ -167,18 +167,15 @@ export function extractReadableText(el, lang = "en") {
 
     if (tagName === "select") {
       const opt = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex]?.text : "";
-      const stateText = opt ? (lang === "hi" ? `चयनित: ${opt}` : opt) : "";
+      const selectedPrefix = labels.selected || (lang === "hi" ? "चयनित" : "selected");
+      const stateText = opt ? `${selectedPrefix}: ${opt}` : "";
       return [label, stateText].filter(Boolean).join(". ").trim();
     }
 
     if (el.type === "checkbox" || el.type === "radio") {
-      const stateText = el.checked
-        ? lang === "hi"
-          ? "चयनित"
-          : "checked"
-        : lang === "hi"
-          ? "अचयनित"
-          : "not checked";
+      const checkedWord = labels.checked || (lang === "hi" ? "चयनित" : "checked");
+      const uncheckedWord = labels.unchecked || (lang === "hi" ? "अचयनित" : "not checked");
+      const stateText = el.checked ? checkedWord : uncheckedWord;
       return [label, stateText].filter(Boolean).join(", ").trim();
     }
 
@@ -206,10 +203,14 @@ export function extractReadableText(el, lang = "en") {
 }
 
 export function startMic(onResult, speechLocale, options = {}) {
+  const msgs = options.messages || {};
   const Rec =
     typeof window !== "undefined" && (window.SpeechRecognition || window.webkitSpeechRecognition);
   if (!Rec) {
-    onResult("", "Voice input is not supported in this browser. Please type your question.");
+    onResult(
+      "",
+      msgs.unsupported || "Voice input is not supported in this browser. Please type your question."
+    );
     return null;
   }
 
@@ -226,18 +227,27 @@ export function startMic(onResult, speechLocale, options = {}) {
     rec.onerror = (e) => {
       const errCode = e?.error || "";
       if (errCode === "not-allowed" || errCode === "service-not-allowed") {
-        onResult("", "Microphone permission denied. You can still type your message.");
+        onResult(
+          "",
+          msgs.denied || "Microphone permission denied. You can still type your message."
+        );
       } else if (errCode === "no-speech") {
-        onResult("", "No speech detected. Tap the mic and try again, or type your message.");
+        onResult(
+          "",
+          msgs.noSpeech || "No speech detected. Tap the mic and try again, or type your message."
+        );
       } else {
-        onResult("", "Voice recognition could not complete. Please type instead.");
+        onResult(
+          "",
+          msgs.error || "Voice recognition could not complete. Please type instead."
+        );
       }
     };
     rec.onend = () => options.onEnd?.();
     rec.start();
     return rec;
   } catch {
-    onResult("", "Could not start voice input. Please type instead.");
+    onResult("", msgs.startError || "Could not start voice input. Please type instead.");
     return null;
   }
 }

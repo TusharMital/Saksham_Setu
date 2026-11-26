@@ -24,7 +24,14 @@
     "noMatchingLang": "कोई मिलती-जुलती भाषा नहीं",
     "speechUnsupported": "इस ब्राउज़र में आवाज़ समर्थित नहीं है",
     "noVoiceForLang": "ब्राउज़र में {lang} ({locale}) के लिए आवाज़ नहीं है",
-    "voiceNA": "N/A"
+    "voiceNA": "N/A",
+    "homeAria": "साक्षम सेतु होम",
+    "mainNavAria": "मुख्य नेविगेशन",
+    "selectLangAria": "भाषा चुनें। वर्तमान: {native} ({name})",
+    "langSelectionAria": "भाषा चयन",
+    "supportedLangsAria": "समर्थित भाषाएँ",
+    "closeMenu": "मेनू बंद करें",
+    "openMenu": "मेनू खोलें"
   },
   "landing": {
     "heroBadge": "सरकारी योजनाएँ, समझें आसानी से",
@@ -65,7 +72,7 @@
     "statBanks": "साझेदार बैंक शाखाएँ",
     "statBanksVal": "28+",
     "statQuota": "आवंटित ऋण कोटा",
-    "statQuotaVal": "₹500+ Cr",
+    "statQuotaVal": "₹500+ करोड़",
     "statSubsidy": "अधिकतम पूंजी सब्सिडी",
     "statSubsidyVal": "35%",
     "how": "साक्षम सेतु कैसे काम करता है",
@@ -82,7 +89,9 @@
     "voiceBannerDesc": "अपनी भाषा में मार्गदर्शन सुनने के लिए कहीं भी स्पीकर आइकन दबाएँ।",
     "voiceBannerBtn": "आवाज़ से मार्गदर्शन आज़माएँ",
     "voiceBannerBtnActive": "आवाज़ मार्गदर्शन: चालू — रोकने के लिए दबाएँ",
-    "howEyebrow": "एक सरल यात्रा"
+    "howEyebrow": "एक सरल यात्रा",
+    "profileVerifiedTitle": "प्रोफ़ाइल सत्यापित",
+    "liveFundsTitle": "लाइव फंड सक्रिय"
   },
   "form": {
     "title": "आइए आपके लिए सही योजना खोजें",
@@ -195,7 +204,30 @@
     "verifyRuleLabel": "नियम:",
     "verifyNextStepLabel": "अगला चरण:",
     "otherOption": "अन्य",
-    "verifyFailed": "श्रेणी सत्यापित नहीं हो सकी।"
+    "verifyFailed": "श्रेणी सत्यापित नहीं हो सकी।",
+    "stepperAria": "फ़ॉर्म प्रगति स्टेपर",
+    "full_name_placeholder": "आधार कार्ड के अनुसार",
+    "mobile_placeholder": "10-अंकीय मोबाइल नंबर",
+    "pin_placeholder": "6-अंकीय पिन (उदा. 302001)",
+    "age_placeholder": "उदा. 28",
+    "income_placeholder": "उदा. 300000",
+    "sub_caste_placeholder": "उदा., मेघवाल, धोबी, महार, जाटव",
+    "project_description_placeholder": "उद्यम का संक्षिप्त विवरण...",
+    "loan_amount_placeholder": "उदा. 800000",
+    "project_cost_placeholder": "उदा. 1000000",
+    "cat_sc": "SC",
+    "cat_st": "ST",
+    "cat_obc": "OBC",
+    "cat_ews": "EWS",
+    "cat_general": "सामान्य",
+    "cat_minority": "अल्पसंख्यक",
+    "validEntry": "वैध प्रविष्टि",
+    "showHelpFor": "{label} के लिए सहायता दिखाएँ",
+    "toggleHelpTitle": "फ़ील्ड मार्गदर्शन टॉगल करें",
+    "helpDialogAria": "सहायता: {label}",
+    "speechSelected": "चयनित",
+    "speechChecked": "चेक्ड",
+    "speechUnchecked": "अनचेक्ड"
   },
   "results": {
     "title": "आप {count} योजनाओं के लिए पात्र हैं",
@@ -239,7 +271,11 @@
     "marginMoney": "मार्जिन राशि",
     "tenureFormat": "{tenure}m अवधि ({moratorium}m मोरेटोरियम)",
     "perMonth": "/ माह",
-    "emptyStateTab": "{state} में आपके प्रोफ़ाइल से मेल खाने वाले कोई राज्य-विशिष्ट योजनाएँ नहीं मिलीं। \"All Eligible\" या \"Central Govt\" पर स्विच करके राष्ट्रीय योजनाएँ देखें, या नीचे \"Not Selected\" सेक्शन देखें।"
+    "emptyStateTab": "{state} में आपके प्रोफ़ाइल से मेल खाने वाले कोई राज्य-विशिष्ट योजनाएँ नहीं मिलीं। \"All Eligible\" या \"Central Govt\" पर स्विच करके राष्ट्रीय योजनाएँ देखें, या नीचे \"Not Selected\" सेक्शन देखें।",
+    "filterTabsAria": "सरकारी स्तर के अनुसार पात्र योजनाओं को फ़िल्टर करें",
+    "dismissNotice": "सूचना बंद करें",
+    "matchedDefault": "आपकी प्रोफ़ाइल और पात्रता नियमों से मेल खाता है।",
+    "rejectedDefault": "योजना की पात्रता शर्तों को पूरा नहीं किया।"
   },
   "detail": {
     "back": "वापस",
@@ -279,7 +315,11 @@
     "svgStart": "शुरू",
     "svgYr": "वर्ष {year}",
     "svgYearBalance": "वर्ष {year}: बचा हुआ शेष {balance}",
-    "govtOfIndia": "भारत सरकार"
+    "govtOfIndia": "भारत सरकार",
+    "perAnnum": "प्रति वर्ष",
+    "monthsShort": "{months} माह",
+    "loadError": "योजना का विवरण लोड नहीं हो सका।",
+    "notFoundDesc": "कोड {code} के लिए कोई योजना नहीं मिली।"
   },
   "paths": {
     "title": "आवेदन के तीन रास्ते — जो आपको आसान लगे चुनें",
@@ -524,7 +564,19 @@
     "liveOsmTag": "लाइव OSM",
     "schemesCountTag": "{count} योजनाएँ",
     "branchesCountTag": "{count} शाखाएँ",
-    "onlineBadge": "ऑनलाइन"
+    "onlineBadge": "ऑनलाइन",
+    "kmUnit": "किमी",
+    "modalAria": "{name} विवरण",
+    "loadError": "नजदीकी बैंक और पोर्टल लोड करने में विफल।",
+    "invalidPinError": "कृपया मान्य 6-अंकीय भारतीय पिन कोड दर्ज करें (जैसे 110001 या 302001)।",
+    "geoUnsupportedError": "आपके ब्राउज़र में जियोलोकेशन समर्थित नहीं है — नजदीकी बैंक खोजने के लिए कृपया अपना 6-अंकीय भारतीय पिन कोड दर्ज करें।",
+    "liveGpsLocation": "आपका लाइव GPS स्थान",
+    "geoBlockedError": "ब्राउज़र GPS स्थान अवरुद्ध या अनुपलब्ध है — नजदीकी बैंक खोजने के लिए कृपया ऊपर अपना 6-अंकीय पिन कोड दर्ज करें।",
+    "gateSelectLabel": "सभी 66 केंद्रीय और राज्य योजनाओं में से चुनें",
+    "gateSelectPlaceholder": "-- ऋण योजना चुनें --",
+    "pinAriaLabel": "6-अंकीय भारतीय पिन कोड",
+    "filterTypeAria": "संस्थान के प्रकार के अनुसार फ़िल्टर करें",
+    "radiusAria": "खोज दायरा"
   },
   "calc": {
     "title": "EMI कैलकुलेटर",
@@ -619,7 +671,12 @@
     "maxMonthsLimit": "360 महीने",
     "moratoriumZeroLimit": "0 (तुरंत)",
     "toggleMonthlyRows": "मासिक पंक्तियों को टॉगल करने के लिए क्लिक करें",
-    "moratoriumMonthsBadge": "{months}m मोराटोरियम"
+    "moratoriumMonthsBadge": "{months}m मोराटोरियम",
+    "pctPa": "% प्रति वर्ष",
+    "tenureUnitAria": "अवधि इकाई",
+    "svgYearAria": "वर्ष {year}: मूलधन {principal}, ब्याज {interest}, अंतिम शेष {balance}",
+    "svgYearShort": "व{year}",
+    "savingsNeutralTitle": "{code} @ {rate}% बनाम 11.0%"
   },
   "chat": {
     "title": "सारथी AI सहायक",
@@ -659,7 +716,33 @@
     "advisorQ3": "3/3: क्या आपके पिन कोड के पास कोई साझेदार बैंक शाखा या CSC/SCA केंद्र है जिसे आप आसानी से जा सकते हैं?",
     "advisorQ3OptNearby": "हाँ, शाखा पास में है",
     "advisorQ3OptHome": "नहीं, घर से आवेदन करना पसंद करते हैं",
-    "advisorQ3OptUnsure": "पक्का नहीं"
+    "advisorQ3OptUnsure": "पक्का नहीं",
+    "welcomeMessage": "नमस्ते! मैं सारथी हूँ, आपका GovTech योजना सलाहकार। मुझसे ऋण, सब्सिडी, दस्तावेज़ों या बैंक शाखाओं के बारे में कुछ भी पूछें।",
+    "autoSpeakOffAria": "ऑटो-स्पीक बंद करें",
+    "autoSpeakOnAria": "ऑटो-स्पीक चालू करें",
+    "autoSpeakOnTitle": "ऑटो-स्पीक चालू (बंद करने के लिए क्लिक करें)",
+    "autoSpeakOffTitle": "ऑटो-स्पीक बंद (चालू करने के लिए क्लिक करें)",
+    "quickReplyAria": "त्वरित उत्तर विकल्प",
+    "stopMicAria": "आवाज़ रिकॉर्डिंग बंद करें",
+    "startMicAria": "आवाज़ से लिखना शुरू करें",
+    "stopMicTitle": "सुनना बंद करने के लिए टैप करें",
+    "speakLocaleTitle": "बोलें ({locale})",
+    "voicePlaybackUnavailable": " • {lang} के लिए वॉइस प्लेबैक उपलब्ध नहीं है",
+    "micUnsupported": "इस ब्राउज़र में वॉइस इनपुट समर्थित नहीं है। कृपया अपना प्रश्न टाइप करें।",
+    "micDenied": "माइक्रोफ़ोन की अनुमति अस्वीकृत। आप अभी भी अपना संदेश टाइप कर सकते हैं।",
+    "micNoSpeech": "कोई आवाज़ नहीं सुनी गई। माइक पर टैप करके फिर से प्रयास करें, या अपना प्रश्न टाइप करें।",
+    "micError": "आवाज़ पहचान पूरी नहीं हो सकी। कृपया इसके बजाय टाइप करें।",
+    "micStartError": "वॉइस इनपुट शुरू नहीं हो सका। कृपया इसके बजाय टाइप करें।",
+    "advisorReasonSingle": "{scheme} के लिए यही सत्यापित आधिकारिक माध्यम उपलब्ध है। आपके उत्तरों (\"{a1}\", \"{a2}\", और \"{a3}\") के आधार पर सीधे इस मार्ग का पालन करने से देरी नहीं होती।",
+    "advisorReasonBranch": "क्योंकि आपने \"{a1}\", \"{a2}\", और \"{a3}\" चुना है, इसलिए ऋण अधिकारी से आमने-सामने मार्गदर्शन मिलने से आपके दस्तावेज़ आसानी से सत्यापित होंगे और पोर्टल अस्वीकृति से बचाव होगा।",
+    "advisorReasonOnline": "क्योंकि आपने \"{a1}\", \"{a2}\", और \"{a3}\" चुना है, इसलिए आधिकारिक डिजिटल पोर्टल के माध्यम से सीधे आवेदन करना {scheme} के लिए सबसे तेज़ और सुगम विकल्प है।",
+    "errEmpty": "कृपया योजनाओं, ऋण या दस्तावेज़ों के बारे में कोई प्रश्न टाइप करें।",
+    "errTooLong": "कृपया अपना प्रश्न 500 अक्षरों से कम रखें ताकि मैं स्पष्ट उत्तर दे सकूँ।",
+    "errTimeout": "सहायक अभी धीमा चल रहा है। कृपया एक मिनट बाद पुनः प्रयास करें।",
+    "errRate": "कम समय में बहुत अधिक प्रश्न पूछे गए हैं। कृपया थोड़ा इंतज़ार करें और फिर प्रयास करें।",
+    "errAuth": "इस सर्वर पर अभी चैट सेटअप नहीं है। कृपया स्टाफ सदस्य से Groq कुंजी जोड़ने को कहें।",
+    "errNetwork": "नेटवर्क समस्या। कृपया अपना इंटरनेट कनेक्शन जांचें और फिर प्रयास करें।",
+    "errBad": "मैं सहायक का उत्तर पढ़ नहीं सका। कृपया पुनः प्रयास करें।"
   },
   "footer": {
     "rights": "साक्षम सेतु — एकीकृत रियायती ऋण मंच।",
@@ -738,7 +821,12 @@
     "loading": "सभी सरकारी योजनाएँ लोड हो रही हैं...",
     "retry": "पुनः प्रयास करें",
     "noMatchesTitle": "इन फ़िल्टर से कोई योजना मेल नहीं खाती",
-    "noMatchesDesc": "कृपया ऋण राशि, ब्याज दर सीमा, राज्य या खोज शब्द बदलकर देखें।"
+    "noMatchesDesc": "कृपया ऋण राशि, ब्याज दर सीमा, राज्य या खोज शब्द बदलकर देखें।",
+    "loadError": "सरकारी योजनाएँ लोड करने में असमर्थ।",
+    "removeFilterAria": "फ़िल्टर {label} हटाएँ",
+    "sliderAria": "{label} स्लाइडर",
+    "defaultSummary": "सरकारी रियायती ऋण योजना।",
+    "tenureCompact": "{tenure} माह ({moratorium} माह)"
   },
   "compare": {
     "eyebrow": "साइड-बाय-साइड योजना तुलना",
@@ -775,7 +863,9 @@
     "applicantType": "आवेदक प्रकार असंगति: यह योजना {allowed} के लिए है, {userType} के लिए नहीं।",
     "pwdOnly": "PwD‑केवल योजना: यह योजना प्रमाणित विकलांग व्यक्तियों के लिए आरक्षित है।",
     "notSpecified": "निर्दिष्ट नहीं",
-    "matchedSummary": "मैच हुआ: स्कोर {score}/100 (ब्याज {interest}, सब्सिडी {subsidy}, ऋण फिट {loanFit}, विशेष {special})."
+    "matchedSummary": "मैच हुआ: स्कोर {score}/100 (ब्याज {interest}, सब्सिडी {subsidy}, ऋण फिट {loanFit}, विशेष {special}).",
+    "rejectedPrefix": "अस्वीकृत: ",
+    "acceptedSummary": "स्वीकृत: आप {name} के लिए राज्य, वर्ग, आय, आयु, ऋण और आवेदक-प्रकार के नियमों को पूरा करते हैं।"
   },
   "verify": {
     "invalidCategoryMsg": "कृपया वैध श्रेणी चुनें (SC, ST, OBC, EWS, या General).",
@@ -808,7 +898,14 @@
     "minorityCertMismatchMsg": "प्रमाणपत्र असंगति: '{certificate_type}' अल्पसंख्यक समुदाय चयन से मेल नहीं खाता। 'Not Available Yet' चुनें या अपने प्रमाणपत्र पर मुद्रित सटीक श्रेणी चुनें।",
     "minorityCertMismatchNext": "‘Not Available Yet’ चुनें या अपने प्रमाणपत्र से मेल खाने वाली श्रेणी चुनें।",
     "nonNsfdcMsg": "श्रेणी '{category}' मान्य है। इस पोर्टल पर NSFDC योजनाएँ केवल अनुसूचित जाति (SC) आवेदकों के लिए हैं।",
-    "nonNsfdcNext": "{alt_agency} के माध्यम से आवेदन करने पर विचार करें।"
+    "nonNsfdcNext": "{alt_agency} के माध्यम से आवेदन करने पर विचार करें।",
+    "interstateMigrationNote": "अनुच्छेद 341 के अंतर्गत अनुसूचित जाति की स्थिति विशेष रूप से किसी राज्य या केंद्र शासित प्रदेश के संदर्भ में अधिसूचित होती है। दूसरे राज्य द्वारा जारी प्रमाणपत्र के लिए ऋण राज्य में निवास/तहसीलदार सत्यापन या केंद्रीय SCA मार्ग आवश्यक है।",
+    "altAgencyST": "NSTFDC (राष्ट्रीय अनुसूचित जनजाति वित्त एवं विकास निगम)",
+    "altAgencyOBC": "NBCFDC (राष्ट्रीय पिछड़ा वर्ग वित्त एवं विकास निगम)",
+    "altAgencyMinority": "NMDFC (राष्ट्रीय अल्पसंख्यक विकास एवं वित्त निगम)",
+    "altAgencyGeneral": "पीएम मुद्रा योजना (PMMY) या PMEGP",
+    "indiaLabel": "भारत",
+    "defaultScaName": "राज्य चैनलाइज़िंग एजेंसी (SCA)"
   },
   "bankBackend": {
     "labelPSB": "सार्वजनिक क्षेत्र बैंक",
@@ -835,6 +932,36 @@
     "whyNpa": "NPA {npa}%",
     "whySupportsScheme": "इस योजना का समर्थन करता है",
     "whyNoListScheme": "इस योजना को सूचीबद्ध नहीं करता",
-    "empty25km": "इस PIN/स्थान से 25 किमी के भीतर कोई भौतिक बैंक शाखा नहीं मिली — आप ऊपर आधिकारिक सरकारी पोर्टल्स टैब के माध्यम से सीधे आवेदन कर सकते हैं।"
+    "empty25km": "इस PIN/स्थान से 25 किमी के भीतर कोई भौतिक बैंक शाखा नहीं मिली — आप ऊपर आधिकारिक सरकारी पोर्टल्स टैब के माध्यम से सीधे आवेदन कर सकते हैं।",
+    "defaultProcTime": "10–15 कार्य दिवस",
+    "defaultCollateral": "RBI / योजना मानदंडों के अनुसार।",
+    "defaultHelpline": "सोम–शनि सुबह 10:00 – शाम 4:00 बजे",
+    "osmDefaultOverview": "OpenStreetMap के माध्यम से खोजी गई अनुसूचित बैंक शाखा।",
+    "osmDefaultAddress": "OpenStreetMap से प्राप्त शाखा स्थान",
+    "onlineNationalPortal": "ऑनलाइन राष्ट्रीय पोर्टल",
+    "allIndiaLabel": "संपूर्ण भारत",
+    "eligibleSchemesLabel": "पात्र योजनाएँ"
+  },
+  "channels": {
+    "pmsuraj": "PM-SURAJ",
+    "jansamarth": "जनसमर्थ",
+    "sca": "राज्य SCA",
+    "bank": "बैंक शाखा",
+    "mfi": "NBFC-MFI",
+    "kviconline": "KVIC PMEGP",
+    "standupmitra": "स्टैंड-अप मित्र",
+    "pmvishwakarma": "पीएम विश्वकर्मा",
+    "state_portal": "राज्य पोर्टल"
+  },
+  "channelsFull": {
+    "pmsuraj": "PM-SURAJ राष्ट्रीय पोर्टल",
+    "jansamarth": "आधिकारिक जनसमर्थ पोर्टल",
+    "kviconline": "आधिकारिक KVIC PMEGP ई-पोर्टल",
+    "standupmitra": "आधिकारिक स्टैंड-अप मित्र पोर्टल",
+    "state_portal": "आधिकारिक राज्य सरकार पोर्टल",
+    "pmvishwakarma": "पीएम विश्वकर्मा पोर्टल (CSC के माध्यम से)",
+    "bank": "नजदीकी भागीदार बैंक शाखा",
+    "sca": "राज्य चैनलाइज़िंग एजेंसी (SCA)",
+    "mfi": "सूचीबद्ध NBFC-MFI"
   }
 }

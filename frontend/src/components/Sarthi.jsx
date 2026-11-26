@@ -140,7 +140,7 @@ function classifyAdvisorText(step, text) {
   return "not_sure";
 }
 
-function evaluatePathRecommendation({ schemeCode, schemeName, availableChannels, answers, lang }) {
+function evaluatePathRecommendation({ schemeCode, schemeName, availableChannels, answers, t }) {
   const valid = normalizeAvailableChannels(availableChannels);
   const purePortals = valid.filter((k) => CHANNEL_META[k].kind === "online");
   const cscPortal = valid.includes("pmvishwakarma") ? ["pmvishwakarma"] : [];
@@ -183,8 +183,9 @@ function evaluatePathRecommendation({ schemeCode, schemeName, availableChannels,
   }
 
   const meta = CHANNEL_META[chosenKey] || CHANNEL_META.bank;
-  const isHi = lang === "hi";
-  const channelLabel = isHi ? meta.hi : meta.en;
+  const channelLabel = t(`channelsFull.${chosenKey}`) !== `channelsFull.${chosenKey}`
+    ? t(`channelsFull.${chosenKey}`)
+    : meta.en;
   const isBranchPath = meta.kind === "branch";
 
   const a1Text = answers[1]?.label || "";
@@ -192,22 +193,26 @@ function evaluatePathRecommendation({ schemeCode, schemeName, availableChannels,
   const a3Text = answers[3]?.label || "";
 
   let reason;
-  if (isHi) {
-    if (valid.length === 1) {
-      reason = `${schemeName || schemeCode} के लिए यह एकमात्र आधिकारिक और सत्यापित आवेदन माध्यम है। आपके जवाबों ("${a1Text}", "${a2Text}", "${a3Text}") के अनुसार यही सबसे सुगम और सुरक्षित रास्ता है।`;
-    } else if (isBranchPath) {
-      reason = `आपने "${a1Text}", "${a2Text}", और "${a3Text}" चुना है — इसलिए नज़दीकी अधिकारी से मिलकर दस्तावेज़ सत्यापित कराना और आवेदन जमा करना आपके लिए सबसे आसान रहेगा।`;
-    } else {
-      reason = `आपने "${a1Text}", "${a2Text}", और "${a3Text}" चुना है — इसलिए सीधे आधिकारिक पोर्टल से डिजिटल आवेदन करना सबसे तेज़ और सरल रास्ता है।`;
-    }
+  if (valid.length === 1) {
+    reason = t("chat.advisorReasonSingle", {
+      scheme: schemeName || schemeCode,
+      a1: a1Text,
+      a2: a2Text,
+      a3: a3Text,
+    });
+  } else if (isBranchPath) {
+    reason = t("chat.advisorReasonBranch", {
+      a1: a1Text,
+      a2: a2Text,
+      a3: a3Text,
+    });
   } else {
-    if (valid.length === 1) {
-      reason = `This is the verified official channel available for ${schemeName || schemeCode}. Based on your answers ("${a1Text}", "${a2Text}", and "${a3Text}"), following this path directly avoids delays.`;
-    } else if (isBranchPath) {
-      reason = `Because you chose "${a1Text}", "${a2Text}", and "${a3Text}", getting face-to-face guidance from a loan officer will help verify your papers smoothly and avoid portal rejections.`;
-    } else {
-      reason = `Because you chose "${a1Text}", "${a2Text}", and "${a3Text}", submitting directly through the official digital portal is the fastest, smoothest option for ${schemeCode}.`;
-    }
+    reason = t("chat.advisorReasonOnline", {
+      scheme: schemeCode,
+      a1: a1Text,
+      a2: a2Text,
+      a3: a3Text,
+    });
   }
 
   return {
@@ -366,7 +371,7 @@ export default function Sarthi() {
       schemeName: advisor.schemeName,
       availableChannels: advisor.availableChannels,
       answers: nextAnswers,
-      lang,
+      t,
     });
     setAdvisor({
       ...advisor,
@@ -452,7 +457,7 @@ export default function Sarthi() {
     }
 
     if (!hasSpeechRecognition()) {
-      setMicNotice("Voice input is not supported in this browser. Please type your question.");
+      setMicNotice(t("chat.micUnsupported"));
       return;
     }
 
@@ -472,14 +477,18 @@ export default function Sarthi() {
       speakLang,
       {
         onEnd: () => setRecording(false),
+        messages: {
+          unsupported: t("chat.micUnsupported"),
+          denied: t("chat.micDenied"),
+          noSpeech: t("chat.micNoSpeech"),
+          error: t("chat.micError"),
+          startError: t("chat.micStartError"),
+        },
       }
     );
   };
 
-  const welcomeText =
-    lang === "hi"
-      ? "नमस्ते! मैं सारथी हूँ। मैं आपको योजनाएँ खोजने, आवश्यक दस्तावेज़ समझने और ऋण आवेदन में सहायता कर सकता हूँ।"
-      : "Namaste! I’m Sarthi, your GovTech scheme advisor. Ask me anything about loans, subsidies, documents, or bank branches.";
+  const welcomeText = t("chat.welcomeMessage");
 
   const activeAdvisorQ =
     advisor && advisor.step !== "done"
@@ -525,13 +534,13 @@ export default function Sarthi() {
                 className={`autospeak-btn ${autoSpeak ? "active" : ""}`}
                 onClick={toggleAutoSpeak}
                 aria-pressed={autoSpeak}
-                aria-label={autoSpeak ? "Turn off auto-speak" : "Turn on auto-speak"}
+                aria-label={autoSpeak ? t("chat.autoSpeakOffAria") : t("chat.autoSpeakOnAria")}
                 title={
                   !voiceInfo.available
-                    ? `No browser voice for ${currentLanguageMeta.name} (${speakLang})`
+                    ? t("nav.noVoiceForLang", { lang: currentLanguageMeta.name, locale: speakLang })
                     : autoSpeak
-                      ? "Auto-speak ON (click to disable)"
-                      : "Auto-speak OFF (click to enable)"
+                      ? t("chat.autoSpeakOnTitle")
+                      : t("chat.autoSpeakOffTitle")
                 }
               >
                 <Icon name="speaker" size={15} />
@@ -591,7 +600,7 @@ export default function Sarthi() {
                 ))}
 
                 {activeAdvisorQ && (
-                  <div className="advisor-chips-wrap" role="group" aria-label="Quick-reply options">
+                  <div className="advisor-chips-wrap" role="group" aria-label={t("chat.quickReplyAria")}>
                     {activeAdvisorQ.options.map((opt) => (
                       <button
                         key={opt.id}
@@ -727,8 +736,8 @@ export default function Sarthi() {
               type="button"
               className={`chat-mic-btn ${recording ? "recording" : ""}`}
               onClick={handleMic}
-              aria-label={recording ? "Stop voice recording" : "Start voice input"}
-              title={recording ? "Tap to stop listening" : `Speak (${speakLang})`}
+              aria-label={recording ? t("chat.stopMicAria") : t("chat.startMicAria")}
+              title={recording ? t("chat.stopMicTitle") : t("chat.speakLocaleTitle", { locale: speakLang })}
             >
               <Icon name="mic" size={18} />
             </button>
@@ -746,7 +755,9 @@ export default function Sarthi() {
           <div className="chat-disclaimer">
             <small>
               {t("chat.note")}
-              {!voiceInfo.available ? ` • Voice playback unavailable for ${currentLanguageMeta.name}` : ""}
+              {!voiceInfo.available
+                ? t("chat.voicePlaybackUnavailable", { lang: currentLanguageMeta.native_name })
+                : ""}
             </small>
           </div>
         </section>

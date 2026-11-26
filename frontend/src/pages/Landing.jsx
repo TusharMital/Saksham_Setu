@@ -69,7 +69,7 @@ export default function Landing() {
                 <small>{t("landing.previewProfile")}</small>
                 <strong>{t("landing.previewProfileDesc")}</strong>
               </div>
-              <b className="verified-check" title="Profile Verified">✓</b>
+              <b className="verified-check" title={t("landing.profileVerifiedTitle")}>✓</b>
             </div>
 
             <div className="match-score">
@@ -99,7 +99,7 @@ export default function Landing() {
                 <strong>{t("landing.previewBankNearby")}</strong>
                 <small>{t("landing.previewFundsLive")}</small>
               </p>
-              <i className="status-dot-pulse" title="Live Funds Active" />
+              <i className="status-dot-pulse" title={t("landing.liveFundsTitle")} />
             </div>
           </div>
 

@@ -41,6 +41,13 @@ VERIFY_DEFAULTS = {
     "minorityCertMismatchNext": "Choose 'Not Available Yet' or select the category matching your certificate.",
     "nonNsfdcMsg": "Category '{category}' acknowledged. NSFDC schemes on this portal are exclusively for Scheduled Caste (SC) applicants.",
     "nonNsfdcNext": "Consider applying through {alt_agency}.",
+    "interstateMigrationNote": "Under Article 341, Scheduled Caste status is notified specifically in relation to a particular State or Union Territory. A certificate issued by another state requires domicile/Tehsildar verification in the loan state or central SCA routing.",
+    "altAgencyST": "NSTFDC (National Scheduled Tribes Finance & Development Corp.)",
+    "altAgencyOBC": "NBCFDC (National Backward Classes Finance & Development Corp.)",
+    "altAgencyMinority": "NMDFC (National Minorities Development & Finance Corp.)",
+    "altAgencyGeneral": "PM MUDRA Yojana (PMMY) or PMEGP",
+    "indiaLabel": "India",
+    "defaultScaName": "State Channelising Agency (SCA)",
 }
 
 CATEGORY_CERT_MAP = {
@@ -287,7 +294,7 @@ def verify_category_and_document(payload: dict[str, Any], lang: str = "en") -> d
                     tpl["interstateMsg"],
                     certificate_state=certificate_state,
                     loan_state=loan_state,
-                    note=rules["sc_constitutional_rule"]["interstate_migration_note"],
+                    note=tpl.get("interstateMigrationNote") or rules["sc_constitutional_rule"]["interstate_migration_note"],
                 ),
                 "next_step": fmt_tpl(tpl["interstateNext"], loan_state=loan_state),
             }
@@ -304,12 +311,12 @@ def verify_category_and_document(payload: dict[str, Any], lang: str = "en") -> d
                 "loan_state": loan_state,
                 "certificate_type": certificate_type,
                 "citation": f"{art341_citation}; {nsfdc_citation}",
-                "message": fmt_tpl(tpl["scCertMissingMsg"], loan_state=loan_state or "India"),
+                "message": fmt_tpl(tpl["scCertMissingMsg"], loan_state=loan_state or tpl["indiaLabel"]),
                 "next_step": tpl["scCertMissingNext"],
             }
 
         income_ok = True if annual_income is None else annual_income <= nsfdc_cap
-        sca_name = states_dict.get(loan_state, {}).get("sca_name", "State Channelising Agency (SCA)")
+        sca_name = states_dict.get(loan_state, {}).get("sca_name", tpl["defaultScaName"])
         income_note = (
             fmt_tpl(tpl["scIncomeOk"], cap=f"{nsfdc_cap:,}")
             if income_ok
@@ -327,7 +334,7 @@ def verify_category_and_document(payload: dict[str, Any], lang: str = "en") -> d
             "citation": f"{art341_citation}; {nsfdc_citation}",
             "message": fmt_tpl(
                 tpl["scVerifiedMsg"],
-                loan_state=loan_state or "India",
+                loan_state=loan_state or tpl["indiaLabel"],
                 income_note=income_note,
             ),
             "next_step": (
@@ -394,13 +401,13 @@ def verify_category_and_document(payload: dict[str, Any], lang: str = "en") -> d
 
     # ST, OBC, Minority, or General
     alt_agency = (
-        "NSTFDC (National Scheduled Tribes Finance & Development Corp.)"
+        tpl["altAgencyST"]
         if category == "ST"
-        else "NBCFDC (National Backward Classes Finance & Development Corp.)"
+        else tpl["altAgencyOBC"]
         if category == "OBC"
-        else "NMDFC (National Minorities Development & Finance Corp.)"
+        else tpl["altAgencyMinority"]
         if category == "MINORITY"
-        else "PM MUDRA Yojana (PMMY) or PMEGP"
+        else tpl["altAgencyGeneral"]
     )
     return {
         "status": "verified_non_nsfdc",

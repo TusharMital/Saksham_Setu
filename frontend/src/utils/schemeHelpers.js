@@ -96,15 +96,15 @@ export function getSchemeDefaultPrincipal(scheme, userLoanAmount) {
   return Math.max(10000, base);
 }
 
-export function formatMoney(val) {
-  if (val === null || val === undefined) return "No fixed cap";
+export function formatMoney(val, noCapLabel = "No fixed cap") {
+  if (val === null || val === undefined) return noCapLabel;
   const num = Number(val);
   if (Number.isNaN(num)) return "—";
   return `₹${num.toLocaleString("en-IN")}`;
 }
 
-export function formatCompactMoney(val) {
-  if (val === null || val === undefined) return "No Cap";
+export function formatCompactMoney(val, noCapLabel = "No Cap") {
+  if (val === null || val === undefined) return noCapLabel;
   const num = Number(val);
   if (Number.isNaN(num)) return "—";
   if (num >= 10000000) return `₹${(num / 10000000).toFixed(2).replace(/\.?0+$/, "")} Cr`;
@@ -113,11 +113,11 @@ export function formatCompactMoney(val) {
   return `₹${num.toLocaleString("en-IN")}`;
 }
 
-export function formatLoanRange(minLoan, maxLoan) {
+export function formatLoanRange(minLoan, maxLoan, noCapLabel = "No Cap") {
   const minStr = minLoan !== null && minLoan !== undefined && Number(minLoan) > 0
-    ? formatCompactMoney(minLoan)
+    ? formatCompactMoney(minLoan, noCapLabel)
     : "₹0";
-  const maxStr = maxLoan !== null && maxLoan !== undefined ? formatCompactMoney(maxLoan) : "No Cap";
+  const maxStr = maxLoan !== null && maxLoan !== undefined ? formatCompactMoney(maxLoan, noCapLabel) : noCapLabel;
   return `${minStr} – ${maxStr}`;
 }
 

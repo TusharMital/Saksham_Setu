@@ -50,7 +50,7 @@ export default function Results() {
   const matched = useTranslatedSchemes(rawMatched);
   const rejected = useTranslatedSchemes(rawRejected);
 
-  const userState = form.state || "State";
+  const userState = form.state || t("paths.stateFallback");
   const centralSchemes = useMemo(() => matched.filter((s) => (s.level || "central") === "central"), [matched]);
   const stateSchemes = useMemo(() => matched.filter((s) => s.level === "state"), [matched]);
 
@@ -132,7 +132,7 @@ export default function Results() {
       </div>
 
       {/* Filter Tabs: All Eligible / Central Govt / [User's State] Govt */}
-      <div className="results-filter-bar" role="tablist" aria-label="Filter eligible schemes by government level">
+      <div className="results-filter-bar" role="tablist" aria-label={t("results.filterTabsAria")}>
         <button
           type="button"
           role="tab"
@@ -169,7 +169,7 @@ export default function Results() {
         <div className="compare-notice-banner" role="status">
           <Icon name="alert" size={16} />
           <span>{compareNotice}</span>
-          <button type="button" onClick={() => setCompareNotice("")} aria-label="Dismiss notice">
+          <button type="button" onClick={() => setCompareNotice("")} aria-label={t("results.dismissNotice")}>
             <Icon name="close" size={14} />
           </button>
         </div>
@@ -225,18 +225,18 @@ export default function Results() {
                     </span>
                     <div>
                       <h2>{s.name}</h2>
-                      <small>{s.agency || "Government of India"}</small>
+                      <small>{s.agency || t("detail.govtOfIndia")}</small>
                     </div>
                   </div>
 
                   <div className="why-box">
                     <Icon name="checkCircle" size={16} />
-                    <p>{s.overview || s.reason || "Matched with your profile and eligibility rules."}</p>
+                    <p>{s.overview || s.reason || t("results.matchedDefault")}</p>
                   </div>
 
                   <div className="metrics-list">
-                    {metricRow("percent", t("results.interest"), <bdi>{s.interest_rate}% p.a.</bdi>, "var(--forest)")}
-                    {metricRow("wallet", t("results.maxLoan"), <bdi>{formatMoney(s.max_loan)}</bdi>)}
+                    {metricRow("percent", t("results.interest"), <bdi>{s.interest_rate}{t("calc.pctPa")}</bdi>, "var(--forest)")}
+                    {metricRow("wallet", t("results.maxLoan"), <bdi>{formatMoney(s.max_loan, t("detail.noUpperCap"))}</bdi>)}
                     {metricRow(
                       "award",
                       t("results.subsidy"),
@@ -326,7 +326,7 @@ export default function Results() {
                 const reasons =
                   Array.isArray(r.rejection_reasons) && r.rejection_reasons.length > 0
                     ? r.rejection_reasons
-                    : [r.reason || "Did not meet scheme eligibility criteria."];
+                    : [r.reason || t("results.rejectedDefault")];
                 const isState = r.level === "state";
 
                 return (
@@ -376,7 +376,7 @@ export default function Results() {
         setCompareNotice={setCompareNotice}
         onToggleCompare={toggleCompare}
         loanAmountBasis={form.loan_amount || 500000}
-        profileSummary={`${form.state || "All India"} (${form.caste_category || "General"})`}
+        profileSummary={`${form.state || t("allSchemes.allIndia")} (${form.caste_category || t("form.cat_general")})`}
         setScheme={setScheme}
       />
     </div>

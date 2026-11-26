@@ -38,6 +38,14 @@ BANK_BACKEND_DEFAULTS = {
     "whySupportsScheme": "supports this scheme",
     "whyNoListScheme": "does not list this scheme",
     "empty25km": "No physical bank branches mapped within 25 km of this PIN/location — you can apply directly via the Official Government Portals tab above",
+    "defaultProcTime": "10–15 working days",
+    "defaultCollateral": "As per RBI / scheme norms.",
+    "defaultHelpline": "Mon–Sat 10:00 AM – 4:00 PM",
+    "osmDefaultOverview": "Scheduled bank branch discovered via OpenStreetMap.",
+    "osmDefaultAddress": "Branch location from OpenStreetMap",
+    "onlineNationalPortal": "Online National Portal",
+    "allIndiaLabel": "All India",
+    "eligibleSchemesLabel": "eligible schemes",
 }
 
 EARTH_KM = 6371.0

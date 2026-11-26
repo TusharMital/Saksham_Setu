@@ -103,10 +103,10 @@ def _translate_batch_via_groq(batch: dict[str, dict], lang_meta: dict) -> dict[s
         f"3. Keep list lengths identical for key_highlights, required_documents, and important_notes.\n"
         f"4. Return ONLY valid JSON — no markdown fences, no commentary."
     )
-    primary_model = getattr(settings, "GROQ_MODEL", "llama-3.1-8b-instant")
-    fallback_models = [primary_model, "openai/gpt-oss-20b", "qwen/qwen3.8-27b"]
-    timeout = max(30, int(getattr(settings, "GROQ_TIMEOUT_SECONDS", 10)))
-    for attempt in range(6):
+    primary_model = getattr(settings, "GROQ_MODEL", "openai/gpt-oss-120b")
+    fallback_models = list(dict.fromkeys([primary_model, "openai/gpt-oss-20b", "qwen/qwen3.8-27b"]))
+    timeout = max(35, int(getattr(settings, "GROQ_TIMEOUT_SECONDS", 10)))
+    for attempt in range(9):
         model_name = fallback_models[attempt % len(fallback_models)]
         payload = {
             "model": model_name,
@@ -130,9 +130,24 @@ def _translate_batch_via_groq(batch: dict[str, dict], lang_meta: dict) -> dict[s
                 json=payload,
                 timeout=timeout,
             )
+            if resp.status_code == 400:
+                payload.pop("response_format", None)
+                resp = requests.post(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json",
+                    },
+                    json=payload,
+                    timeout=timeout,
+                )
             if resp.status_code == 429:
                 if (attempt + 1) % len(fallback_models) == 0:
-                    wait_s = min(30.0, float(resp.headers.get("retry-after") or 6.0) + 1.0)
+                    retry_hdr = resp.headers.get("retry-after") or "12"
+                    try:
+                        wait_s = max(6.0, min(45.0, float(str(retry_hdr).rstrip("s")) + 2.0))
+                    except ValueError:
+                        wait_s = 12.0
                     time.sleep(wait_s)
                 continue
             if resp.status_code != 200:
@@ -149,8 +164,8 @@ def _translate_batch_via_groq(batch: dict[str, dict], lang_meta: dict) -> dict[s
             parsed = json.loads(content)
             return parsed if isinstance(parsed, dict) else {}
         except (requests.RequestException, ValueError, KeyError, IndexError, TypeError):
-            if attempt < 4:
-                time.sleep(1.0)
+            if attempt < 7:
+                time.sleep(1.5)
                 continue
             return {}
     return {}
@@ -209,17 +224,24 @@ def translate_schemes(
             chunk_codes = miss_codes[idx : idx + max(1, batch_size)]
             chunk_payload = {code: misses[code] for code in chunk_codes}
             translated_chunk = _translate_batch_via_groq(chunk_payload, lang_meta)
+            chunk_new: dict[str, dict] = {}
             for code in chunk_codes:
                 eng = misses[code]
                 raw_item = translated_chunk.get(code)
                 if isinstance(raw_item, dict) and raw_item:
                     normalized = _normalize_translated_item(eng, raw_item)
                     translations[code] = normalized
+                    chunk_new[f"{target_lang}:{code}"] = normalized
                     new_cache_entries[f"{target_lang}:{code}"] = normalized
                     translated_count += 1
                 else:
                     translations[code] = eng
                     fallback_count += 1
+            if chunk_new:
+                with _CACHE_LOCK:
+                    latest = load_scheme_translation_cache()
+                    latest.update(chunk_new)
+                    save_scheme_translation_cache(latest)
 
     if new_cache_entries:
         with _CACHE_LOCK:

@@ -549,7 +549,7 @@ def _collect_local_branches_for_radius(
         address = ob["address"]
         if not address:
             fallback_parts = [loc_meta.get("district"), loc_meta.get("state"), loc_meta.get("pin")]
-            address = ", ".join(p for p in fallback_parts if p) or "Branch location from OpenStreetMap"
+            address = ", ".join(p for p in fallback_parts if p) or tpl["osmDefaultAddress"]
 
         branch_phone = ob["phone"]
         toll_free = inst.get("toll_free_phone", "") if inst else ""
@@ -613,15 +613,15 @@ def _collect_local_branches_for_radius(
                 "tel_href": tel_href,
                 "official_url": inst.get("official_url", "") if inst else "",
                 "headquarters": inst.get("headquarters", "") if inst else "India",
-                "overview": inst.get("overview", "") if inst else "Scheduled bank branch discovered via OpenStreetMap.",
-                "processing_time": inst.get("processing_time", "10–15 working days") if inst else "10–15 working days",
-                "collateral_policy": inst.get("collateral_policy", "As per RBI / scheme norms.") if inst else "As per RBI / scheme norms.",
+                "overview": inst.get("overview", "") if inst else tpl["osmDefaultOverview"],
+                "processing_time": inst.get("processing_time", tpl["defaultProcTime"]) if inst else tpl["defaultProcTime"],
+                "collateral_policy": inst.get("collateral_policy", tpl["defaultCollateral"]) if inst else tpl["defaultCollateral"],
                 "bank_required_documents": inst.get("bank_required_documents", []) if inst else [
                     "Aadhaar Card & PAN Card",
                     "Category / Income Certificate",
                     "Project Report & Bank Passbook",
                 ],
-                "helpline_hours": inst.get("helpline_hours", "Mon–Sat 10:00 AM – 4:00 PM") if inst else "Mon–Sat 10:00 AM – 4:00 PM",
+                "helpline_hours": inst.get("helpline_hours", tpl["defaultHelpline"]) if inst else tpl["defaultHelpline"],
                 "supported_channels": supported_channels,
                 "health": {
                     "funds_available": True,
@@ -751,11 +751,11 @@ def _collect_local_branches_for_radius(
                 "tel_href": tel_href,
                 "official_url": inst.get("official_url", "") if inst else "",
                 "headquarters": inst.get("headquarters", "") if inst else db_b.state,
-                "overview": inst.get("overview", "") if inst else (db_b.notes or "Partner bank / SCA desk."),
-                "processing_time": inst.get("processing_time", "10–15 working days") if inst else "10–15 working days",
-                "collateral_policy": inst.get("collateral_policy", "As per scheme rules.") if inst else "As per scheme rules.",
+                "overview": inst.get("overview", "") if inst else (db_b.notes or tpl["labelDefault"]),
+                "processing_time": inst.get("processing_time", tpl["defaultProcTime"]) if inst else tpl["defaultProcTime"],
+                "collateral_policy": inst.get("collateral_policy", tpl["defaultCollateral"]) if inst else tpl["defaultCollateral"],
                 "bank_required_documents": inst.get("bank_required_documents", []) if inst else [],
-                "helpline_hours": inst.get("helpline_hours", "Mon–Fri 10:00 AM – 5:00 PM") if inst else "Mon–Fri 10:00 AM – 5:00 PM",
+                "helpline_hours": inst.get("helpline_hours", tpl["defaultHelpline"]) if inst else tpl["defaultHelpline"],
                 "supported_channels": supported_channels,
                 "fund_quota_crore": db_b.fund_quota_crore,
                 "npa_percent": db_b.npa_percent,
@@ -904,9 +904,9 @@ def live_search_banks_and_portals(
                 "short_code": entry["short_code"],
                 "institution_type": "PORTAL",
                 "institution_label": _institution_label("PORTAL", tpl),
-                "address": entry.get("headquarters", "Online National Portal"),
+                "address": entry.get("headquarters", tpl["onlineNationalPortal"]),
                 "district": "",
-                "state": (scheme.applicable_states[0] if scheme and scheme.applicable_states else "All India"),
+                "state": (scheme.applicable_states[0] if scheme and scheme.applicable_states else tpl["allIndiaLabel"]),
                 "pin_code": "",
                 "lat": None,
                 "lng": None,
@@ -945,7 +945,7 @@ def live_search_banks_and_portals(
                 },
                 "why": fmt_tpl(
                     tpl["whyPortal"],
-                    code=scheme_code or "eligible schemes",
+                    code=scheme_code or tpl["eligibleSchemesLabel"],
                 ),
             }
         )

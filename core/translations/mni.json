@@ -7,6 +7,7 @@
     "govBanner": "ꯚꯥꯔꯠ ꯂꯩꯉꯥꯛ • ꯁꯥꯃꯥꯖꯤꯛ ꯅ꯭ꯌꯥꯌ ꯑꯃꯁꯨꯡ ꯁꯛꯇꯤ ꯄꯤꯕꯥ ꯃꯟꯇ꯭ꯔꯥꯂꯌ • ꯂꯩꯕꯥꯛꯀꯤ ꯔꯤꯌꯥꯌꯠ ꯂꯣꯟ ꯄꯣꯔꯇꯦꯜ",
     "brandTagline": "ꯄꯨꯟꯁꯤꯜꯂꯕꯥ ꯁ꯭ꯀꯤꯝ ꯑꯃꯁꯨꯡ ꯔꯤꯌꯥꯌꯠ ꯂꯣꯟ ꯐꯝꯄꯥꯛ",
     "home": "ꯃꯌꯨꯝ",
+    "allSchemes": "ꯑꯃꯤꯟ ꯂꯨꯝꯕꯤꯗꯤꯟ ꯑꯃꯤꯟ ꯑꯃꯤꯟ",
     "find": "ꯁ꯭ꯀꯤꯝ ꯊꯤꯕꯥ",
     "calculator": "EMI ꯀꯦꯜꯀꯨꯂꯦꯇꯔ",
     "locator": "ꯕꯦꯡꯛ ꯊꯤꯕꯥ",
@@ -18,13 +19,19 @@
     "voiceGuideOnTitle": "ꯈꯣꯟꯖꯦꯜ ꯂꯝꯖꯤꯡꯕꯥ ꯑꯣꯟ ꯇꯧꯕꯥ",
     "voiceGuideOffTitle": "ꯈꯣꯟꯖꯦꯜ ꯂꯝꯖꯤꯡꯕꯥ ꯑꯣꯐ ꯇꯧꯕꯥ",
     "voiceGuideAnnounceOn": "ꯈꯣꯟꯖꯦꯜ ꯂꯝꯖꯤꯡꯕꯥ ꯑꯣꯟ ꯇꯧꯔꯦ꯫ ꯇꯥꯅꯕꯥ ꯀꯔꯤꯒꯨꯝꯕꯥ ꯃꯐꯝ ꯑꯃꯗꯥ ꯀꯔꯁꯔ ꯊꯝꯃꯨ꯫",
-    "allSchemes": "ꯑꯃꯤꯟ ꯂꯨꯝꯕꯤꯗꯤꯟ ꯑꯃꯤꯟ ꯑꯃꯤꯟ",
     "stopSpeaking": "ꯂꯤꯟ",
     "searchLangPlaceholder": "ꯂꯤꯟ 23 ꯑꯃꯤꯟ ꯑꯃꯤꯟ ꯑꯃꯤꯟ ꯑꯃꯤꯟ",
     "noMatchingLang": "ꯑꯃꯤꯟ ꯑꯃꯤꯟ ꯑꯃꯤꯟ ꯑꯃꯤꯟ",
     "speechUnsupported": "ꯑꯃꯤꯟ ꯑꯃꯤꯟ ꯑꯃꯤꯟ ꯑꯃꯤꯟ",
     "noVoiceForLang": "No browser voice for {lang} ({locale})",
-    "voiceNA": "N/A"
+    "voiceNA": "N/A",
+    "homeAria": "Saksham Setu Home",
+    "mainNavAria": "Main Navigation",
+    "selectLangAria": "Select language. Current: {native} ({name})",
+    "langSelectionAria": "Language selection",
+    "supportedLangsAria": "Supported languages",
+    "closeMenu": "Close menu",
+    "openMenu": "Open menu"
   },
   "landing": {
     "heroBadge": "ꯂꯩꯉꯥꯛꯀꯤ ꯁ꯭ꯀꯤꯝꯁꯤꯡ, ꯈꯪꯕꯗꯥ ꯂꯥꯏꯕꯥ",
@@ -82,7 +89,9 @@
     "voiceBannerDesc": "ꯅꯍꯥꯛꯀꯤ ꯂꯣꯟꯗꯥ ꯂꯝꯖꯤꯡꯕꯥ ꯇꯥꯅꯕꯥ ꯁ꯭ꯄꯤꯀꯔ ꯑꯥꯏꯀꯟꯗꯥ ꯇꯦꯞ ꯇꯧꯌꯨ꯫",
     "voiceBannerBtn": "ꯈꯣꯟꯖꯦꯜ ꯂꯝꯖꯤꯡꯕꯥ ꯆꯥꯡꯌꯦꯡ",
     "voiceBannerBtnActive": "ꯈꯣꯟꯖꯦꯜ ꯂꯝꯖꯤꯡꯕꯥ: ꯑꯣꯟ — ꯂꯦꯞꯅꯕꯥ ꯀ꯭ꯂꯤꯛ ꯇꯧ",
-    "howEyebrow": "ꯑꯃꯤꯟ ꯑꯃꯤꯟ ꯑꯃꯤꯟ ꯑꯃꯤꯟ"
+    "howEyebrow": "ꯑꯃꯤꯟ ꯑꯃꯤꯟ ꯑꯃꯤꯟ ꯑꯃꯤꯟ",
+    "profileVerifiedTitle": "Profile Verified",
+    "liveFundsTitle": "Live Funds Active"
   },
   "form": {
     "title": "ꯅꯍꯥꯛꯀꯤꯗꯃꯛ ꯑꯆꯨꯝꯕꯥ ꯁ꯭ꯀꯤꯝ ꯊꯤꯔꯁꯤ",
@@ -195,7 +204,30 @@
     "verifyRuleLabel": "ꯃꯅꯨꯔꯣꯟꯕ:",
     "verifyNextStepLabel": "ꯃꯅꯨꯔꯣꯟꯕ ꯄꯥꯎꯄ:",
     "otherOption": "ꯃꯅꯨꯔꯣꯟꯕ",
-    "verifyFailed": "ꯃꯅꯨꯔꯣꯟꯕ ꯃꯅꯨꯔꯣꯟꯕ ꯑꯃꯁꯨꯡ ꯂꯩꯖꯅ ꯑꯃꯁꯨꯡ."
+    "verifyFailed": "ꯃꯅꯨꯔꯣꯟꯕ ꯃꯅꯨꯔꯣꯟꯕ ꯑꯃꯁꯨꯡ ꯂꯩꯖꯅ ꯑꯃꯁꯨꯡ.",
+    "stepperAria": "Form Progress Stepper",
+    "full_name_placeholder": "As on Aadhaar card",
+    "mobile_placeholder": "10-digit mobile number",
+    "pin_placeholder": "6-digit postal PIN (e.g. 302001)",
+    "age_placeholder": "e.g. 28",
+    "income_placeholder": "e.g. 300000",
+    "sub_caste_placeholder": "e.g., Meghwal, Dhobi, Mahar, Jatav",
+    "project_description_placeholder": "Brief description of enterprise...",
+    "loan_amount_placeholder": "e.g. 800000",
+    "project_cost_placeholder": "e.g. 1000000",
+    "cat_sc": "SC",
+    "cat_st": "ST",
+    "cat_obc": "OBC",
+    "cat_ews": "EWS",
+    "cat_general": "General",
+    "cat_minority": "Minority",
+    "validEntry": "Valid entry",
+    "showHelpFor": "Show help for {label}",
+    "toggleHelpTitle": "Toggle field guidance",
+    "helpDialogAria": "Help: {label}",
+    "speechSelected": "selected",
+    "speechChecked": "checked",
+    "speechUnchecked": "not checked"
   },
   "results": {
     "title": "ꯅꯍꯥꯛ ꯁ꯭ꯀꯤꯝ {count} ꯒꯤꯗꯃꯛ ꯌꯣꯒ꯭ꯌ ꯑꯣꯏ",
@@ -239,7 +271,11 @@
     "marginMoney": "ꯃꯅꯨꯔꯣꯟꯕ ꯄꯥꯎꯄ",
     "tenureFormat": "{tenure}m tenure ({moratorium}m moratorium)",
     "perMonth": "/ month",
-    "emptyStateTab": "No state-specific schemes matched your profile in {state}. Switch to \"All Eligible\" or \"Central Govt\" to view nationwide schemes, or inspect the Not Selected section below."
+    "emptyStateTab": "No state-specific schemes matched your profile in {state}. Switch to \"All Eligible\" or \"Central Govt\" to view nationwide schemes, or inspect the Not Selected section below.",
+    "filterTabsAria": "Filter eligible schemes by government level",
+    "dismissNotice": "Dismiss notice",
+    "matchedDefault": "Matched with your profile and eligibility rules.",
+    "rejectedDefault": "Did not meet scheme eligibility criteria."
   },
   "detail": {
     "back": "Back",
@@ -279,7 +315,11 @@
     "svgStart": "ꯑꯃꯤꯗꯤ",
     "svgYr": "ꯑꯃꯤꯗꯤ {year}",
     "svgYearBalance": "ꯑꯃꯤꯗꯤ {year}: ꯑꯃꯤꯗꯤ ꯑꯃꯤꯗꯤ {balance}",
-    "govtOfIndia": "ꯑꯃꯤꯗꯤ ꯑꯃꯤꯗꯤ ꯑꯃꯤꯗꯤ"
+    "govtOfIndia": "ꯑꯃꯤꯗꯤ ꯑꯃꯤꯗꯤ ꯑꯃꯤꯗꯤ",
+    "perAnnum": "p.a.",
+    "monthsShort": "{months}m",
+    "loadError": "Could not load scheme details.",
+    "notFoundDesc": "No scheme found for code {code}."
   },
   "paths": {
     "title": "ꯂꯝꯕꯤ ꯑꯍꯨꯝ꯫ ꯅꯍꯥꯛꯅꯥ ꯆꯨꯝꯃꯤ ꯈꯜꯂꯨ꯫",
@@ -524,7 +564,19 @@
     "liveOsmTag": "ꯊꯕꯤ OSM",
     "schemesCountTag": "{count} ꯊꯕꯤ",
     "branchesCountTag": "{count} ꯊꯕꯤ",
-    "onlineBadge": "ꯊꯕꯤ"
+    "onlineBadge": "ꯊꯕꯤ",
+    "kmUnit": "km",
+    "modalAria": "{name} details",
+    "loadError": "Failed to load nearby banks & portals.",
+    "invalidPinError": "Please enter a valid 6-digit Indian PIN code (e.g. 110001 or 302001).",
+    "geoUnsupportedError": "Geolocation is not supported by your browser — please enter your 6-digit Indian PIN code to find banks near you.",
+    "liveGpsLocation": "Your Live GPS Location",
+    "geoBlockedError": "Browser GPS location was blocked or unavailable — please enter your 6-digit PIN code above to find nearby banks.",
+    "gateSelectLabel": "Choose from all 66 Central & State Schemes",
+    "gateSelectPlaceholder": "-- Select a Loan Scheme --",
+    "pinAriaLabel": "6-digit Indian PIN code",
+    "filterTypeAria": "Filter institutions by type",
+    "radiusAria": "Search radius"
   },
   "calc": {
     "title": "EMI ꯀꯦꯜꯀꯨꯂꯦꯇꯔ",
@@ -619,7 +671,12 @@
     "maxMonthsLimit": "360 Months",
     "moratoriumZeroLimit": "0 (Immediate)",
     "toggleMonthlyRows": "Click to toggle monthly rows",
-    "moratoriumMonthsBadge": "{months}m morat."
+    "moratoriumMonthsBadge": "{months}m morat.",
+    "pctPa": "% p.a.",
+    "tenureUnitAria": "Tenure unit",
+    "svgYearAria": "Year {year}: Principal {principal}, Interest {interest}, Closing Balance {balance}",
+    "svgYearShort": "Y{year}",
+    "savingsNeutralTitle": "{code} @ {rate}% vs. 11.0%"
   },
   "chat": {
     "title": "ꯁꯥꯔꯊꯤ AI ꯃꯇꯦꯡ ꯄꯥꯡꯕꯥ",
@@ -659,7 +716,33 @@
     "advisorQ3": "3/3: Is there a partner bank branch or CSC/SCA center near your PIN code that you can visit easily?",
     "advisorQ3OptNearby": "Yes, branch is nearby",
     "advisorQ3OptHome": "No, prefer applying from home",
-    "advisorQ3OptUnsure": "Not sure"
+    "advisorQ3OptUnsure": "Not sure",
+    "welcomeMessage": "Namaste! I’m Sarthi, your GovTech scheme advisor. Ask me anything about loans, subsidies, documents, or bank branches.",
+    "autoSpeakOffAria": "Turn off auto-speak",
+    "autoSpeakOnAria": "Turn on auto-speak",
+    "autoSpeakOnTitle": "Auto-speak ON (click to disable)",
+    "autoSpeakOffTitle": "Auto-speak OFF (click to enable)",
+    "quickReplyAria": "Quick-reply options",
+    "stopMicAria": "Stop voice recording",
+    "startMicAria": "Start voice input",
+    "stopMicTitle": "Tap to stop listening",
+    "speakLocaleTitle": "Speak ({locale})",
+    "voicePlaybackUnavailable": " • Voice playback unavailable for {lang}",
+    "micUnsupported": "Voice input is not supported in this browser. Please type your question.",
+    "micDenied": "Microphone permission denied. You can still type your message.",
+    "micNoSpeech": "No speech detected. Tap the mic and try again, or type your message.",
+    "micError": "Voice recognition could not complete. Please type instead.",
+    "micStartError": "Could not start voice input. Please type instead.",
+    "advisorReasonSingle": "This is the verified official channel available for {scheme}. Based on your answers (\"{a1}\", \"{a2}\", and \"{a3}\"), following this path directly avoids delays.",
+    "advisorReasonBranch": "Because you chose \"{a1}\", \"{a2}\", and \"{a3}\", getting face-to-face guidance from a loan officer will help verify your papers smoothly and avoid portal rejections.",
+    "advisorReasonOnline": "Because you chose \"{a1}\", \"{a2}\", and \"{a3}\", submitting directly through the official digital portal is the fastest, smoothest option for {scheme}.",
+    "errEmpty": "Please type a question about schemes, loans or documents.",
+    "errTooLong": "Please keep your question under 500 characters so I can answer clearly.",
+    "errTimeout": "The helper is slow right now. Please try again in a minute.",
+    "errRate": "Too many questions in a short time. Please wait a little and try again.",
+    "errAuth": "Chat is not set up on this server yet. Ask a staff member to add the Groq key.",
+    "errNetwork": "Network problem. Please check your connection and try again.",
+    "errBad": "I could not read the helper's reply. Please try again."
   },
   "footer": {
     "rights": "ꯁꯛꯁꯝ ꯁꯦꯇꯨ — ꯄꯨꯟꯁꯤꯜꯂꯕꯥ ꯔꯤꯌꯥꯌꯠ ꯂꯣꯟ ꯄꯣꯔꯇꯦꯜ꯫",
@@ -738,7 +821,12 @@
     "loading": "Loading all government schemes...",
     "retry": "Retry",
     "noMatchesTitle": "No schemes match these filters",
-    "noMatchesDesc": "Try loosening your loan amount, interest rate cap, state, or search query."
+    "noMatchesDesc": "Try loosening your loan amount, interest rate cap, state, or search query.",
+    "loadError": "Unable to load government schemes.",
+    "removeFilterAria": "Remove filter {label}",
+    "sliderAria": "{label} slider",
+    "defaultSummary": "Government concessional credit scheme.",
+    "tenureCompact": "{tenure}m ({moratorium}m)"
   },
   "compare": {
     "eyebrow": "SIDE-BY-SIDE SCHEME COMPARISON",
@@ -775,7 +863,9 @@
     "applicantType": "Applicant type mismatch: this scheme is for {allowed}, not {userType}.",
     "pwdOnly": "PwD-only scheme: this scheme is reserved for persons with certified disability.",
     "notSpecified": "not specified",
-    "matchedSummary": "Matched: score {score}/100 (interest {interest}, subsidy {subsidy}, loan fit {loanFit}, special {special})."
+    "matchedSummary": "Matched: score {score}/100 (interest {interest}, subsidy {subsidy}, loan fit {loanFit}, special {special}).",
+    "rejectedPrefix": "Rejected: ",
+    "acceptedSummary": "Accepted: you meet the state, category, income, age, loan, and applicant-type rules for {name}."
   },
   "verify": {
     "invalidCategoryMsg": "Please select a valid category (SC, ST, OBC, EWS, or General).",
@@ -808,7 +898,14 @@
     "minorityCertMismatchMsg": "Certificate mismatch: '{certificate_type}' does not match Minority community selection. Select 'Not Available Yet' or the exact category printed on your certificate.",
     "minorityCertMismatchNext": "Choose 'Not Available Yet' or select the category matching your certificate.",
     "nonNsfdcMsg": "Category '{category}' acknowledged. NSFDC schemes on this portal are exclusively for Scheduled Caste (SC) applicants.",
-    "nonNsfdcNext": "Consider applying through {alt_agency}."
+    "nonNsfdcNext": "Consider applying through {alt_agency}.",
+    "interstateMigrationNote": "Under Article 341, Scheduled Caste status is notified specifically in relation to a particular State or Union Territory. A certificate issued by another state requires domicile/Tehsildar verification in the loan state or central SCA routing.",
+    "altAgencyST": "NSTFDC (National Scheduled Tribes Finance & Development Corp.)",
+    "altAgencyOBC": "NBCFDC (National Backward Classes Finance & Development Corp.)",
+    "altAgencyMinority": "NMDFC (National Minorities Development & Finance Corp.)",
+    "altAgencyGeneral": "PM MUDRA Yojana (PMMY) or PMEGP",
+    "indiaLabel": "India",
+    "defaultScaName": "State Channelising Agency (SCA)"
   },
   "bankBackend": {
     "labelPSB": "Public Sector Bank",
@@ -835,6 +932,36 @@
     "whyNpa": "NPA {npa}%",
     "whySupportsScheme": "supports this scheme",
     "whyNoListScheme": "does not list this scheme",
-    "empty25km": "No physical bank branches mapped within 25 km of this PIN/location — you can apply directly via the Official Government Portals tab above"
+    "empty25km": "No physical bank branches mapped within 25 km of this PIN/location — you can apply directly via the Official Government Portals tab above",
+    "defaultProcTime": "10–15 working days",
+    "defaultCollateral": "As per RBI / scheme norms.",
+    "defaultHelpline": "Mon–Sat 10:00 AM – 4:00 PM",
+    "osmDefaultOverview": "Scheduled bank branch discovered via OpenStreetMap.",
+    "osmDefaultAddress": "Branch location from OpenStreetMap",
+    "onlineNationalPortal": "Online National Portal",
+    "allIndiaLabel": "All India",
+    "eligibleSchemesLabel": "eligible schemes"
+  },
+  "channels": {
+    "pmsuraj": "PM-SURAJ",
+    "jansamarth": "JanSamarth",
+    "sca": "State SCA",
+    "bank": "Bank Branch",
+    "mfi": "NBFC-MFI",
+    "kviconline": "KVIC PMEGP",
+    "standupmitra": "Stand-Up Mitra",
+    "pmvishwakarma": "PM Vishwakarma",
+    "state_portal": "State Portal"
+  },
+  "channelsFull": {
+    "pmsuraj": "PM-SURAJ National Portal",
+    "jansamarth": "Official JanSamarth Portal",
+    "kviconline": "Official KVIC PMEGP e-Portal",
+    "standupmitra": "Official Stand-Up Mitra Portal",
+    "state_portal": "Official State Govt Portal",
+    "pmvishwakarma": "PM Vishwakarma Portal (via CSC)",
+    "bank": "Nearest Partner Bank Branch",
+    "sca": "State Channelising Agency (SCA)",
+    "mfi": "Empanelled NBFC-MFI"
   }
 }

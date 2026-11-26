@@ -57,7 +57,7 @@ export default function SchemeCompareBarAndModal({
   return (
     <>
       {compareCodes.length > 0 && (
-        <div className="sticky-compare-bar" role="region" aria-label="Scheme Comparison Bar">
+        <div className="sticky-compare-bar" role="region" aria-label={t("compare.barAria")}>
           <div className="sticky-compare-inner">
             <div className="compare-selected-pills">
               <strong className="compare-bar-title">
@@ -70,7 +70,7 @@ export default function SchemeCompareBarAndModal({
                     <button
                       type="button"
                       onClick={() => onToggleCompare(cs.code)}
-                      aria-label={`Remove ${cs.name} from comparison`}
+                      aria-label={t("compare.removeAria", { name: cs.name })}
                     >
                       <Icon name="close" size={12} />
                     </button>
@@ -176,7 +176,7 @@ export default function SchemeCompareBarAndModal({
                           setCompareCodes(next);
                           if (next.length < 2) setCompareOpen(false);
                         }}
-                        aria-label={`Remove ${s.code}`}
+                        aria-label={t("compare.removeAria", { name: s.code })}
                       >
                         <Icon name="close" size={14} />
                       </button>
@@ -202,13 +202,13 @@ export default function SchemeCompareBarAndModal({
                           <div>
                             <dt>{t("compare.interestRate")}</dt>
                             <dd className="text-forest">
-                              <strong><bdi>{s.interest_rate}% p.a.</bdi></strong>
+                              <strong><bdi>{s.interest_rate}{t("calc.pctPa")}</bdi></strong>
                             </dd>
                           </div>
                           <div>
                             <dt>{t("compare.maxLoanLimit")}</dt>
                             <dd>
-                              <strong><bdi>{formatMoney(s.max_loan)}</bdi></strong>
+                              <strong><bdi>{formatMoney(s.max_loan, t("detail.noUpperCap"))}</bdi></strong>
                             </dd>
                           </div>
                           <div>
@@ -285,7 +285,7 @@ export default function SchemeCompareBarAndModal({
                         <div className="split-channel-pills">
                           {(s.available_channels || []).map((ch) => (
                             <span key={ch} className="channel-mini-pill">
-                              {CHANNEL_LABELS[ch] || ch}
+                              {t(`channels.${ch}`) !== `channels.${ch}` ? t(`channels.${ch}`) : (CHANNEL_LABELS[ch] || ch)}
                             </span>
                           ))}
                         </div>

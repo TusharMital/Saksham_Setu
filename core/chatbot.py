@@ -8,6 +8,7 @@ from django.conf import settings
 from django.core.cache import cache
 from rest_framework import status
 
+from core.i18n_templates import get_section_templates
 from core.languages import get_language_meta
 
 SYSTEM_PROMPT_TEMPLATE = """You are Sarthi, a helper on Saksham Setu (साक्षम सेतु).
@@ -75,13 +76,29 @@ def _lang_meta_payload(meta):
     }
 
 
+ERR_KEY_MAP = {
+    "empty": "errEmpty",
+    "too_long": "errTooLong",
+    "timeout": "errTimeout",
+    "rate": "errRate",
+    "auth": "errAuth",
+    "network": "errNetwork",
+    "bad": "errBad",
+}
+
+
 def friendly(code, lang_meta, http_status):
     bag = FRIENDLY[code]
     key = "hi" if lang_meta["code"] == "hi" else "en"
+    msg = bag[key]
+    if lang_meta["code"] not in ("en", "hi"):
+        defaults = {ERR_KEY_MAP[k]: v["en"] for k, v in FRIENDLY.items()}
+        tpl = get_section_templates("chat", defaults, lang=lang_meta["code"])
+        msg = tpl.get(ERR_KEY_MAP[code], bag["en"])
     return {
         "error": True,
         "code": code,
-        "message": bag[key],
+        "message": msg,
         "message_en": bag["en"],
         "message_hi": bag["hi"],
         "language": _lang_meta_payload(lang_meta),

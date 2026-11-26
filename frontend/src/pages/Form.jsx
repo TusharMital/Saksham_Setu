@@ -142,7 +142,7 @@ export default function Form() {
           lastPinFetchedRef.current = "";
           setPinInfo(null);
           setSelectedPostOffice("");
-          setPinNote(err.body?.detail || "Could not auto-detect this PIN; please select State & District manually.");
+          setPinNote(err.body?.detail || f("pinNotFoundManual"));
         })
         .finally(() => {
           if (reqId === pinReqRef.current) {
@@ -261,7 +261,7 @@ export default function Form() {
       </div>
 
       {/* 3-Step Interactive Stepper */}
-      <nav className="stepper" aria-label="Form Progress Stepper">
+      <nav className="stepper" aria-label={f("stepperAria")}>
         <div className="stepper-track-line" aria-hidden="true">
           <div
             className="stepper-track-fill"
@@ -310,7 +310,7 @@ export default function Form() {
                   name="full_name"
                   label={f("full_name")}
                   help={f("full_name_help")}
-                  placeholder="As on Aadhaar card / आधार कार्ड अनुसार"
+                  placeholder={f("full_name_placeholder")}
                   value={form.full_name}
                   onChange={(v) => updateForm({ full_name: v })}
                   error={errors.full_name}
@@ -319,7 +319,7 @@ export default function Form() {
                   name="mobile"
                   label={f("mobile")}
                   help={f("mobile_help")}
-                  placeholder="10-digit mobile number"
+                  placeholder={f("mobile_placeholder")}
                   value={form.mobile}
                   onChange={(v) => updateForm({ mobile: v })}
                   error={errors.mobile}
@@ -329,7 +329,7 @@ export default function Form() {
                     name="pin"
                     label={f("pin")}
                     help={f("pin_help")}
-                    placeholder="6-digit postal PIN (e.g. 302001)"
+                    placeholder={f("pin_placeholder")}
                     value={form.pin}
                     onChange={(v) => updateForm({ pin: v })}
                     error={errors.pin}
@@ -397,7 +397,15 @@ export default function Form() {
                   help={f("caste_category_help")}
                   value={form.caste_category}
                   onChange={(v) => updateForm({ caste_category: v })}
-                  options={[selectPlaceholder, ...["SC", "ST", "OBC", "EWS", "General", "Minority"].map((s) => ({ value: s, label: s }))]}
+                  options={[
+                    selectPlaceholder,
+                    { value: "SC", label: f("cat_sc") },
+                    { value: "ST", label: f("cat_st") },
+                    { value: "OBC", label: f("cat_obc") },
+                    { value: "EWS", label: f("cat_ews") },
+                    { value: "General", label: f("cat_general") },
+                    { value: "Minority", label: f("cat_minority") },
+                  ]}
                   error={errors.caste_category}
                 />
                 <HelpField
@@ -405,7 +413,7 @@ export default function Form() {
                   type="number"
                   label={f("age")}
                   help={f("age_help")}
-                  placeholder="e.g. 28"
+                  placeholder={f("age_placeholder")}
                   value={form.age}
                   onChange={(v) => updateForm({ age: v })}
                   error={errors.age}
@@ -416,7 +424,7 @@ export default function Form() {
                   label={f("annual_family_income")}
                   help={f("annual_family_income_help")}
                   suffix="₹"
-                  placeholder="e.g. 300000"
+                  placeholder={f("income_placeholder")}
                   example={f("exampleIncome")}
                   value={form.annual_family_income}
                   onChange={(v) => updateForm({ annual_family_income: v })}
@@ -450,7 +458,7 @@ export default function Form() {
                     name="sub_caste"
                     label={f("sub_caste")}
                     help={f("sub_caste_help")}
-                    placeholder="e.g., Meghwal, Dhobi, Mahar, Jatav"
+                    placeholder={f("sub_caste_placeholder")}
                     value={form.sub_caste}
                     onChange={(v) => updateForm({ sub_caste: v })}
                   />
@@ -600,7 +608,7 @@ export default function Form() {
                     name="project_description"
                     label={f("project_description")}
                     help={f("project_description_help")}
-                    placeholder="Brief description of enterprise / व्यवसाय का संक्षिप्त विवरण..."
+                    placeholder={f("project_description_placeholder")}
                     value={form.project_description}
                     onChange={(v) => updateForm({ project_description: v })}
                     textarea
@@ -613,7 +621,7 @@ export default function Form() {
                   label={f("loan_amount")}
                   help={f("loan_amount_help")}
                   suffix="₹"
-                  placeholder="e.g. 800000"
+                  placeholder={f("loan_amount_placeholder")}
                   example={f("exampleLoan")}
                   value={form.loan_amount}
                   onChange={(v) => updateForm({ loan_amount: v })}
@@ -625,7 +633,7 @@ export default function Form() {
                   label={f("project_cost")}
                   help={f("project_cost_help")}
                   suffix="₹"
-                  placeholder="e.g. 1000000"
+                  placeholder={f("project_cost_placeholder")}
                   value={form.project_cost}
                   onChange={(v) => updateForm({ project_cost: v })}
                 />

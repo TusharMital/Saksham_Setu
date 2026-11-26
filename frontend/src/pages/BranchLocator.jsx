@@ -21,8 +21,8 @@ const CHANNEL_LABELS = {
 
 const RADIUS_OPTIONS = [5, 10, 25];
 
-function formatCompactInr(val) {
-  if (val === null || val === undefined) return "No cap";
+function formatCompactInr(val, noCapLabel = "No cap") {
+  if (val === null || val === undefined) return noCapLabel;
   const n = Number(val);
   if (Number.isNaN(n)) return "—";
   if (n >= 10000000) return `₹${(n / 10000000).toFixed(2).replace(/\.00$/, "")} Cr`;
@@ -88,10 +88,10 @@ function createBranchIcon(isSelected, healthColor, instType) {
   });
 }
 
-function createUserPulseIcon() {
+function createUserPulseIcon(youAreHereLabel = "You are here") {
   return L.divIcon({
     className: "user-gps-pin-wrap",
-    html: `<div class="user-gps-pulse-dot" title="You are here"><span class="pulse-ring"></span><span class="core-dot"></span></div>`,
+    html: `<div class="user-gps-pulse-dot" title="${youAreHereLabel}"><span class="pulse-ring"></span><span class="core-dot"></span></div>`,
     iconSize: [24, 24],
     iconAnchor: [12, 12],
     popupAnchor: [0, -14],
@@ -144,11 +144,13 @@ function InstitutionDetailsModal({
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [onClose]);
 
+  const providedSchemes = Array.isArray(item?.provided_schemes) ? item.provided_schemes : [];
+  const translatedProvidedSchemes = useTranslatedSchemes(providedSchemes);
+  const allBranches = Array.isArray(item?.all_branches) ? item.all_branches : [];
+
   if (!item) return null;
 
-  const providedSchemes = Array.isArray(item.provided_schemes) ? item.provided_schemes : [];
-  const allBranches = Array.isArray(item.all_branches) ? item.all_branches : [];
-  const filteredSchemes = providedSchemes.filter((s) => {
+  const filteredSchemes = translatedProvidedSchemes.filter((s) => {
     const q = schemeQuery.trim().toLowerCase();
     if (!q) return true;
     return (
@@ -165,7 +167,7 @@ function InstitutionDetailsModal({
       className="locator-modal-overlay"
       role="dialog"
       aria-modal="true"
-      aria-label={`${item.name} details`}
+      aria-label={t("locator.modalAria", { name: item.name })}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -180,7 +182,7 @@ function InstitutionDetailsModal({
               {item.short_code && <span className="badge-pill">{item.short_code}</span>}
               {item.distance_km != null && (
                 <span className="distance-badge">
-                  <bdi>{item.distance_km} km</bdi>
+                  <bdi>{item.distance_km} {t("locator.kmUnit")}</bdi>
                 </span>
               )}
             </div>
@@ -343,10 +345,10 @@ function InstitutionDetailsModal({
                       <h4>{s.name}</h4>
                       <div className="modal-scheme-meta">
                         <span>
-                          {t("compare.interestRate")}: <b><bdi>{s.interest_rate}% p.a.</bdi></b>
+                          {t("compare.interestRate")}: <b><bdi>{s.interest_rate}{t("calc.pctPa")}</bdi></b>
                         </span>
                         <span>
-                          {t("compare.maxLoanLimit")}: <b><bdi>{formatCompactInr(s.max_loan)}</bdi></b>
+                          {t("compare.maxLoanLimit")}: <b><bdi>{formatCompactInr(s.max_loan, t("detail.noUpperCap"))}</bdi></b>
                         </span>
                       </div>
                       <Link
@@ -382,7 +384,7 @@ function InstitutionDetailsModal({
                           <strong>{br.branch_name}</strong>
                           {br.distance_km != null && (
                             <span className="distance-badge">
-                              <bdi>{br.distance_km} km</bdi>
+                              <bdi>{br.distance_km} {t("locator.kmUnit")}</bdi>
                             </span>
                           )}
                         </div>
@@ -586,12 +588,12 @@ export default function BranchLocator() {
           setResolvedLocation(res.location);
         }
       } catch (err) {
-        setError(err.body?.detail || err.message || "Failed to load nearby banks & portals.");
+        setError(err.body?.detail || err.message || t("locator.loadError"));
       } finally {
         setLoading(false);
       }
     },
-    [activeSchemeCode, radiusKm, lang]
+    [activeSchemeCode, radiusKm, lang, t]
   );
 
   // When scheme changes while a location is already searched, re-query for the new scheme; otherwise stay cleanly on India prompt
@@ -634,7 +636,7 @@ export default function BranchLocator() {
     if (e) e.preventDefault();
     const cleaned = pinInput.trim();
     if (!/^[1-9][0-9]{5}$/.test(cleaned)) {
-      setError("Please enter a valid 6-digit Indian PIN code (e.g. 110001 or 302001).");
+      setError(t("locator.invalidPinError"));
       pinInputRef.current?.focus();
       return;
     }
@@ -647,9 +649,7 @@ export default function BranchLocator() {
     // Clear any typed PIN so PIN state never overrides live GPS coordinates
     setPinInput("");
     if (!navigator.geolocation) {
-      setError(
-        "Geolocation is not supported by your browser — please enter your 6-digit Indian PIN code to find banks near you."
-      );
+      setError(t("locator.geoUnsupportedError"));
       pinInputRef.current?.focus();
       return;
     }
@@ -667,8 +667,8 @@ export default function BranchLocator() {
         setResolvedLocation({
           lat: coords.lat,
           lng: coords.lng,
-          place: "Your Live GPS Location",
-          location_label: "Your Live GPS Location",
+          place: t("locator.liveGpsLocation"),
+          location_label: t("locator.liveGpsLocation"),
           source: "gps",
         });
         runLiveSearch({
@@ -681,9 +681,7 @@ export default function BranchLocator() {
       },
       () => {
         setGpsLoading(false);
-        setError(
-          "Browser GPS location was blocked or unavailable — please enter your 6-digit PIN code above to find nearby banks."
-        );
+        setError(t("locator.geoBlockedError"));
         pinInputRef.current?.focus();
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -794,21 +792,21 @@ export default function BranchLocator() {
           <div className="locator-gate-icon">
             <Icon name="bank" size={30} />
           </div>
-          <span className="eyebrow">SCHEME-DRIVEN PARTNER & PORTAL LOCATOR</span>
+          <span className="eyebrow">{t("locator.eyebrowGate")}</span>
           <h1>{t("locator.selectSchemeTitle")}</h1>
           <p>{t("locator.selectSchemeDesc")}</p>
 
           <div className="locator-gate-controls">
-            <label htmlFor="gate-scheme-select">Choose from all 66 Central & State Schemes</label>
+            <label htmlFor="gate-scheme-select">{t("locator.gateSelectLabel")}</label>
             <select
               id="gate-scheme-select"
               value=""
               onChange={(e) => handleSchemePick(e.target.value)}
             >
-              <option value="">-- Select a Loan Scheme --</option>
+              <option value="">{t("locator.gateSelectPlaceholder")}</option>
               {translatedAllSchemes.map((s) => (
                 <option key={s.code} value={s.code}>
-                  {s.code} — {s.name} ({s.interest_rate}% p.a.)
+                  {s.code} — {s.name} ({s.interest_rate}{t("calc.pctPa")})
                 </option>
               ))}
             </select>
@@ -848,7 +846,7 @@ export default function BranchLocator() {
               <span>{t("locator.eligibleChannels")}</span>
               {translatedActiveScheme.available_channels.map((ch) => (
                 <span key={ch} className="channel-mini-pill">
-                  {CHANNEL_LABELS[ch] || ch}
+                  {t(`channels.${ch}`) !== `channels.${ch}` ? t(`channels.${ch}`) : (CHANNEL_LABELS[ch] || ch)}
                 </span>
               ))}
             </div>
@@ -857,7 +855,7 @@ export default function BranchLocator() {
 
         <div className="locator-scheme-banner-right">
           <select
-            aria-label="Switch scheme"
+            aria-label={t("paths.switchSchemeLabel")}
             value={activeSchemeCode}
             onChange={(e) => handleSchemePick(e.target.value)}
           >
@@ -901,7 +899,7 @@ export default function BranchLocator() {
             <Icon name="search" size={18} />
             <input
               ref={pinInputRef}
-              aria-label="6-digit Indian PIN code"
+              aria-label={t("locator.pinAriaLabel")}
               placeholder={t("locator.pinInputPlaceholder")}
               value={pinInput}
               maxLength={6}
@@ -927,7 +925,7 @@ export default function BranchLocator() {
 
       {/* Filter Bar: Type Tabs + Search Radius + Keyword Filter */}
       <div className="locator-filter-bar">
-        <div className="locator-type-tabs" role="tablist" aria-label="Filter institutions by type">
+        <div className="locator-type-tabs" role="tablist" aria-label={t("locator.filterTypeAria")}>
           <button
             type="button"
             role="tab"
@@ -976,7 +974,7 @@ export default function BranchLocator() {
         </div>
 
         <div className="locator-filter-right">
-          <div className="radius-pill-group" role="group" aria-label="Search radius">
+          <div className="radius-pill-group" role="group" aria-label={t("locator.radiusAria")}>
             <span>{t("locator.radiusLabel")}</span>
             {RADIUS_OPTIONS.map((r) => (
               <button
@@ -985,7 +983,7 @@ export default function BranchLocator() {
                 className={radiusKm === r ? "active" : ""}
                 onClick={() => handleRadiusChange(r)}
               >
-                <bdi>{r} km</bdi>
+                <bdi>{r} {t("locator.kmUnit")}</bdi>
               </button>
             ))}
           </div>
@@ -1033,7 +1031,7 @@ export default function BranchLocator() {
 
             {/* Blue "You are here" Pulse Marker */}
             {userPinCoords && (
-              <Marker position={userPinCoords} icon={createUserPulseIcon()}>
+              <Marker position={userPinCoords} icon={createUserPulseIcon(t("locator.youAreHere"))}>
                 <Popup>
                   <div style={{ padding: "2px 4px" }}>
                     <strong style={{ color: "#1d4ed8" }}>
@@ -1239,7 +1237,7 @@ export default function BranchLocator() {
                       </div>
                       {item.distance_km != null ? (
                         <span className="distance-badge">
-                          <bdi>{item.distance_km} km</bdi>
+                          <bdi>{item.distance_km} {t("locator.kmUnit")}</bdi>
                         </span>
                       ) : (
                         <span className="distance-badge online">{t("locator.onlineBadge")}</span>

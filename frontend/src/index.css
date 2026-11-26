@@ -5450,9 +5450,44 @@ html[dir="rtl"] {
   flex-shrink: 0;
 }
 
+[dir="rtl"] .calc-preset-card,
+[dir="rtl"] .calc-legend-item,
+[dir="rtl"] .catalog-filter-sidebar,
+[dir="rtl"] .split-compare-window,
+[dir="rtl"] .locator-modal-window,
+[dir="rtl"] .verify-result-card {
+  text-align: right;
+}
+
+[dir="rtl"] .calc-lock-banner {
+  border-left: 1.5px solid var(--amber-border);
+  border-right: 5px solid var(--amber);
+}
+
+[dir="rtl"] .amazon-input-wrap .input-prefix {
+  border-right: 0;
+  border-left: 1px solid var(--line);
+}
+
+[dir="rtl"] .amazon-input-wrap .input-suffix {
+  border-left: 0;
+  border-right: 1px solid var(--line);
+}
+
+[dir="rtl"] .amazon-input-wrap input[type="number"] {
+  text-align: left;
+  direction: ltr;
+}
+
+[dir="rtl"] bdi {
+  unicode-bidi: isolate;
+}
+
 [dir="rtl"] body,
 [dir="rtl"] .app-layout,
-[dir="rtl"] .main-content {
+[dir="rtl"] .main-content,
+[dir="rtl"] .page-shell,
+[dir="rtl"] .locator-page-wrapper {
   overflow-x: hidden;
   max-width: 100%;
 }

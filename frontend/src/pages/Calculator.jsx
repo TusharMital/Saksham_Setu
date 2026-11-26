@@ -577,7 +577,12 @@ function YearlyRepaymentSvg({ yearly, principal, moratoriumMonths, t }) {
               className="yearly-col-group"
               tabIndex={0}
               role="button"
-              aria-label={`Year ${y.year}: Principal ${formatExactInr(y.principal_paid)}, Interest ${formatExactInr(y.interest_paid)}, Closing Balance ${formatExactInr(y.ending_balance)}`}
+              aria-label={t("calc.svgYearAria", {
+                year: String(y.year),
+                principal: formatExactInr(y.principal_paid),
+                interest: formatExactInr(y.interest_paid),
+                balance: formatExactInr(y.ending_balance),
+              })}
               onMouseEnter={() => setActiveYear(y.year)}
               onClick={() => setActiveYear(y.year)}
               onFocus={() => setActiveYear(y.year)}
@@ -642,7 +647,7 @@ function YearlyRepaymentSvg({ yearly, principal, moratoriumMonths, t }) {
                   textAnchor="middle"
                   className={`svg-axis-label ${isActive ? "active" : ""}`}
                 >
-                  Y{y.year}
+                  {t("calc.svgYearShort", { year: String(y.year) })}
                 </text>
               )}
             </g>
@@ -867,7 +872,7 @@ export default function Calculator() {
       .catch((err) => {
         if (!cancelled) {
           setLockedScheme(null);
-          setSchemeError(err.body?.detail || err.message || `Scheme '${querySchemeCode}' not found.`);
+          setSchemeError(err.body?.detail || err.message || t("detail.notFoundDesc", { code: querySchemeCode }));
         }
       })
       .finally(() => {
@@ -1207,7 +1212,7 @@ export default function Calculator() {
               <option value="">{t("calc.loadSchemePlaceholder")}</option>
               {translatedAllSchemes.map((s) => (
                 <option key={s.code} value={s.code}>
-                  {s.code} — {s.name} ({s.interest_rate}% p.a.)
+                  {s.code} — {s.name} ({s.interest_rate}{t("calc.pctPa")})
                 </option>
               ))}
             </select>
@@ -1288,16 +1293,16 @@ export default function Calculator() {
               >
                 <div className="preset-card-top">
                   <strong>{presetLabels[preset.id] || preset.name}</strong>
-                  <span className="preset-rate-pill"><bdi>{preset.rate.toFixed(2)}% p.a.</bdi></span>
+                  <span className="preset-rate-pill"><bdi>{preset.rate.toFixed(2)}{t("calc.pctPa")}</bdi></span>
                 </div>
                 <div className="preset-card-meta">
                   <span><bdi>{formatInr(preset.amount)}</bdi></span>
                   <span>•</span>
-                  <span><bdi>{preset.tenure}m</bdi></span>
+                  <span><bdi>{preset.tenure}{t("calc.mosShort")}</bdi></span>
                   {preset.moratorium > 0 && (
                     <>
                       <span>•</span>
-                      <span><bdi>{preset.moratorium}m</bdi></span>
+                      <span><bdi>{preset.moratorium}{t("calc.mosShort")}</bdi></span>
                     </>
                   )}
                 </div>
@@ -1402,7 +1407,7 @@ export default function Calculator() {
                     onBlur={handleRateBlur}
                     aria-label={t("calc.rate")}
                   />
-                  <span className="input-suffix">% p.a.</span>
+                  <span className="input-suffix">{t("calc.pctPa")}</span>
                 </div>
               </div>
               <input
@@ -1417,7 +1422,7 @@ export default function Calculator() {
               />
               <small className="slider-limits">
                 <span>1%</span>
-                <span className="limit-mid">{Number(rate).toFixed(2)}% p.a.</span>
+                <span className="limit-mid">{Number(rate).toFixed(2)}{t("calc.pctPa")}</span>
                 <span>24%</span>
               </small>
             </div>
@@ -1429,7 +1434,7 @@ export default function Calculator() {
                   <label htmlFor="calc-tenure-input">
                     <strong>{t("calc.tenure")}</strong>
                   </label>
-                  <div className="unit-toggle-group" role="group" aria-label="Tenure unit">
+                  <div className="unit-toggle-group" role="group" aria-label={t("calc.tenureUnitAria")}>
                     <button
                       type="button"
                       disabled={isLocked}
@@ -1560,7 +1565,7 @@ export default function Calculator() {
                 <div>
                   <dt>{t("calc.rateNoteLabel")}</dt>
                   <dd>
-                    <strong><bdi>{translatedLockedScheme.interest_rate}% p.a.</bdi></strong>
+                    <strong><bdi>{translatedLockedScheme.interest_rate}{t("calc.pctPa")}</bdi></strong>
                     {translatedLockedScheme.interest_rate_note
                       ? ` — ${translatedLockedScheme.interest_rate_note}`
                       : ""}
@@ -1630,9 +1635,9 @@ export default function Calculator() {
                 </div>
                 <small className="hero-emi-sub">
                   <bdi>
-                    {activeCalc.annual_rate}% p.a. • {activeCalc.tenure_months} {t("calc.monthsUnit")}
+                    {activeCalc.annual_rate}{t("calc.pctPa")} • {activeCalc.tenure_months} {t("calc.monthsUnit")}
                     {activeCalc.moratorium_months > 0
-                      ? ` (${activeCalc.moratorium_months}m)`
+                      ? ` (${activeCalc.moratorium_months}${t("calc.mosShort")})`
                       : ""}
                   </bdi>
                 </small>
@@ -1699,7 +1704,10 @@ export default function Calculator() {
                       ? t("calc.savingsHighlight", {
                           saved: formatExactInr(marketComparison.interestSaved),
                         })
-                      : `${translatedLockedScheme.code} @ ${activeCalc.annual_rate}% vs. 11.0%`}
+                      : t("calc.savingsNeutralTitle", {
+                          code: translatedLockedScheme.code,
+                          rate: String(activeCalc.annual_rate),
+                        })}
                   </h3>
                 </div>
               </div>
@@ -1715,7 +1723,7 @@ export default function Calculator() {
               ) : (
                 <p>
                   <bdi>
-                    11.0% p.a.: {formatExactInr(marketComparison.marketInterest)} vs.{" "}
+                    {t("calc.bankMarketLabel")} {formatExactInr(marketComparison.marketInterest)} vs.{" "}
                     {formatExactInr(activeCalc.total_interest)} ({translatedLockedScheme.code})
                   </bdi>
                 </p>

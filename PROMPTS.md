@@ -636,3 +636,18 @@ What failed or was missing: Initial `P8b` pass left duplicate `Locator.jsx` and 
 Did it follow the rules? Yes (multi-AI screenshot triage with Gemini + iterative prompt refinement in Antigravity).
 Next prompt it led to: Bug Fix Round 3 (P8c).
 Screenshot file names: `docs/04_Prompt_Improvements/p8b_antigravity_prompt.png`, `docs/05_Website_Screenshots/p8b_locator_map_gps_directions_fixed.png`
+
+---
+
+### P8d | Antigravity & Groq API | Automated Full-Site 23-Language Translation (UI + All 66 Schemes)
+Date: 2026-11-26
+Run by: Bhumi (25bcon2360)
+Prompt (exact text): Built and ran `python manage.py translate_all_content` using `GROQ_API_KEY` from `.env` to automatically translate all missing/English UI keys across all 22 Indian language JSON bundles (`core/translations/*.json`) with `validate_bundle` placeholder verification, pre-cache all 66 schemes' full details/documents/notes into `data/scheme_translations_cache.json`, wire `useTranslatedSchemes` across every scheme/calculator/locator page, and localize backend recommender, category verifier, and bank locator responses.
+Output summary (3 lines):
+- Extracted all remaining JSX UI strings across `frontend/src/` and batch-translated all 22 Indian language bundles in `core/translations/` via Groq with 100% `validate_bundle` placeholder parity.
+- Pre-populated `data/scheme_translations_cache.json` across all 66 schemes via Groq and wired `useTranslatedSchemes` into `/schemes`, `/results`, `/scheme/:code`, `/calculator`, `/apply`, and `/locator`.
+- Localized backend rejection reasons, category verification messages, and bank locator labels; all 62 Django tests, Vite build, and `collectstatic` passed.
+What worked: Switching to any of the 23 supported languages now translates the entire website from top-level navigation down to full scheme descriptions, documents, bank details, and EMI tables.
+What failed or was missing: None.
+Did it follow the rules? Yes (`.env` remained git-ignored; zero API keys exposed)[cite: 7].
+Next prompt it led to: Claude independent security & code audit (P9) and live deployment.

@@ -107,12 +107,15 @@ export default function Layout({ children }) {
       const status = getVoiceStatus(speakLangRef.current);
       setVoiceInfo(status);
       if (!status.supported) {
-        setLiveStatus("Browser speech synthesis is not supported on this device.");
+        setLiveStatus(tRef.current("nav.speechUnsupported"));
         return;
       }
       if (!status.available) {
         setLiveStatus(
-          `No browser voice installed for ${currentLanguageMeta.name} (${speakLangRef.current}). Text remains available.`
+          tRef.current("nav.noVoiceForLang", {
+            lang: currentLanguageMeta.name,
+            locale: speakLangRef.current,
+          })
         );
         return;
       }
@@ -133,7 +136,10 @@ export default function Layout({ children }) {
           isAnnouncingRef.current = false;
           setIsSpeaking(false);
           setLiveStatus(
-            `No browser voice installed for ${currentLanguageMeta.name} (${speakLangRef.current}).`
+            tRef.current("nav.noVoiceForLang", {
+              lang: currentLanguageMeta.name,
+              locale: speakLangRef.current,
+            })
           );
         },
       });
@@ -182,7 +188,11 @@ export default function Layout({ children }) {
 
       if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
 
-      const text = extractReadableText(el, langRef.current);
+      const text = extractReadableText(el, langRef.current, {
+        selected: tRef.current("form.speechSelected"),
+        checked: tRef.current("form.speechChecked"),
+        unchecked: tRef.current("form.speechUnchecked"),
+      });
       if (!text) return;
 
       debounceTimerRef.current = setTimeout(() => {
@@ -209,7 +219,10 @@ export default function Layout({ children }) {
               activeHighlightRef.current = null;
             }
             setLiveStatus(
-              `No browser voice installed for ${speakLangRef.current}.`
+              tRef.current("nav.noVoiceForLang", {
+                lang: currentLanguageMeta.name,
+                locale: speakLangRef.current,
+              })
             );
           },
         });
@@ -284,7 +297,7 @@ export default function Layout({ children }) {
       {/* Single-Row Sticky Header */}
       <header className="header">
         <div className="header-inner">
-          <Link className="brand" to="/" onClick={() => setMenuOpen(false)} aria-label="Saksham Setu Home">
+          <Link className="brand" to="/" onClick={() => setMenuOpen(false)} aria-label={t("nav.homeAria")}>
             <span className="brand-mark" aria-hidden="true">
               <span>स</span>
             </span>
@@ -295,7 +308,7 @@ export default function Layout({ children }) {
           </Link>
 
           {/* Desktop / Mobile Navigation */}
-          <nav className={`nav ${menuOpen ? "open" : ""}`} aria-label="Main Navigation">
+          <nav className={`nav ${menuOpen ? "open" : ""}`} aria-label={t("nav.mainNavAria")}>
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
@@ -354,7 +367,10 @@ export default function Layout({ children }) {
                 onClick={() => setLangOpen((prev) => !prev)}
                 aria-haspopup="listbox"
                 aria-expanded={langOpen}
-                aria-label={`Select language. Current: ${currentLanguageMeta.native_name} (${currentLanguageMeta.name})`}
+                aria-label={t("nav.selectLangAria", {
+                  native: currentLanguageMeta.native_name,
+                  name: currentLanguageMeta.name,
+                })}
                 title={voiceUnavailableNotice ? `${currentLanguageMeta.name} • ${voiceUnavailableNotice}` : currentLanguageMeta.name}
               >
                 <Icon name="globe" size={16} />
@@ -365,7 +381,7 @@ export default function Layout({ children }) {
               </button>
 
               {langOpen && (
-                <div className="lang-dropdown" role="dialog" aria-label="Language selection">
+                <div className="lang-dropdown" role="dialog" aria-label={t("nav.langSelectionAria")}>
                   <div className="lang-search-wrap">
                     <Icon name="search" size={15} />
                     <input
@@ -377,7 +393,7 @@ export default function Layout({ children }) {
                       aria-label={t("nav.searchLangPlaceholder")}
                     />
                   </div>
-                  <ul className="lang-options-list" role="listbox" aria-label="Supported languages">
+                  <ul className="lang-options-list" role="listbox" aria-label={t("nav.supportedLangsAria")}>
                     {filteredLanguages.length === 0 ? (
                       <li className="lang-empty">{t("nav.noMatchingLang")}</li>
                     ) : (
@@ -412,7 +428,7 @@ export default function Layout({ children }) {
               className="menu-btn"
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-label={menuOpen ? t("nav.closeMenu") : t("nav.openMenu")}
               aria-expanded={menuOpen}
             >
               <Icon name={menuOpen ? "close" : "menu"} size={22} />

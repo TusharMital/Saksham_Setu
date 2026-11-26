@@ -91,10 +91,10 @@ export default function AllSchemes() {
         setLoading(false);
       })
       .catch((err) => {
-        setError(err?.message || "Unable to load government schemes.");
+        setError(err?.message || t("allSchemes.loadError"));
         setLoading(false);
       });
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     loadCatalog();
@@ -649,7 +649,7 @@ export default function AllSchemes() {
                   <button
                     type="button"
                     onClick={chip.onRemove}
-                    aria-label={`Remove filter ${chip.label}`}
+                    aria-label={t("allSchemes.removeFilterAria", { label: chip.label })}
                   >
                     <Icon name="close" size={12} />
                   </button>
@@ -871,14 +871,14 @@ export default function AllSchemes() {
               step={10000}
               value={desiredLoan ? clamp(desiredLoan, 0, LOAN_SLIDER_MAX) : 0}
               onChange={(e) => handleDesiredLoanSlider(e.target.value)}
-              aria-label={`${t("allSchemes.desiredLoanLabel")} slider`}
+              aria-label={t("allSchemes.sliderAria", { label: t("allSchemes.desiredLoanLabel") })}
             />
             <small className="slider-limits">
               <span>{t("allSchemes.anyLabel")}</span>
               <span className="limit-mid">
-                {desiredLoan ? formatCompactMoney(desiredLoan) : "—"}
+                {desiredLoan ? formatCompactMoney(desiredLoan, t("detail.noUpperCap")) : "—"}
               </span>
-              <span>₹1 Cr</span>
+              <span>{t("calc.amountMaxLimit")}</span>
             </small>
           </div>
 
@@ -912,7 +912,7 @@ export default function AllSchemes() {
                 onBlur={handleMaxRateBlur}
                 aria-label={t("allSchemes.maxRateLabel")}
               />
-              <span className="input-suffix">% p.a.</span>
+              <span className="input-suffix">{t("calc.pctPa")}</span>
             </div>
             <input
               type="range"
@@ -922,7 +922,7 @@ export default function AllSchemes() {
               step={0.25}
               value={clamp(maxRate, 0, RATE_SLIDER_MAX)}
               onChange={(e) => handleMaxRateSlider(e.target.value)}
-              aria-label={`${t("allSchemes.maxRateLabel")} slider`}
+              aria-label={t("allSchemes.sliderAria", { label: t("allSchemes.maxRateLabel") })}
             />
             <small className="slider-limits">
               <span>0%</span>
@@ -975,7 +975,7 @@ export default function AllSchemes() {
               <button
                 type="button"
                 onClick={() => setCompareNotice("")}
-                aria-label="Dismiss notice"
+                aria-label={t("results.dismissNotice")}
               >
                 <Icon name="close" size={14} />
               </button>
@@ -1014,11 +1014,11 @@ export default function AllSchemes() {
                   : t("allSchemes.allIndia");
                 const subsidyText = s.subsidy_note || s.subsidy_margin_note;
                 const summaryText =
-                  s.overview || s.description || "Government concessional credit scheme.";
+                  s.overview || s.description || t("allSchemes.defaultSummary");
                 const categoriesText =
                   (s.eligible_categories || []).length === 6
                     ? t("allSchemes.allCategoriesShort")
-                    : (s.eligible_categories || []).join(", ") || "All";
+                    : (s.eligible_categories || []).join(", ") || t("allSchemes.allOption");
 
                 return (
                   <article
@@ -1046,7 +1046,7 @@ export default function AllSchemes() {
                         </span>
                         <div>
                           <h2>{s.name}</h2>
-                          <small>{s.agency || "Government of India"}</small>
+                          <small>{s.agency || t("detail.govtOfIndia")}</small>
                         </div>
                       </div>
 
@@ -1069,19 +1069,24 @@ export default function AllSchemes() {
                         <div className="catalog-metric-cell">
                           <small>{t("allSchemes.metricInterest")}</small>
                           <strong className="text-forest">
-                            <bdi>{s.interest_rate}% p.a.</bdi>
+                            <bdi>{s.interest_rate}{t("calc.pctPa")}</bdi>
                           </strong>
                         </div>
                         <div className="catalog-metric-cell">
                           <small>{t("allSchemes.metricLoanRange")}</small>
                           <strong>
-                            <bdi>{formatLoanRange(s.min_loan, s.max_loan)}</bdi>
+                            <bdi>{formatLoanRange(s.min_loan, s.max_loan, t("detail.noUpperCap"))}</bdi>
                           </strong>
                         </div>
                         <div className="catalog-metric-cell">
                           <small>{t("allSchemes.metricTenure")}</small>
                           <strong>
-                            <bdi>{s.tenure_months}m ({s.moratorium_months}m)</bdi>
+                            <bdi>
+                              {t("allSchemes.tenureCompact", {
+                                tenure: String(s.tenure_months),
+                                moratorium: String(s.moratorium_months),
+                              })}
+                            </bdi>
                           </strong>
                         </div>
                         <div className="catalog-metric-cell">

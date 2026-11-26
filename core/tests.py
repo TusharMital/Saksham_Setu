@@ -710,6 +710,54 @@ class I18nApiAndValidatorTests(TestCase):
         self.assertEqual(res.data["fallback_count"], 0)
         self.assertEqual(len(res.data["translations"]), 66)
 
+    def test_verify_category_interstate_hindi_localized(self):
+        res = verify_category_and_document(
+            {
+                "loan_state": "Rajasthan",
+                "certificate_state": "Uttar Pradesh",
+                "category": "SC",
+                "certificate_type": "sc_cert",
+                "sub_caste": "Jatav",
+                "annual_income": 250000,
+                "lang": "hi",
+            },
+            lang="hi",
+        )
+        self.assertEqual(res["status"], "state_mismatch_warning")
+        self.assertTrue(any("\u0900" <= ch <= "\u097f" for ch in res["message"]))
+        self.assertTrue(any("\u0900" <= ch <= "\u097f" for ch in res["next_step"]))
+
+    def test_chatbot_localized_error_message_for_non_hindi(self):
+        res = self.client.post("/api/chat/", {"message": "", "lang": "ta"}, format="json")
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(res.data["language"]["code"], "ta")
+        self.assertTrue(res.data["error"])
+
+    @override_settings(GROQ_API_KEY="test-key")
+    @patch("core.management.commands.translate_all_content.requests.post")
+    def test_translate_all_content_handles_429_retry_and_preserves_placeholders(self, mock_post):
+        from core.management.commands.translate_all_content import GroqPool
+
+        rl_resp = MagicMock()
+        rl_resp.status_code = 429
+        rl_resp.headers = {"retry-after": "1"}
+        rl_resp.text = "Rate limit reached"
+
+        ok_resp = MagicMock()
+        ok_resp.status_code = 200
+        ok_resp.headers = {"x-ratelimit-remaining-tokens": "5000"}
+        ok_resp.json.return_value = {
+            "choices": [{"message": {"content": '{"greeting": "नमस्ते {name}"}'}}]
+        }
+        mock_post.side_effect = [rl_resp, ok_resp]
+
+        out = MagicMock()
+        with patch("core.management.commands.translate_all_content.time.sleep"):
+            pool = GroqPool(api_key="test-key", primary_model="openai/gpt-oss-120b", stdout=out)
+            res = pool.call_json("sys", {"greeting": "Hello {name}"}, 256, "test")
+        self.assertEqual(res, {"greeting": "नमस्ते {name}"})
+        self.assertEqual(mock_post.call_count, 2)
+
 
 class CategoryVerifierTests(TestCase):
     def setUp(self):

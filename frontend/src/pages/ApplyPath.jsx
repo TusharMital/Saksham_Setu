@@ -207,7 +207,7 @@ export default function ApplyPath() {
       .catch((err) => {
         if (!cancelled) {
           setLoadedScheme(null);
-          setSchemeError(err.body?.detail || err.message || `Scheme '${activeCode}' not found.`);
+          setSchemeError(err.body?.detail || err.message || t("detail.notFoundDesc", { code: activeCode }));
         }
       })
       .finally(() => {

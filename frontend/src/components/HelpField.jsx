@@ -139,7 +139,7 @@ export default function HelpField({
 
         {/* Live Inline Validation Checkmark */}
         {isValid && !boolean && !options && (
-          <span className="valid-tick-badge" title="Valid entry">
+          <span className="valid-tick-badge" title={t("form.validEntry")}>
             <Icon name="check" size={13} />
           </span>
         )}
@@ -152,8 +152,8 @@ export default function HelpField({
               className={`tool-btn ${bubble ? "active" : ""}`}
               onClick={handleHelpClick}
               aria-expanded={bubble}
-              aria-label={`Show help for ${label}`}
-              title="Toggle field guidance"
+              aria-label={t("form.showHelpFor", { label })}
+              title={t("form.toggleHelpTitle")}
             >
               <Icon name="help" size={17} />
             </button>
@@ -165,7 +165,7 @@ export default function HelpField({
 
       {/* Strictly click-only inline help bubble directly beneath this field */}
       {bubble && help && (
-        <div className="field-bubble" role="dialog" aria-label={`Help: ${label}`}>
+        <div className="field-bubble" role="dialog" aria-label={t("form.helpDialogAria", { label })}>
           <p>{help}</p>
           {example && <small className="bubble-example">{example}</small>}
           <div className="bubble-actions">

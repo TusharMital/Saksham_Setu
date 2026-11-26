@@ -13,8 +13,8 @@ function formatCompactInr(val) {
   return `₹${Math.round(n)}`;
 }
 
-function formatFullInr(val) {
-  if (val === null || val === undefined) return "No fixed upper cap";
+function formatFullInr(val, noCapLabel = "No fixed upper cap") {
+  if (val === null || val === undefined) return noCapLabel;
   return `₹${Number(val).toLocaleString("en-IN")}`;
 }
 
@@ -128,8 +128,8 @@ function EmiSvgVisuals({ emi, scheme, t }) {
             <div className="donut-legend-row total">
               <span className="legend-dot navy" />
               <div>
-                <small>{t("calc.totalPayable")} ({scheme.tenure_months}m)</small>
-                <strong><bdi>{formatFullInr(emi.total_payable)}</bdi></strong>
+                <small>{t("calc.totalPayable")} ({t("detail.monthsShort", { months: String(scheme.tenure_months) })})</small>
+                <strong><bdi>{formatFullInr(emi.total_payable, t("detail.noUpperCap"))}</bdi></strong>
               </div>
             </div>
           </div>
@@ -151,7 +151,7 @@ function EmiSvgVisuals({ emi, scheme, t }) {
           viewBox={`0 0 ${width} ${height}`}
           className="balance-curve-svg"
           role="img"
-          aria-label="Year-by-year remaining loan balance curve"
+          aria-label={t("detail.curveTitle")}
         >
           <defs>
             <linearGradient id="balAreaGrad" x1="0" y1="0" x2="0" y2="1">
@@ -206,7 +206,7 @@ function EmiSvgVisuals({ emi, scheme, t }) {
                 y={pad.top + 14}
                 className="svg-moratorium-text"
               >
-                Moratorium ({emi.moratorium_months}m)
+                {t("detail.moratoriumTag", { months: String(emi.moratorium_months) })}
               </text>
             </g>
           )}
@@ -265,7 +265,7 @@ export default function SchemeDetail() {
       })
       .catch((err) => {
         if (!cancelled) {
-          setError(err.body?.detail || err.message || "Could not load scheme details.");
+          setError(err.body?.detail || err.message || t("detail.loadError"));
         }
       })
       .finally(() => {
@@ -293,7 +293,7 @@ export default function SchemeDetail() {
     return (
       <div className="page-shell text-center" style={{ padding: "4rem 1rem" }}>
         <h2>{t("detail.notFoundTitle")}</h2>
-        <p style={{ color: "var(--slate)", margin: "1rem 0 2rem" }}>{error || `No scheme found for code ${code}.`}</p>
+        <p style={{ color: "var(--slate)", margin: "1rem 0 2rem" }}>{error || t("detail.notFoundDesc", { code })}</p>
         <Link to="/results" className="btn btn-primary">
           {t("detail.backToResults")}
         </Link>
@@ -337,7 +337,7 @@ export default function SchemeDetail() {
       {/* Scheme Hero Header */}
       <section className="detail-hero-card">
         <div className="detail-hero-main">
-          <p className="detail-agency">{activeData.agency || "Government of India"}</p>
+          <p className="detail-agency">{activeData.agency || t("detail.govtOfIndia")}</p>
           <h1>{activeData.name}</h1>
           <p className="detail-overview">{activeData.overview || activeData.description}</p>
 
@@ -350,13 +350,13 @@ export default function SchemeDetail() {
             {activeData.women_only && <span className="cat-pill women">{t("detail.womenOnly")}</span>}
             <span className="cat-pill income">
               {t("detail.incomeLimit")}{" "}
-              <bdi>{activeData.max_income ? formatFullInr(activeData.max_income) : t("detail.noIncomeCap")}</bdi>
+              <bdi>{activeData.max_income ? formatFullInr(activeData.max_income, t("detail.noUpperCap")) : t("detail.noIncomeCap")}</bdi>
             </span>
             <span className="cat-pill loan">
               {t("detail.loanRange")}{" "}
               <bdi>
-                {formatFullInr(activeData.min_loan || 0)} –{" "}
-                {activeData.max_loan != null ? formatFullInr(activeData.max_loan) : t("detail.noUpperCap")}
+                {formatFullInr(activeData.min_loan || 0, t("detail.noUpperCap"))} –{" "}
+                {activeData.max_loan != null ? formatFullInr(activeData.max_loan, t("detail.noUpperCap")) : t("detail.noUpperCap")}
               </bdi>
             </span>
           </div>
@@ -395,7 +395,7 @@ export default function SchemeDetail() {
           <div className="detail-rate-subsidy-box">
             <div>
               <small>{t("detail.interestTermsLabel")}</small>
-              <p>{activeData.interest_rate_note || `${activeData.interest_rate}% p.a.`}</p>
+              <p>{activeData.interest_rate_note || `${activeData.interest_rate}${t("calc.pctPa")}`}</p>
             </div>
             <div>
               <small>{t("detail.subsidyMarginLabel")}</small>
@@ -413,8 +413,11 @@ export default function SchemeDetail() {
             <h2>{t("detail.emiTitle")}</h2>
             <p>
               <bdi>
-                {formatFullInr(emi.principal || 0)} • {activeData.interest_rate}% p.a. •{" "}
-                {activeData.tenure_months}m ({activeData.moratorium_months}m)
+                {formatFullInr(emi.principal || 0, t("detail.noUpperCap"))} • {activeData.interest_rate}{t("calc.pctPa")} •{" "}
+                {t("allSchemes.tenureCompact", {
+                  tenure: String(activeData.tenure_months),
+                  moratorium: String(activeData.moratorium_months),
+                })}
               </bdi>
             </p>
           </div>
