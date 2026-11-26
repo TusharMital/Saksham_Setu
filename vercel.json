@@ -20,7 +20,7 @@
       "destination": { "service": "backend" }
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!api/|admin/).*)",
       "destination": { "service": "frontend" }
     }
   ]

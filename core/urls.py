@@ -17,6 +17,7 @@ urlpatterns = [
     path("pin-lookup/", views.PinLookupView.as_view()),
     path("locations/districts/", views.DistrictsListView.as_view()),
     path("verify-category/", views.VerifyCategoryView.as_view()),
+    path("health/", views.HealthView.as_view()),
     path("i18n/languages/", views.I18nLanguagesView.as_view()),
     path("i18n/translate-schemes/", views.TranslateSchemesView.as_view()),
     path("i18n/translate-texts/", views.TranslateTextsView.as_view()),

@@ -1,8 +1,10 @@
 import hashlib
 import json
+import os
 from pathlib import Path
 
-from django.db import transaction
+from django.conf import settings
+from django.db import OperationalError, transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -684,6 +686,25 @@ class DistrictsListView(APIView):
         resp = Response(data, status=status.HTTP_200_OK)
         resp["Cache-Control"] = "public, max-age=86400"
         return resp
+
+
+class HealthView(APIView):
+    def get(self, request):
+        try:
+            schemes_count = LoanScheme.objects.count()
+        except OperationalError:
+            schemes_count = 0
+        groq_key = (os.getenv("GROQ_API_KEY") or getattr(settings, "GROQ_API_KEY", "") or "").strip()
+        groq_model = (os.getenv("GROQ_MODEL") or getattr(settings, "GROQ_MODEL", "") or "openai/gpt-oss-120b").strip()
+        return Response(
+            {
+                "status": "ok",
+                "schemes": schemes_count,
+                "groq_configured": bool(groq_key),
+                "groq_model": groq_model,
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 def _next_ref():

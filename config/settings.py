@@ -101,6 +101,9 @@ elif os.environ.get("VERCEL"):
     _tmp_db = Path("/tmp/db.sqlite3")
     if _src_db.exists() and not _tmp_db.exists():
         shutil.copy2(_src_db, _tmp_db)
+        os.chmod(_tmp_db, 0o666)
+    elif _tmp_db.exists():
+        os.chmod(_tmp_db, 0o666)
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -124,6 +127,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+os.makedirs(STATIC_ROOT, exist_ok=True)
 FRONTEND_DIST = BASE_DIR / "frontend" / "dist"
 STATICFILES_DIRS = [FRONTEND_DIST] if FRONTEND_DIST.exists() else []
 WHITENOISE_ROOT = FRONTEND_DIST if FRONTEND_DIST.exists() else BASE_DIR

@@ -15,17 +15,23 @@ from django.db import OperationalError
 
 django.setup()
 
-if os.environ.get("VERCEL") and not os.environ.get("DATABASE_URL"):
+
+def _ensure_vercel_db():
+    if not (os.environ.get("VERCEL") and not os.environ.get("DATABASE_URL")):
+        return
     from core.models import LoanScheme
 
     needs_init = False
     try:
-        needs_init = LoanScheme.objects.count() == 0
+        needs_init = not LoanScheme.objects.exists()
     except OperationalError:
         needs_init = True
 
     if needs_init:
-        call_command("migrate", interactive=False)
+        call_command("migrate", "--noinput")
         call_command("seed_data")
+
+
+_ensure_vercel_db()
 
 app = get_wsgi_application()

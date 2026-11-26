@@ -2,16 +2,19 @@
 
 import hmac
 import ipaddress
+import json
 import logging
 import os
 import re
 import time
 import unicodedata
+from pathlib import Path
 
 import requests
 from django.conf import settings
 from django.core.cache import cache
 from django.core.signing import Signer
+from django.db import OperationalError
 from rest_framework import status
 
 from core.i18n_templates import get_section_templates
@@ -251,11 +254,92 @@ def _fmt_income_cap(val):
     return f"Rs {_fmt_num(val)}"
 
 
+def _format_scheme_row(
+    code,
+    name,
+    agency,
+    interest_rate,
+    min_loan,
+    max_loan,
+    ceiling,
+    tenure_months,
+    moratorium_months,
+    subsidy_percent,
+    finance_percent,
+    women_only,
+    cats,
+    states,
+    sectors,
+    overview,
+):
+    clean_overview = re.sub(r"\s+", " ", (overview or "").strip())[:160]
+    line = (
+        f"- {code} | {name} | agency={agency or 'Govt of India'} | "
+        f"rate={interest_rate}% | loan=Rs {_fmt_num(min_loan)}-{_fmt_num(max_loan)} | "
+        f"income_cap={_fmt_income_cap(ceiling)} | tenure={tenure_months}m | "
+        f"moratorium={moratorium_months}m | subsidy={subsidy_percent}% | "
+        f"finance={finance_percent}% | women_only={women_only} | "
+        f"categories={cats} | states={states}"
+    )
+    return {
+        "code": code,
+        "primary": f"{code} {name} {agency or ''}".lower(),
+        "secondary": f"{states} {cats} {sectors} {'women' if women_only else ''} {clean_overview}".lower(),
+        "women_only": bool(women_only),
+        "line": line,
+    }
+
+
+def _fetch_scheme_rows_from_json():
+    path = Path(settings.BASE_DIR) / "data" / "schemes.json"
+    if not path.exists():
+        return None
+    try:
+        items = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    if not isinstance(items, list) or not items:
+        return None
+    rows = []
+    for item in sorted(items, key=lambda x: str(x.get("code") or "")):
+        if not isinstance(item, dict) or not item.get("code"):
+            continue
+        raw_states = item.get("applicable_states") or item.get("states_supported") or ["ALL"]
+        states = ", ".join(str(x) for x in raw_states)
+        cats = ", ".join(str(x) for x in (item.get("eligible_categories") or [])) or "ALL"
+        sectors = ", ".join(str(x) for x in (item.get("sectors") or []))
+        ceiling = item.get("max_income") if item.get("max_income") is not None else item.get("income_ceiling")
+        rows.append(
+            _format_scheme_row(
+                code=item["code"],
+                name=item.get("name") or item["code"],
+                agency=item.get("agency") or "",
+                interest_rate=item.get("interest_rate") or 0,
+                min_loan=item.get("min_loan"),
+                max_loan=item.get("max_loan"),
+                ceiling=ceiling,
+                tenure_months=item.get("tenure_months") or 60,
+                moratorium_months=item.get("moratorium_months") or 0,
+                subsidy_percent=item.get("subsidy_percent") or 0,
+                finance_percent=item.get("finance_percent") or 90,
+                women_only=bool(item.get("women_only", False)),
+                cats=cats,
+                states=states,
+                sectors=sectors,
+                overview=item.get("overview") or item.get("description") or "",
+            )
+        )
+    return rows or None
+
+
 def _fetch_scheme_rows():
     try:
         if not LoanScheme.objects.exists():
             return None
         schemes = list(LoanScheme.objects.all().order_by("code"))
+    except OperationalError:
+        logger.warning("LoanScheme table unavailable; falling back to data/schemes.json")
+        return _fetch_scheme_rows_from_json()
     except Exception:
         logger.exception("Failed to load LoanScheme records for chat grounding")
         return None
@@ -268,23 +352,25 @@ def _fetch_scheme_rows():
         cats = ", ".join(str(x) for x in (s.eligible_categories or [])) or "ALL"
         sectors = ", ".join(str(x) for x in (s.sectors or []))
         ceiling = s.max_income if s.max_income is not None else s.income_ceiling
-        overview = re.sub(r"\s+", " ", (s.overview or s.description or "").strip())[:160]
-        line = (
-            f"- {s.code} | {s.name} | agency={s.agency or 'Govt of India'} | "
-            f"rate={s.interest_rate}% | loan=Rs {_fmt_num(s.min_loan)}-{_fmt_num(s.max_loan)} | "
-            f"income_cap={_fmt_income_cap(ceiling)} | tenure={s.tenure_months}m | "
-            f"moratorium={s.moratorium_months}m | subsidy={s.subsidy_percent}% | "
-            f"finance={s.finance_percent}% | women_only={s.women_only} | "
-            f"categories={cats} | states={states}"
-        )
         rows.append(
-            {
-                "code": s.code,
-                "primary": f"{s.code} {s.name} {s.agency or ''}".lower(),
-                "secondary": f"{states} {cats} {sectors} {'women' if s.women_only else ''} {overview}".lower(),
-                "women_only": bool(s.women_only),
-                "line": line,
-            }
+            _format_scheme_row(
+                code=s.code,
+                name=s.name,
+                agency=s.agency or "",
+                interest_rate=s.interest_rate,
+                min_loan=s.min_loan,
+                max_loan=s.max_loan,
+                ceiling=ceiling,
+                tenure_months=s.tenure_months,
+                moratorium_months=s.moratorium_months,
+                subsidy_percent=s.subsidy_percent,
+                finance_percent=s.finance_percent,
+                women_only=s.women_only,
+                cats=cats,
+                states=states,
+                sectors=sectors,
+                overview=s.overview or s.description or "",
+            )
         )
     return rows
 
@@ -461,6 +547,50 @@ def _build_groq_payload(model_name, messages):
     return payload
 
 
+FALLBACK_GROQ_MODELS = [
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b",
+    "qwen/qwen3.8-27b",
+]
+
+
+def call_groq(messages, api_key, timeout=None):
+    """Try configured GROQ_MODEL first and fall back across active org models on 404/429/5xx."""
+    primary_model = (
+        getattr(settings, "GROQ_MODEL", "") or os.getenv("GROQ_MODEL", "") or "openai/gpt-oss-120b"
+    ).strip()
+    candidates = list(dict.fromkeys([primary_model, *FALLBACK_GROQ_MODELS]))
+    eff_timeout = timeout or max(12, int(getattr(settings, "GROQ_TIMEOUT_SECONDS", 12) or 12))
+    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+
+    resp = None
+    slept_for_429 = False
+    for idx, model_name in enumerate(candidates):
+        resp = requests.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers=headers,
+            json=_build_groq_payload(model_name, messages),
+            timeout=eff_timeout,
+        )
+        if resp.status_code == 200:
+            return resp
+        if resp.status_code in (404, 429) or resp.status_code >= 500:
+            if idx + 1 < len(candidates):
+                next_model = candidates[idx + 1]
+                logger.warning(
+                    "Groq upstream HTTP %s on %s; retrying with %s",
+                    resp.status_code,
+                    model_name,
+                    next_model,
+                )
+                if resp.status_code == 429 and not slept_for_429:
+                    time.sleep(1.2)
+                    slept_for_429 = True
+                continue
+        break
+    return resp
+
+
 def chat_completion(message, history, language, client_ip="unknown"):
     message = message if isinstance(message, str) else ""
     lang_meta = resolve_language(language)
@@ -502,45 +632,10 @@ def chat_completion(message, history, language, client_ip="unknown"):
     )
     system = f"{system_header}{grounding}{SYSTEM_FOOTER}"
     messages = [{"role": "system", "content": system}, *memory, {"role": "user", "content": text}]
-    primary_model = (
-        getattr(settings, "GROQ_MODEL", "") or os.getenv("GROQ_MODEL", "") or "openai/gpt-oss-120b"
-    ).strip()
-    alt_model = (
-        "qwen/qwen3.8-27b"
-        if primary_model == "openai/gpt-oss-20b"
-        else "openai/gpt-oss-20b"
-    )
     timeout = max(12, int(getattr(settings, "GROQ_TIMEOUT_SECONDS", 12) or 12))
-    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
     try:
-        resp = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            headers=headers,
-            json=_build_groq_payload(primary_model, messages),
-            timeout=timeout,
-        )
-        if resp.status_code in (429, 404):
-            logger.warning("Groq upstream HTTP %s on %s; retrying with %s", resp.status_code, primary_model, alt_model)
-            time.sleep(1.2)
-            resp = requests.post(
-                "https://api.groq.com/openai/v1/chat/completions",
-                headers=headers,
-                json=_build_groq_payload(alt_model, messages),
-                timeout=timeout,
-            )
-            if resp.status_code in (429, 404):
-                for org_alt in ("qwen/qwen3.8-27b", "llama-3.1-8b-instant"):
-                    if org_alt in (primary_model, alt_model):
-                        continue
-                    resp = requests.post(
-                        "https://api.groq.com/openai/v1/chat/completions",
-                        headers=headers,
-                        json=_build_groq_payload(org_alt, messages),
-                        timeout=timeout,
-                    )
-                    if resp.status_code == 200:
-                        break
+        resp = call_groq(messages, api_key, timeout=timeout)
     except requests.Timeout:
         logger.warning("Groq upstream request timed out")
         return friendly("timeout", lang_meta, status.HTTP_504_GATEWAY_TIMEOUT)

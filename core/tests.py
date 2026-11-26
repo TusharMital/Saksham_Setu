@@ -604,6 +604,42 @@ class ChatApiTests(TestCase):
             "openai/gpt-oss-20b",
         )
 
+    @override_settings(GROQ_API_KEY="test-key", GROQ_MODEL="custom-missing-model")
+    @patch("core.chatbot.requests.post")
+    def test_5xx_falls_back_across_active_groq_models(self, mock_post):
+        err_resp = MagicMock(status_code=503)
+        ok_resp = MagicMock(
+            status_code=200,
+            json=lambda: {"choices": [{"message": {"content": "MSY offers 4.0% interest."}}]},
+        )
+        mock_post.side_effect = [err_resp, ok_resp]
+
+        client = APIClient()
+        res = client.post("/api/chat/", {"message": "MSY rate?", "lang": "en"}, format="json")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(mock_post.call_count, 2)
+        self.assertEqual(mock_post.call_args_list[0].kwargs["json"]["model"], "custom-missing-model")
+        self.assertEqual(mock_post.call_args_list[1].kwargs["json"]["model"], "openai/gpt-oss-120b")
+
+    def test_grounding_falls_back_to_schemes_json_on_operational_error(self):
+        from django.db import OperationalError
+        from core.chatbot import load_scheme_grounding
+
+        cache.clear()
+        with patch("core.chatbot.LoanScheme.objects.exists", side_effect=OperationalError("no such table")):
+            grounding = load_scheme_grounding("MSY")
+        self.assertIsNotNone(grounding)
+        self.assertIn("- MSY |", grounding)
+
+    def test_health_endpoint_returns_safe_status_without_secrets(self):
+        res = self.client.get("/api/health/") if hasattr(self, "client") else APIClient().get("/api/health/")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.data["status"], "ok")
+        self.assertIn("schemes", res.data)
+        self.assertIsInstance(res.data["groq_configured"], bool)
+        self.assertIn("groq_model", res.data)
+        self.assertNotIn("GROQ_API_KEY", str(res.data))
+
 
 class ApiIntegrationTests(TestCase):
     def setUp(self):
