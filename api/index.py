@@ -21,17 +21,20 @@ def _ensure_vercel_db():
         return
     from core.models import LoanScheme
 
-    needs_init = False
     try:
-        needs_init = not LoanScheme.objects.exists()
+        if LoanScheme.objects.exists():
+            return
     except OperationalError:
-        needs_init = True
+        pass
 
-    if needs_init:
-        call_command("migrate", "--noinput")
-        call_command("seed_data")
+    call_command("migrate", "--noinput")
+    call_command("seed_data")
 
 
-_ensure_vercel_db()
+try:
+    _ensure_vercel_db()
+except Exception as exc:
+    os.environ["_VERCEL_DB_INIT_ERROR"] = f"{type(exc).__name__}: {exc}"
 
-app = get_wsgi_application()
+application = get_wsgi_application()
+app = application

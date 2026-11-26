@@ -632,13 +632,21 @@ class ChatApiTests(TestCase):
         self.assertIn("- MSY |", grounding)
 
     def test_health_endpoint_returns_safe_status_without_secrets(self):
-        res = self.client.get("/api/health/") if hasattr(self, "client") else APIClient().get("/api/health/")
+        client = self.client if hasattr(self, "client") else APIClient()
+        res = client.get("/api/health/")
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.data["status"], "ok")
         self.assertIn("schemes", res.data)
+        self.assertIn("db_error", res.data)
         self.assertIsInstance(res.data["groq_configured"], bool)
         self.assertIn("groq_model", res.data)
         self.assertNotIn("GROQ_API_KEY", str(res.data))
+
+        with patch("core.models.LoanScheme.objects.count", side_effect=RuntimeError("db locked")):
+            degraded = client.get("/api/health/")
+        self.assertEqual(degraded.status_code, 200)
+        self.assertEqual(degraded.data["schemes"], 0)
+        self.assertIn("db locked", degraded.data["db_error"])
 
 
 class ApiIntegrationTests(TestCase):

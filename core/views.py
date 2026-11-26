@@ -7,6 +7,8 @@ from django.conf import settings
 from django.db import OperationalError, transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -525,6 +527,7 @@ class ApplicationPdfView(APIView):
         return response
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class ChatView(APIView):
     def post(self, request):
         body = request.data if isinstance(request.data, dict) else {}
@@ -690,16 +693,19 @@ class DistrictsListView(APIView):
 
 class HealthView(APIView):
     def get(self, request):
+        db_error = os.environ.get("_VERCEL_DB_INIT_ERROR") or None
         try:
             schemes_count = LoanScheme.objects.count()
-        except OperationalError:
+        except Exception as exc:
             schemes_count = 0
+            db_error = db_error or f"{type(exc).__name__}: {exc}"
         groq_key = (os.getenv("GROQ_API_KEY") or getattr(settings, "GROQ_API_KEY", "") or "").strip()
         groq_model = (os.getenv("GROQ_MODEL") or getattr(settings, "GROQ_MODEL", "") or "openai/gpt-oss-120b").strip()
         return Response(
             {
                 "status": "ok",
                 "schemes": schemes_count,
+                "db_error": db_error,
                 "groq_configured": bool(groq_key),
                 "groq_model": groq_model,
             },
