@@ -11,7 +11,6 @@
     "calculator": "EMI कॅल्क्युलेटर",
     "locator": "बँक शोधा",
     "paths": "अर्जाचे मार्ग",
-    "track": "ट्रॅक करा",
     "skip": "मुख्य मजकुरावर जा",
     "voiceGuide": "आवाज",
     "voiceOn": "चालू",
@@ -26,7 +25,6 @@
     "heroTitleEm": "आम्ही दाखवतो योग्य मार्ग.",
     "promise": "योग्य सरकारी कर्ज योजना शोधा, लाभांची तुलना करा आणि जवळची विश्वासार्ह भागीदार बँक मिळवा — काही मिनिटांत.",
     "cta": "माझी योजना शोधा",
-    "trackCta": "अर्ज ट्रॅक करा",
     "calcCta": "EMI कॅल्क्युलेटर वापरा",
     "heroProofTime": "३ मिनिटे",
     "heroProofTimeLabel": "तपासणीसाठी",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "आधार, जात प्रमाणपत्र आणि प्रकल्प कागदपत्रांचे स्पष्ट फोटो ठेवा.",
       "फोनवर अवघड वाटत असल्यास संगणकावर बँक पोर्टल उघडा.",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "तुमचा अर्ज नेमका कुठे आहे ते जाणा",
-    "subtitle": "अर्ज सादर केल्यानंतर मिळालेला संदर्भ क्रमांक प्रविष्ट करा.",
-    "placeholder": "तुमचा संदर्भ क्रमांक टाका (उदा. SS-2026-10001)",
-    "go": "स्थिती पहा",
-    "emptyError": "कृपया तुमचा अर्ज संदर्भ क्रमांक प्रविष्ट करा.",
-    "notFound": "{ref} साठी कोणताही अर्ज आढळला नाही. क्रमांक तपासून पुन्हा प्रयत्न करा.",
-    "pending": "कारवाई आवश्यक",
-    "rejected": "नकाराचे कारण विश्लेषण",
-    "fix": "पुढे काय दुरुस्त करावे",
-    "whereStands": "अर्जाची प्रगती",
-    "actionNeeded": "कारवाई आवश्यक",
-    "daysSince": "दिवसांपूर्वी सादर",
-    "whatNext": "पुढे काय करावे"
   },
   "chat": {
     "title": "सारथी AI सहाय्यक",

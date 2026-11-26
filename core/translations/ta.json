@@ -11,7 +11,6 @@
     "calculator": "EMI கணிப்பான்",
     "locator": "வங்கி தேடு",
     "paths": "விண்ணப்ப வழிகள்",
-    "track": "கண்காணி",
     "skip": "முதன்மை உள்ளடக்கத்திற்குச் செல்",
     "voiceGuide": "குரல்",
     "voiceOn": "ஆன்",
@@ -26,7 +25,6 @@
     "heroTitleEm": "சரியான வழியைக் காட்டுகிறோம்.",
     "promise": "சரியான அரசு கடன் திட்டத்தைக் கண்டறியவும், சலுகைகளை ஒப்பிடவும், அருகிலுள்ள நம்பகமான வங்கியைப் பெறவும் — சில நிமிடங்களில்.",
     "cta": "என் திட்டத்தைக் கண்டறி",
-    "trackCta": "விண்ணப்பத்தைக் கண்காணி",
     "calcCta": "EMI கணிப்பானை முயற்சி செய்",
     "heroProofTime": "3 நிமிடம்",
     "heroProofTimeLabel": "சரிபார்க்க",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "ஆதார், சாதிச் சான்றிதழ் மற்றும் திட்ட ஆவணங்களின் தெளிவான புகைப்படங்களை வைத்திருங்கள்.",
       "தொலைபேசியில் சிரமமாக இருந்தால் கணினியில் வங்கித் தளத்தைத் திறக்கவும்.",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "உங்கள் விண்ணப்பம் எந்த நிலையில் உள்ளது என அறியவும்",
-    "subtitle": "விண்ணப்பத்தைச் சமர்ப்பித்த பிறகு பெற்ற குறிப்பு எண்ணை உள்ளிடவும்.",
-    "placeholder": "உங்கள் குறிப்பு எண்ணை உள்ளிடவும் (எ.கா. SS-2026-10001)",
-    "go": "நிலையைப் பார்",
-    "emptyError": "தயவுசெய்து உங்கள் விண்ணப்பக் குறிப்பு எண்ணை உள்ளிடவும்.",
-    "notFound": "{ref} க்கான விண்ணப்பம் எதுவும் இல்லை. எண்ணைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.",
-    "pending": "நடவடிக்கை தேவை",
-    "rejected": "நிராகரிப்புக் காரணம்",
-    "fix": "அடுத்து என்ன சரிசெய்ய வேண்டும்",
-    "whereStands": "விண்ணப்ப முன்னேற்றம்",
-    "actionNeeded": "நடவடிக்கை தேவை",
-    "daysSince": "நாட்களுக்கு முன் சமர்ப்பிக்கப்பட்டது",
-    "whatNext": "அடுத்து என்ன செய்வது"
   },
   "chat": {
     "title": "சாரதி AI உதவியாளர்",

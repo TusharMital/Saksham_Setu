@@ -11,7 +11,6 @@
     "calculator": "EMI കാൽക്കുലേറ്റർ",
     "locator": "ബാങ്ക് കണ്ടെത്തുക",
     "paths": "അപേക്ഷാ മാർഗങ്ങൾ",
-    "track": "ട്രാക്ക് ചെയ്യുക",
     "skip": "പ്രധാന ഉള്ളടക്കത്തിലേക്ക് പോകുക",
     "voiceGuide": "ശബ്ദം",
     "voiceOn": "ഓൺ",
@@ -26,7 +25,6 @@
     "heroTitleEm": "ഞങ്ങൾ ശരിയായ വഴി കാണിക്കുന്നു.",
     "promise": "അനുയോജ്യമായ സർക്കാർ വായ്പാ പദ്ധതി കണ്ടെത്തുക, ആനുകൂല്യങ്ങൾ താരതമ്യം ചെയ്യുക, സമീപത്തുള്ള വിശ്വസ്ത പങ്കാളി ബാങ്ക് കണ്ടെത്തുക — മിനിറ്റുകൾക്കുള്ളിൽ.",
     "cta": "എന്റെ പദ്ധതി കണ്ടെത്തുക",
-    "trackCta": "അപേക്ഷ ട്രാക്ക് ചെയ്യുക",
     "calcCta": "EMI കാൽക്കുലേറ്റർ ഉപയോഗിക്കുക",
     "heroProofTime": "3 മിനിറ്റ്",
     "heroProofTimeLabel": "പരിശോധിക്കാൻ",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "ആധാർ, ജാതി സർട്ടിഫിക്കറ്റ്, പ്രോജക്റ്റ് രേഖകൾ എന്നിവയുടെ വ്യക്തമായ ഫോട്ടോകൾ കരുതുക.",
       "ഫോണിൽ ബുദ്ധിമുട്ടാണെങ്കിൽ കമ്പ്യൂട്ടറിൽ ബാങ്ക് പോർട്ടൽ തുറക്കുക.",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "നിങ്ങളുടെ അപേക്ഷ എവിടെ എത്തി എന്ന് കൃത്യമായി അറിയുക",
-    "subtitle": "അപേക്ഷ സമർപ്പിച്ചതിന് ശേഷം ലഭിച്ച റഫറൻസ് നമ്പർ നൽകുക.",
-    "placeholder": "നിങ്ങളുടെ റഫറൻസ് നമ്പർ നൽകുക (ഉദാ. SS-2026-10001)",
-    "go": "നില പരിശോധിക്കുക",
-    "emptyError": "ദയവായി നിങ്ങളുടെ അപേക്ഷാ റഫറൻസ് നമ്പർ നൽകുക.",
-    "notFound": "{ref} എന്നതിനായി അപേക്ഷയൊന്നും കണ്ടെത്തിയില്ല. നമ്പർ പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക.",
-    "pending": "നടപടി ആവശ്യമാണ്",
-    "rejected": "നിരസിച്ചതിന്റെ വിശകലനം",
-    "fix": "അടുത്തതായി എന്ത് തിരുത്തണം",
-    "whereStands": "അപേക്ഷാ പുരോഗതി",
-    "actionNeeded": "നടപടി ആവശ്യമാണ്",
-    "daysSince": "ദിവസം മുമ്പ് സമർപ്പിച്ചു",
-    "whatNext": "അടുത്തതായി എന്ത് ചെയ്യണം"
   },
   "chat": {
     "title": "സാരഥി AI സഹായി",

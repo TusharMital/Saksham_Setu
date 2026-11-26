@@ -23,7 +23,7 @@ function buildChannelConfig(channelKey, scheme) {
       steps: [
         "Register with Aadhaar-linked mobile number on PM-SURAJ.",
         `Select ${scheme?.name || "your matched scheme"} and upload caste & income certificates.`,
-        "Track sanction status directly with your State Channelising Agency or bank.",
+        "Check sanction status directly on the PM-SURAJ portal or with your State Channelising Agency / bank.",
       ],
       externalUrl: "https://pmsuraj.dosje.gov.in/",
       externalLabel: "Open PM-SURAJ Portal",
@@ -169,7 +169,7 @@ function buildChannelConfig(channelKey, scheme) {
 
 export default function ApplyPath() {
   const { t } = useI18n();
-  const { form, scheme, setScheme, branch, refNo, setRefNo } = useAppState();
+  const { scheme, setScheme, branch } = useAppState();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -185,8 +185,6 @@ export default function ApplyPath() {
     Boolean(activeCode && scheme?.code?.toUpperCase() !== activeCode.toUpperCase())
   );
   const [schemeError, setSchemeError] = useState("");
-  const [savingApp, setSavingApp] = useState(false);
-  const [saveNotice, setSaveNotice] = useState("");
 
   // Load 66 schemes for searchable/grouped selector
   useEffect(() => {
@@ -262,36 +260,6 @@ export default function ApplyPath() {
   const handleSelectScheme = (code) => {
     if (!code) return;
     navigate(`/apply?scheme=${encodeURIComponent(code)}`);
-  };
-
-  const handleSaveAndTrack = async () => {
-    setSaveNotice("");
-    if (refNo && loadedScheme?.code) {
-      navigate("/track");
-      return;
-    }
-    if (!form.full_name?.trim()) {
-      setSaveNotice(t("paths.needProfileForTrack"));
-      return;
-    }
-    setSavingApp(true);
-    try {
-      const data = await api.createApplication({
-        ...form,
-        applicant_name: form.full_name.trim(),
-        scheme_code: loadedScheme.code,
-        partner: branch?.name || "To be chosen",
-        partner_block: branch
-          ? `${branch.name}, ${branch.address}, ${branch.phone || ""}`
-          : "To be chosen",
-      });
-      setRefNo(data.ref_no);
-      navigate("/track");
-    } catch (err) {
-      setSaveNotice(err.body?.detail || err.message || "Could not save application.");
-    } finally {
-      setSavingApp(false);
-    }
   };
 
   // Gate when NO scheme is selected
@@ -443,21 +411,13 @@ export default function ApplyPath() {
           <Icon name="arrow" size={17} />
         </Link>
 
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={handleSaveAndTrack}
-          disabled={savingApp || loading}
+        <Link
+          to={`/calculator?scheme=${encodeURIComponent(selectedScheme.code)}`}
+          className="btn btn-outline"
         >
-          <Icon name="track" size={17} />
-          <span>
-            {savingApp
-              ? "Saving..."
-              : refNo
-                ? `Track Saved Application (${refNo}) →`
-                : t("paths.saveAndTrack")}
-          </span>
-        </button>
+          <Icon name="calc" size={17} />
+          <span>{t("detail.viewInCalc")}</span>
+        </Link>
 
         <Link
           to={`/scheme/${encodeURIComponent(selectedScheme.code)}`}
@@ -467,21 +427,6 @@ export default function ApplyPath() {
           <span>{t("detail.docsTitle")}</span>
         </Link>
       </div>
-
-      {saveNotice && (
-        <div className="error-banner" style={{ marginBottom: "1.25rem" }} role="status">
-          <Icon name="alert" size={18} />
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
-            <p style={{ margin: 0 }}>{saveNotice}</p>
-            <Link to="/form" className="btn btn-outline btn-sm">
-              <span>{t("nav.find")}</span>
-            </Link>
-            <Link to="/track" className="btn btn-outline btn-sm">
-              <span>{t("nav.track")}</span>
-            </Link>
-          </div>
-        </div>
-      )}
 
       {loading ? (
         <div className="tracker-skeleton-card">

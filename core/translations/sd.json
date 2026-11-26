@@ -11,7 +11,6 @@
     "calculator": "EMI ڪيلڪيوليٽر",
     "locator": "بينڪ ڳوليو",
     "paths": "درخواست جا رستا",
-    "track": "ٽريڪ ڪريو",
     "skip": "مکيه مواد ڏانهن وڃو",
     "voiceGuide": "آواز",
     "voiceOn": "آن",
@@ -26,7 +25,6 @@
     "heroTitleEm": "اسين ڏيکاريون ٿا صحيح رستو.",
     "promise": "صحيح سرڪاري قرض اسڪيم ڳوليو، فائدن جو مقابلو ڪريو ۽ ويجهو قابل اعتماد پارٽنر بينڪ حاصل ڪريو — ڪجهه منٽن ۾.",
     "cta": "منهنجي اسڪيم ڳوليو",
-    "trackCta": "درخواست ٽريڪ ڪريو",
     "calcCta": "EMI ڪيلڪيوليٽر آزمايو",
     "heroProofTime": "3 منٽ",
     "heroProofTimeLabel": "جاچ لاءِ",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "آڌار، ذات سرٽيفڪيٽ ۽ پروجيڪٽ ڪاغذن جون صاف تصويرون رکو.",
       "فون تي ڏکيو لڳي ته ڪمپيوٽر تي بينڪ پورٽل کوليو.",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "ڄاڻو توهان جي درخواست ڪٿي پهتي آهي",
-    "subtitle": "درخواست جمع ڪرائڻ کان پوءِ مليل حوالو نمبر داخل ڪريو.",
-    "placeholder": "پنهنجو حوالو نمبر داخل ڪريو (مثال طور SS-2026-10001)",
-    "go": "حالت ڏسو",
-    "emptyError": "مهرباني ڪري پنهنجو درخواست حوالو نمبر داخل ڪريو.",
-    "notFound": "{ref} لاءِ ڪا به درخواست نه ملي. نمبر چيڪ ڪري ٻيهر ڪوشش ڪريو.",
-    "pending": "ڪارروائي گهربل",
-    "rejected": "رد ٿيڻ جو تجزيو",
-    "fix": "اڳتي ڇا درست ڪجي",
-    "whereStands": "درخواست جي اڳڀرائي",
-    "actionNeeded": "ڪارروائي گهربل",
-    "daysSince": "ڏينهن اڳ جمع",
-    "whatNext": "اڳتي ڇا ڪجي"
   },
   "chat": {
     "title": "سارٿي AI مددگار",

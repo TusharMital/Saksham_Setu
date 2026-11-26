@@ -11,7 +11,6 @@
     "calculator": "EMI કેલ્ક્યુલેટર",
     "locator": "બેંક શોધો",
     "paths": "અરજીના રસ્તા",
-    "track": "ટ્રેક કરો",
     "skip": "મુખ્ય સામગ્રી પર જાઓ",
     "voiceGuide": "અવાજ",
     "voiceOn": "ચાલુ",
@@ -26,7 +25,6 @@
     "heroTitleEm": "અમે બતાવીએ છીએ સાચો રસ્તો.",
     "promise": "યોગ્ય સરકારી લોન યોજના શોધો, લાભોની તુલના કરો અને નજીકની વિશ્વસનીય ભાગીદાર બેંક મેળવો — થોડી જ મિનિટોમાં.",
     "cta": "મારી યોજના શોધો",
-    "trackCta": "અરજી ટ્રેક કરો",
     "calcCta": "EMI કેલ્ક્યુલેટર અજમાવો",
     "heroProofTime": "૩ મિનિટ",
     "heroProofTimeLabel": "તપાસ માટે",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "આધાર, જાતિ પ્રમાણપત્ર અને પ્રોજેક્ટ કાગળોના સ્પષ્ટ ફોટા રાખો.",
       "ફોનમાં મુશ્કેલ લાગે તો કમ્પ્યુટર પર બેંક પોર્ટલ ખોલો.",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "તમારી અરજી ક્યાં પહોંચી છે તે જાણો",
-    "subtitle": "તમારી અરજી સબમિટ કર્યા પછી મળેલો સંદર્ભ નંબર દાખલ કરો.",
-    "placeholder": "તમારો સંદર્ભ નંબર દાખલ કરો (દા.ત. SS-2026-10001)",
-    "go": "સ્થિતિ તપાસો",
-    "emptyError": "કૃપા કરીને તમારો અરજી સંદર્ભ નંબર દાખલ કરો.",
-    "notFound": "{ref} માટે કોઈ અરજી મળી નથી. સંદર્ભ નંબર તપાસી ફરી પ્રયાસ કરો.",
-    "pending": "કાર્યવાહી જરૂરી",
-    "rejected": "અસ્વીકારનું વિશ્લેષણ",
-    "fix": "આગળ શું સુધારવું",
-    "whereStands": "અરજીની પ્રગતિ",
-    "actionNeeded": "કાર્યવાહી જરૂરી",
-    "daysSince": "દિવસ પહેલાં જમા",
-    "whatNext": "આગળ શું કરવું"
   },
   "chat": {
     "title": "સારથી AI સહાયક",

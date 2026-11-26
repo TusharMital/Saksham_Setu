@@ -11,7 +11,6 @@
     "calculator": "EMI کیلکولیٹر",
     "locator": "بینک تلاش کریں",
     "paths": "درخواست کے راستے",
-    "track": "ٹریک کریں",
     "skip": "مرکزی مواد پر جائیں",
     "voiceGuide": "آواز",
     "voiceOn": "آن",
@@ -26,7 +25,6 @@
     "heroTitleEm": "ہم دکھاتے ہیں صحیح راستہ۔",
     "promise": "صحیح سرکاری قرض اسکیم تلاش کریں، فوائد کا موازنہ کریں اور قریب ہی قابل اعتماد پارٹنر بینک پائیں — چند منٹوں میں۔",
     "cta": "میری اسکیم تلاش کریں",
-    "trackCta": "درخواست ٹریک کریں",
     "calcCta": "EMI کیلکولیٹر آزمائیں",
     "heroProofTime": "3 منٹ",
     "heroProofTimeLabel": "جانچ کے لیے",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "آدھار، ذات سرٹیفکیٹ اور پروجیکٹ کاغذات کی واضح تصاویر ساتھ رکھیں۔",
       "فون پر مشکل ہو تو کمپیوٹر پر بینک پورٹل کھولیں۔",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "جانیں آپ کی درخواست کس مرحلے میں ہے",
-    "subtitle": "درخواست جمع کرانے کے بعد موصول ہونے والا حوالہ نمبر درج کریں۔",
-    "placeholder": "اپنا حوالہ نمبر درج کریں (مثلاً SS-2026-10001)",
-    "go": "اسٹیٹس دیکھیں",
-    "emptyError": "براہ کرم اپنا درخواست حوالہ نمبر درج کریں۔",
-    "notFound": "{ref} کے لیے کوئی درخواست نہیں ملی۔ نمبر چیک کر کے دوبارہ کوشش کریں۔",
-    "pending": "کارروائی درکار ہے",
-    "rejected": "مسترد ہونے کی وجوہات",
-    "fix": "آگے کیا درست کریں",
-    "whereStands": "درخواست کی پیشرفت",
-    "actionNeeded": "کارروائی درکار",
-    "daysSince": "دن پہلے جمع کرائی گئی",
-    "whatNext": "آگے کیا کرنا ہے"
   },
   "chat": {
     "title": "سارتھی AI اسسٹنٹ",

@@ -11,7 +11,6 @@
     "calculator": "EMI सानखौरां",
     "locator": "बैंक नागिर",
     "paths": "आरज गावनि लामा",
-    "track": "नायबिजिर",
     "skip": "गाहाय बाहागोआव थां",
     "voiceGuide": "गारां",
     "voiceOn": "सालु",
@@ -26,7 +25,6 @@
     "heroTitleEm": "जों थार लामा दिन्थियो।",
     "promise": "थार सरकारी दाहार बिथांखि नागिर, खाबुफोरखौ रुजु आरो नोंनि खाथियाव बाहागि बैंक नागिर — बेसेबा मिनिटावनो।",
     "cta": "आंनि बिथांखि नागिर",
-    "trackCta": "आरज नायबिजिर",
     "calcCta": "EMI सानखौरां आनजाद खालाम",
     "heroProofTime": "३ मिनिट",
     "heroProofTimeLabel": "आनजाद नायनो",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "आधार, जाति फोरमान बिलाइ आरो बिथांखि लेखाफोरनि रोखा फट' लाखि।",
       "फनआव गोब्राब मोनब्ला कम्पिउटारआव बैंक पर्टेल खेव।",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "नोंनि आरजआ बबे थासारियाव दं मिथि",
-    "subtitle": "नोंनि आरज जमा खालामनायनि उनाव मोननाय रेफारेन्स अनजिमाखौ लिर।",
-    "placeholder": "नोंनि रेफारेन्स अनजिमा लिर (जेरै SS-2026-10001)",
-    "go": "थासारि नाय",
-    "emptyError": "अननानै नोंनि आरज रेफारेन्स अनजिमा लिर।",
-    "notFound": "{ref} नि थाखाय जेबो आरज मोननाय जायाखै। अनजिमाखौ नायफिननानै नाजाफिन।",
-    "pending": "खामानि गोनां",
-    "rejected": "नेवसिजानायनि बिजिरनाय",
-    "fix": "उनाव मा सुद्रायगोन",
-    "whereStands": "आरज दावगानाय",
-    "actionNeeded": "खामानि गोनां",
-    "daysSince": "सान सिगां जमा",
-    "whatNext": "उनाव मा खालामनांगौ"
   },
   "chat": {
     "title": "सारथि AI मददगार",

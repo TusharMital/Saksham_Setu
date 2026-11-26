@@ -11,7 +11,6 @@
     "calculator": "EMI ಕ್ಯಾಲ್ಕುಲೇಟರ್",
     "locator": "ಬ್ಯಾಂಕ್ ಹುಡುಕಿ",
     "paths": "ಅರ್ಜಿ ಮಾರ್ಗಗಳು",
-    "track": "ಟ್ರ್ಯಾಕ್ ಮಾಡಿ",
     "skip": "ಮುಖ್ಯ ವಿಷಯಕ್ಕೆ ಹೋಗಿ",
     "voiceGuide": "ಧ್ವನಿ",
     "voiceOn": "ಆನ್",
@@ -26,7 +25,6 @@
     "heroTitleEm": "ನಾವು ತೋರಿಸುತ್ತೇವೆ ಸರಿಯಾದ ದಾರಿ.",
     "promise": "ಸರಿಯಾದ ಸರ್ಕಾರಿ ಸಾಲ ಯೋಜನೆಯನ್ನು ಹುಡುಕಿ, ಪ್ರಯೋಜನಗಳನ್ನು ಹೋಲಿಸಿ ಮತ್ತು ಹತ್ತಿರದ ನಂಬಿಕಸ್ತ ಪಾಲುದಾರ ಬ್ಯಾಂಕ್ ಪಡೆಯಿರಿ — ಕೆಲವೇ ನಿಮಿಷಗಳಲ್ಲಿ.",
     "cta": "ನನ್ನ ಯೋಜನೆ ಹುಡುಕಿ",
-    "trackCta": "ಅರ್ಜಿ ಟ್ರ್ಯಾಕ್ ಮಾಡಿ",
     "calcCta": "EMI ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಪ್ರಯತ್ನಿಸಿ",
     "heroProofTime": "3 ನಿಮಿಷ",
     "heroProofTimeLabel": "ಪರಿಶೀಲಿಸಲು",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "ಆಧಾರ್, ಜಾತಿ ಪ್ರಮಾಣಪತ್ರ ಮತ್ತು ಯೋಜನಾ ದಾಖಲೆಗಳ ಸ್ಪಷ್ಟ ಫೋಟೋಗಳನ್ನು ಇಟ್ಟುಕೊಳ್ಳಿ.",
       "ಫೋನ್‌ನಲ್ಲಿ ಕಷ್ಟವಾದರೆ ಕಂಪ್ಯೂಟರ್‌ನಲ್ಲಿ ಬ್ಯಾಂಕ್ ಪೋರ್ಟಲ್ ತೆರೆಯಿರಿ.",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "ನಿಮ್ಮ ಅರ್ಜಿ ಯಾವ ಹಂತದಲ್ಲಿದೆ ತಿಳಿಯಿರಿ",
-    "subtitle": "ನಿಮ್ಮ ಅರ್ಜಿ ಸಲ್ಲಿಸಿದ ನಂತರ ಪಡೆದ ಉಲ್ಲೇಖ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ.",
-    "placeholder": "ನಿಮ್ಮ ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ (ಉದಾ. SS-2026-10001)",
-    "go": "ಸ್ಥಿತಿ ನೋಡಿ",
-    "emptyError": "ದಯವಿಟ್ಟು ನಿಮ್ಮ ಅರ್ಜಿ ಉಲ್ಲೇಖ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ.",
-    "notFound": "{ref} ಗಾಗಿ ಯಾವುದೇ ಅರ್ಜಿ ಕಂಡುಬಂದಿಲ್ಲ. ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
-    "pending": "ಕ್ರಮ ಅಗತ್ಯವಿದೆ",
-    "rejected": "ತಿರಸ್ಕಾರ ಕಾರಣ ವಿಶ್ಲೇಷಣೆ",
-    "fix": "ಮುಂದೆ ಏನು ಸರಿಪಡಿಸಬೇಕು",
-    "whereStands": "ಅರ್ಜಿಯ ಪ್ರಗತಿ",
-    "actionNeeded": "ಕ್ರಮ ಅಗತ್ಯವಿದೆ",
-    "daysSince": "ದಿನಗಳ ಹಿಂದೆ ಸಲ್ಲಿಸಲಾಗಿದೆ",
-    "whatNext": "ಮುಂದೆ ಏನು ಮಾಡಬೇಕು"
   },
   "chat": {
     "title": "ಸಾರಥಿ AI ಸಹಾಯಕ",

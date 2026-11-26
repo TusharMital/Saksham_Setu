@@ -11,7 +11,6 @@
     "calculator": "EMI Calculator",
     "locator": "Find Bank",
     "paths": "Application Paths",
-    "track": "Track",
     "skip": "Skip to main content",
     "voiceGuide": "Voice",
     "voiceOn": "ON",
@@ -26,7 +25,6 @@
     "heroTitleEm": "we help you find the way.",
     "promise": "Discover the right government loan scheme, compare benefits, and find a trusted partner bank near you — in minutes.",
     "cta": "Find My Scheme",
-    "trackCta": "Track Application",
     "calcCta": "Try EMI Calculator",
     "heroProofTime": "3 mins",
     "heroProofTimeLabel": "to check",
@@ -71,8 +69,8 @@
     "s2d": "We compare schemes and explain why each one fits.",
     "s3": "Choose a healthy bank",
     "s3d": "Find nearby banks with funds and scheme support.",
-    "s4": "Apply & stay informed",
-    "s4d": "Get document help and track every application stage.",
+    "s4": "Apply on official portals",
+    "s4d": "Check scheme documents and apply directly via verified government portals or partner branches.",
     "voiceBannerTitle": "Prefer listening instead of reading?",
     "voiceBannerDesc": "Tap the speaker icon anywhere to hear guidance in your language.",
     "voiceBannerBtn": "Try voice guidance",
@@ -245,14 +243,12 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme first to generate a persistent Tracking ID.",
     "stepsBank": [
       "Keep Aadhaar, caste certificate and project papers as photos.",
       "Open the bank portal on a computer if the phone page is hard to use.",
       "Fill the form slowly. Do not guess numbers.",
       "Upload clear photos. Dark or cut photos get sent back.",
-      "Note the acknowledgement number and come back here to track."
+      "Note the acknowledgement number to check status directly on the official bank portal."
     ],
     "stepsGovt": [
       "Confirm the scheme name on the government site.",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "Know exactly where your application stands",
-    "subtitle": "Enter the reference number you received after submitting your application.",
-    "placeholder": "Enter your reference number (e.g. SS-2026-10001)",
-    "go": "Track Status",
-    "emptyError": "Please enter your application reference number.",
-    "notFound": "No application found for {ref}. Check the reference number and try again.",
-    "pending": "Action Needed",
-    "rejected": "Rejection Diagnostics",
-    "fix": "What to fix next",
-    "whereStands": "Application progress",
-    "actionNeeded": "ACTION NEEDED",
-    "daysSince": "days since submission",
-    "whatNext": "What to do next"
   },
   "chat": {
     "title": "Sarthi AI Assistant",

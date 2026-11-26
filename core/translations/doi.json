@@ -11,7 +11,6 @@
     "calculator": "EMI कैलकुलेटर",
     "locator": "बैंक लब्भो",
     "paths": "दरख्वास्त दे रस्ते",
-    "track": "ट्रैक करो",
     "skip": "मुक्ख हिस्से पर जाओ",
     "voiceGuide": "अवाज",
     "voiceOn": "चालू",
@@ -26,7 +25,6 @@
     "heroTitleEm": "अस दस्सने आं सही रस्ता।",
     "promise": "सही सरकारी कर्ज योजना लब्भो, फायदें दी तुलना करो ते नेड़े भरोसेमंद हिस्सेदार बैंक पाओ — कुछ मिंटें च।",
     "cta": "मेरी योजना लब्भो",
-    "trackCta": "दरख्वास्त ट्रैक करो",
     "calcCta": "EMI कैलकुलेटर अजमाओ",
     "heroProofTime": "३ मिंट",
     "heroProofTimeLabel": "जांच आस्तै",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "आधार, जात सर्टिफिकेट ते प्रोजेक्ट कागजें दियां साफ फोटो रक्खो।",
       "फोन पर औखा लग्गै तां कंप्यूटर पर बैंक पोर्टल खोल्हो।",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "जानो तुंदी दरख्वास्त कुत्थें पुज्जी ऐ",
-    "subtitle": "दरख्वास्त जमा करने शा बाद मिल्या संदर्भ नंबर पाओ।",
-    "placeholder": "अपना संदर्भ नंबर पाओ (जि'यां SS-2026-10001)",
-    "go": "हाल दिक्खो",
-    "emptyError": "कृपया अपना दरख्वास्त संदर्भ नंबर पाओ।",
-    "notFound": "{ref} आस्तै कोई दरख्वास्त नेईं लब्भी। नंबर जांची यै परतियै कोशिश करो।",
-    "pending": "कार्रवाई लोड़िंदी",
-    "rejected": "नामंजूरी विश्लेषण",
-    "fix": "अग्गें केह् ठीक करना ऐ",
-    "whereStands": "दरख्वास्त दी तरक्की",
-    "actionNeeded": "कार्रवाई लोड़िंदी",
-    "daysSince": "दिन पैह्लें जमा",
-    "whatNext": "अग्गें केह् करना ऐ"
   },
   "chat": {
     "title": "सारथी AI मददगार",

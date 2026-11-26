@@ -11,7 +11,6 @@
     "calculator": "EMI ক্যালকুলেটর",
     "locator": "ব্যাংক খুঁজুন",
     "paths": "আবেদনের পথ",
-    "track": "ট্র্যাক করুন",
     "skip": "মূল বিষয়বস্তুতে যান",
     "voiceGuide": "ভয়েস",
     "voiceOn": "চালু",
@@ -26,7 +25,6 @@
     "heroTitleEm": "আমরা দেখাই সঠিক পথ।",
     "promise": "আপনার জন্য সঠিক সরকারি ঋণ প্রকল্প খুঁজুন, সুবিধা তুলনা করুন এবং কাছেই তহবিলযুক্ত অংশীদার ব্যাংক পান — মাত্র কয়েক মিনিটে।",
     "cta": "আমার প্রকল্প খুঁজুন",
-    "trackCta": "আবেদন ট্র্যাক করুন",
     "calcCta": "EMI ক্যালকুলেটর দেখুন",
     "heroProofTime": "৩ মিনিট",
     "heroProofTimeLabel": "যাচাই করতে",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "আধার, জাতি শংসাপত্র এবং প্রকল্পের কাগজপত্রের স্পষ্ট ছবি রাখুন।",
       "ফোনে কঠিন মনে হলে কম্পিউটারে ব্যাংক পোর্টাল খুলুন।",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "আপনার আবেদন ঠিক কোন পর্যায়ে আছে জানুন",
-    "subtitle": "আবেদন জমা দেওয়ার পর প্রাপ্ত রেফারেন্স নম্বরটি লিখুন।",
-    "placeholder": "আপনার রেফারেন্স নম্বর লিখুন (যেমন SS-2026-10001)",
-    "go": "অবস্থা দেখুন",
-    "emptyError": "অনুগ্রহ করে আপনার আবেদন রেফারেন্স নম্বর লিখুন।",
-    "notFound": "{ref} এর জন্য কোনো আবেদন পাওয়া যায়নি। রেফারেন্স নম্বর যাচাই করে আবার চেষ্টা করুন।",
-    "pending": "পদক্ষেপ প্রয়োজন",
-    "rejected": "বাতিলের কারণ বিশ্লেষণ",
-    "fix": "পরবর্তীতে কী সংশোধন করবেন",
-    "whereStands": "আবেদনের অগ্রগতি",
-    "actionNeeded": "পদক্ষেপ প্রয়োজন",
-    "daysSince": "দিন আগে জমা হয়েছে",
-    "whatNext": "পরবর্তীতে কী করবেন"
   },
   "chat": {
     "title": "সারথি AI সহায়ক",

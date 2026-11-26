@@ -528,7 +528,7 @@ Output summary (3 lines):
 What worked: End-to-end filtering across Central + State schemes, visual EMI repayment curves, side-by-side comparison, and clear rejection explanations.
 What failed or was missing: Newly added scheme descriptions, document checklists, and dynamic rejection reasons still display in English when a regional language is selected (queued for Bhumi's final translation & bug-fix pass after all features are added).
 Did it follow the rules? Yes.
-Next prompt it led to: Next feature addition, followed by Bhumi's full-site 23-language translation & polish pass (P8b) and Claude security review (P9).
+translation & polish pass (P8b) and Claude security review (P9).
 Screenshot file names: `docs/05_Website_Screenshots/p7_results_compare_dropdown_rejected.png`, `docs/05_Website_Screenshots/p7_scheme_detail_emi_graph.png`, `docs/05_Website_Screenshots/p7_scheme_compare_split.png`, `docs/05_Website_Screenshots/p7_apply_filtered_channel.png`
 
 ---
@@ -544,7 +544,7 @@ Output summary (3 lines):
 What worked: Smooth sliding + exact typing in Custom mode, clear visual lock when inspecting a government scheme, and instant SVG graph updates.
 What failed or was missing: None (new labels queued for Bhumi's final 23-language translation pass in P8b).
 Did it follow the rules? Yes.
-Next prompt it led to: Any final feature additions, followed by Bhumi's full-site 23-language translation & polish pass (P8b) and Claude security review (P9).
+translation & polish pass (P8b) and Claude security review (P9).
 Screenshot file names: `docs/05_Website_Screenshots/p7c_emi_calc_custom_slider_graph.png`, `docs/05_Website_Screenshots/p7c_emi_calc_scheme_locked.png`
 
 ---
@@ -560,7 +560,6 @@ Output summary (3 lines):
 What worked: Free zero-API-key live bank discovery for any Indian PIN/GPS, accurate directions & calling, and complete visibility into each bank's supported schemes and branches.
 What failed or was missing: None (new labels queued for Bhumi's final 23-language translation pass in P8b).
 Did it follow the rules? Yes.
-Next prompt it led to: Bhumi's full-site 23-language translation & polish pass (P8b), Claude security review (P9), and Render deployment.
 Screenshot file names: `docs/05_Website_Screenshots/p7d_bank_locator_live_map.png`, `docs/05_Website_Screenshots/p7d_bank_portal_more_details.png`
 
 ---
@@ -576,7 +575,6 @@ Output summary (3 lines):
 What worked: Eliminated generic unlinked application paths so users progress naturally from eligibility matching (`/results`) → scheme details (`/scheme/:code`) → valid application channels (`/apply?scheme=<code>`) → nearby partner banks (`/locator?scheme=<code>`).
 What failed or was missing: None (new labels queued for Bhumi's final 23-language translation pass in P8b).
 Did it follow the rules? Yes.
-Next prompt it led to: Bhumi's full-site 23-language translation & polish pass (P8b), Claude security review (P9), and deployment.
 
 ---
 
@@ -591,5 +589,18 @@ Output summary (3 lines):
 What worked: Streamlined navigation down to 4 focused top-level items (`Home`, `Find Scheme`, `EMI Calculator`, `Track`) with zero dead links.
 What failed or was missing: None.
 Did it follow the rules? Yes.
-Next prompt it led to: Bhumi's final full-site 23-language translation & polish pass (P8b) and Claude security review (P9).
 Screenshot file names: `docs/05_Website_Screenshots/p7f_removed_documents_nav.png`
+
+---
+
+### P7g | Antigravity | Remove Application Tracker Page & All Site References
+Date: 2026-11-26
+Run by: Tushar (25bcon2455) & Bhumi (25bcon2360)
+Prompt (exact text): Find every occurrence of `/track`, `Tracker.jsx`, navbar tab, footer link, and internal route references across the entire website and delete them completely, since real government portals protect live application statuses behind personal login, OTP, and CAPTCHA.
+Output summary (3 lines):
+- Deleted `frontend/src/pages/Tracker.jsx` and removed `/track` from `App.jsx`, the top navbar, and the footer in `Layout.jsx`.
+- Removed all internal `/track` links and prompts across frontend pages and `core/chatbot.py`, leaving focused navigation (`Home`, `Find Scheme`, `EMI Calculator`).
+- All Django tests, Vite production build, and `collectstatic` passed.
+What worked: Eliminated simulated/local application tracking so every navigation item maps directly to real scheme discovery, EMI calculation, and official portal/bank handoff.
+What failed or was missing: None.
+Did it follow the rules? Yes.

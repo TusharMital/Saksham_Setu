@@ -11,7 +11,6 @@
     "calculator": "EMI क्याल्कुलेटर",
     "locator": "बैंक खोज्नुहोस्",
     "paths": "आवेदन मार्गहरू",
-    "track": "ट्र्याक गर्नुहोस्",
     "skip": "मुख्य सामग्रीमा जानुहोस्",
     "voiceGuide": "आवाज",
     "voiceOn": "चालु",
@@ -26,7 +25,6 @@
     "heroTitleEm": "हामी देखाउँछौं सही बाटो।",
     "promise": "सही सरकारी ऋण योजना खोज्नुहोस्, लाभहरूको तुलना गर्नुहोस् र नजिकको भरपर्दो साझेदार बैंक पाउनुहोस् — केही मिनेटमै।",
     "cta": "मेरो योजना खोज्नुहोस्",
-    "trackCta": "आवेदन ट्र्याक गर्नुहोस्",
     "calcCta": "EMI क्याल्कुलेटर चलाउनुहोस्",
     "heroProofTime": "३ मिनेट",
     "heroProofTimeLabel": "जाँच गर्न",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "आधार, जात प्रमाणपत्र र परियोजना कागजातका स्पष्ट फोटो राख्नुहोस्।",
       "फोनमा गाह्रो लागेमा कम्प्युटरमा बैंक पोर्टल खोल्नुहोस्।",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "तपाईंको आवेदन कहाँ पुग्यो थाहा पाउनुहोस्",
-    "subtitle": "आवेदन बुझाएपछि प्राप्त सन्दर्भ नम्बर प्रविष्ट गर्नुहोस्।",
-    "placeholder": "आफ्नो सन्दर्भ नम्बर राख्नुहोस् (जस्तै SS-2026-10001)",
-    "go": "स्थिति हेर्नुहोस्",
-    "emptyError": "कृपया आफ्नो आवेदन सन्दर्भ नम्बर राख्नुहोस्।",
-    "notFound": "{ref} को लागि कुनै आवेदन भेटिएन। नम्बर जाँचेर फेरि प्रयास गर्नुहोस्।",
-    "pending": "कारबाही आवश्यक",
-    "rejected": "अस्वीकृतिको विश्लेषण",
-    "fix": "अर्को के सच्याउने",
-    "whereStands": "आवेदनको प्रगति",
-    "actionNeeded": "कारबाही आवश्यक",
-    "daysSince": "दिनअघि पेश गरिएको",
-    "whatNext": "अर्को के गर्ने"
   },
   "chat": {
     "title": "सारथी AI सहायक",

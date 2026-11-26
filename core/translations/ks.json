@@ -11,7 +11,6 @@
     "calculator": "EMI کیلکولیٹر",
     "locator": "بینک ژھارِو",
     "paths": "درخواستٕکۍ وتہٕ",
-    "track": "ٹریک کٔرِو",
     "skip": "مرکزی موادَس پؠٹھ گژھِو",
     "voiceGuide": "آواز",
     "voiceOn": "آن",
@@ -26,7 +25,6 @@
     "heroTitleEm": "أسۍ چھِ ہاوان صحیٖح وتھ۔",
     "promise": "صحیٖح سرکٲری قرض اسکیم ژھارِو، فٲیدَن ہُنٛد موازنہٕ کٔرِو تہٕ نزدیٖک بھروسہٕ مند پارٹنر بینک لٔبِو — کیٚنٛژن مِنٹَن مَنٛز۔",
     "cta": "میٲنۍ اسکیم ژھارِو",
-    "trackCta": "درخواست ٹریک کٔرِو",
     "calcCta": "EMI کیلکولیٹر وُچھِو",
     "heroProofTime": "3 مِنٹ",
     "heroProofTimeLabel": "جانچ کرنہٕ خٲطرٕ",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "آدھار، ذات سرٹیفکیٹ تہٕ پروجیکٹ کاغذاتَن ہٕنٛز صاف فوٹو تھاوِو۔",
       "فونَس پؠٹھ مشکل لگہِ تیلہِ کمپیوٹرَس پؠٹھ بینک پورٹل کھولِو۔",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "زانِو تُہٕنٛز درخواست کَتھ مرحلَس پؠٹھ چھےٚ",
-    "subtitle": "درخواست جمع کرنہٕ پتہٕ مِلمُت حوالہٕ نمبر درج کٔرِو۔",
-    "placeholder": "پنُن حوالہٕ نمبر درج کٔرِو (مثلاً SS-2026-10001)",
-    "go": "حالت وُچھِو",
-    "emptyError": "مہر بٲنی کٔرِتھ پنُن درخواست حوالہٕ نمبر درج کٔرِو۔",
-    "notFound": "{ref} خٲطرٕ گٔیہِ نہٕ کانہہ درخواست لبنہٕ۔ نمبر چیک کٔرِتھ دوبارٕ کوشش کٔرِو۔",
-    "pending": "کاروٲئی ضروٗری",
-    "rejected": "نامنظوٗری ہُنٛد تجزیہٕ",
-    "fix": "برۄنٛہہ کیاہ ٹھیک کرُن چھُ",
-    "whereStands": "درخواستٕچ پیشرفت",
-    "actionNeeded": "کاروٲئی ضروٗری",
-    "daysSince": "دۄہ برۄنٛہہ جمع",
-    "whatNext": "برۄنٛہہ کیاہ کرُن چھُ"
   },
   "chat": {
     "title": "سارتھی AI مددگار",

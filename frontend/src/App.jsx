@@ -7,7 +7,6 @@ import Landing from "./pages/Landing.jsx";
 import BranchLocator from "./pages/BranchLocator.jsx";
 import Results from "./pages/Results.jsx";
 import SchemeDetail from "./pages/SchemeDetail.jsx";
-import Tracker from "./pages/Tracker.jsx";
 
 export default function App() {
   return (
@@ -21,7 +20,6 @@ export default function App() {
         <Route path="/locator" element={<BranchLocator />} />
         <Route path="/calculator" element={<Calculator />} />
         <Route path="/documents" element={<Navigate to="/results" replace />} />
-        <Route path="/track" element={<Tracker />} />
       </Routes>
     </Layout>
   );

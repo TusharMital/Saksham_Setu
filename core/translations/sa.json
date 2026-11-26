@@ -11,7 +11,6 @@
     "calculator": "EMI गणकः",
     "locator": "वित्तकोषान्वेषणम्",
     "paths": "आवेदनमार्गाः",
-    "track": "स्थितिदर्शनम्",
     "skip": "मुख्यविषयं गच्छतु",
     "voiceGuide": "ध्वनिः",
     "voiceOn": "सक्रियः",
@@ -26,7 +25,6 @@
     "heroTitleEm": "वयं सम्यग्मार्गं दर्शयामः।",
     "promise": "योग्यां सर्वकारीयऋणयोजनाम् अन्विष्यन्तु, लाभान् तोलयन्तु, समीपे विश्वस्तं सहभागिवित्तकोषं च प्राप्नुवन्तु — कतिपयैः निमेषैः।",
     "cta": "मम योजनाम् अन्विष्यतु",
-    "trackCta": "आवेदनं पश्यतु",
     "calcCta": "EMI गणकं प्रयुङ्क्ताम्",
     "heroProofTime": "३ निमेषाः",
     "heroProofTimeLabel": "परीक्षणाय",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "आधारपत्रस्य, जातिप्रमाणपत्रस्य, परियोजनाप्रपत्राणां च स्पष्टचित्राणि स्थापयतु।",
       "दूरवाण्यां कठिनं चेत् सङ्गणके वित्तकोषजालपुटम् उद्घाटयतु।",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "भवतः आवेदनं कुत्र तिष्ठति इति सम्यक् जानातु",
-    "subtitle": "आवेदनप्रदानानन्तरं प्राप्तां सन्दर्भसङ्ख्यां प्रविशतु।",
-    "placeholder": "स्वकीयां सन्दर्भसङ्ख्यां प्रविशतु (यथा SS-2026-10001)",
-    "go": "स्थितिं पश्यतु",
-    "emptyError": "कृपया स्वकीयाम् आवेदनसन्दर्भसङ्ख्यां प्रविशतु।",
-    "notFound": "{ref} कृते किमपि आवेदनं न प्राप्तम्। सङ्ख्यां परीक्ष्य पुनः प्रयतताम्।",
-    "pending": "कार्यान्वयनम् आवश्यकम्",
-    "rejected": "अस्वीकृतिकारणविश्लेषणम्",
-    "fix": "अग्रिमं किं शोधनीयम्",
-    "whereStands": "आवेदनप्रगतिः",
-    "actionNeeded": "कार्यान्वयनम् आवश्यकम्",
-    "daysSince": "दिनानि आवेदनात्",
-    "whatNext": "अग्रिमं किं करणीयम्"
   },
   "chat": {
     "title": "सारथिः AI सहायकः",

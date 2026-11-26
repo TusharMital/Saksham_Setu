@@ -11,7 +11,6 @@
     "calculator": "EMI ꯀꯦꯜꯀꯨꯂꯦꯇꯔ",
     "locator": "ꯕꯦꯡꯛ ꯊꯤꯕꯥ",
     "paths": "ꯑꯦꯞꯂꯤꯀꯦꯁꯟ ꯂꯝꯕꯤ",
-    "track": "ꯇ꯭ꯔꯦꯛ ꯇꯧꯕꯥ",
     "skip": "ꯃꯔꯨꯑꯣꯏꯕꯥ ꯁꯔꯨꯛꯇꯥ ꯆꯠꯄꯥ",
     "voiceGuide": "ꯈꯣꯟꯖꯦꯜ",
     "voiceOn": "ꯑꯣꯟ",
@@ -26,7 +25,6 @@
     "heroTitleEm": "ꯑꯩꯈꯣꯏꯅꯥ ꯑꯆꯨꯝꯕꯥ ꯂꯝꯕꯤ ꯇꯥꯛꯂꯤ꯫",
     "promise": "ꯑꯆꯨꯝꯕꯥ ꯂꯩꯉꯥꯛꯀꯤ ꯂꯣꯟ ꯁ꯭ꯀꯤꯝ ꯊꯤꯌꯨ, ꯀꯥꯟꯅꯕꯁꯤꯡ ꯆꯥꯡꯗꯝꯅꯧ ꯑꯃꯁꯨꯡ ꯅꯛꯅꯕꯥ ꯊꯥꯖꯕꯥ ꯌꯥꯕꯥ ꯄꯥꯔꯇꯅꯔ ꯕꯦꯡꯛ ꯐꯪꯎ — ꯃꯤꯅꯤꯠ ꯈꯔꯗꯥ꯫",
     "cta": "ꯑꯩꯒꯤ ꯁ꯭ꯀꯤꯝ ꯊꯤꯌꯨ",
-    "trackCta": "ꯑꯦꯞꯂꯤꯀꯦꯁꯟ ꯇ꯭ꯔꯦꯛ ꯇꯧ",
     "calcCta": "EMI ꯀꯦꯜꯀꯨꯂꯦꯇꯔ ꯆꯥꯡꯌꯦꯡ",
     "heroProofTime": "ꯃꯤꯅꯤꯠ ꯳",
     "heroProofTimeLabel": "ꯌꯦꯡꯁꯤꯟꯅꯕꯥ",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "ꯑꯥꯙꯥꯔ, ꯖꯥꯇꯤ ꯁꯔꯇꯤꯐꯤꯀꯦꯠ ꯑꯃꯁꯨꯡ ꯄ꯭ꯔꯣꯖꯦꯛꯠ ꯆꯦ-ꯆꯥꯡꯒꯤ ꯃꯌꯦꯛ ꯁꯦꯡꯕꯥ ꯐꯣꯇꯣ ꯊꯝꯃꯨ꯫",
       "ꯐꯣꯅꯗꯥ ꯋꯥꯔꯕꯗꯤ ꯀꯝꯄ꯭ꯌꯨꯇꯔꯗꯥ ꯕꯦꯡꯛ ꯄꯣꯔꯇꯦꯜ ꯍꯥꯡꯗꯣꯛꯎ꯫",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "ꯅꯍꯥꯛꯀꯤ ꯑꯦꯞꯂꯤꯀꯦꯁꯟ ꯀꯗꯥꯏꯗꯥ ꯂꯩꯕꯒꯦ ꯈꯪꯎ",
-    "subtitle": "ꯑꯦꯞꯂꯤꯀꯦꯁꯟ ꯊꯥꯔꯕꯥ ꯃꯇꯨꯡꯗꯥ ꯐꯪꯕꯥ ꯔꯦꯐꯔꯦꯟꯁ ꯅꯝꯕꯔ ꯃꯦꯟꯁꯤꯜꯂꯨ꯫",
-    "placeholder": "ꯅꯍꯥꯛꯀꯤ ꯔꯦꯐꯔꯦꯟꯁ ꯅꯝꯕꯔ ꯏꯌꯨ (ꯈꯨꯗꯝ SS-2026-10001)",
-    "go": "ꯐꯤꯚꯝ ꯌꯦꯡꯎ",
-    "emptyError": "ꯆꯥꯟꯕꯤꯗꯨꯅꯥ ꯅꯍꯥꯛꯀꯤ ꯑꯦꯞꯂꯤꯀꯦꯁꯟ ꯔꯦꯐꯔꯦꯟꯁ ꯅꯝꯕꯔ ꯏꯌꯨ꯫",
-    "notFound": "{ref} ꯒꯤꯗꯃꯛ ꯑꯦꯞꯂꯤꯀꯦꯁꯟ ꯑꯃꯠꯇꯥ ꯐꯪꯗꯦ꯫ ꯅꯝꯕꯔ ꯌꯦꯡꯁꯤꯟꯗꯨꯅꯥ ꯑꯃꯨꯛ ꯍꯟꯅꯥ ꯍꯣꯠꯅꯧ꯫",
-    "pending": "ꯊꯕꯛ ꯃꯊꯧ ꯇꯥꯏ",
-    "rejected": "ꯌꯥꯗꯕꯒꯤ ꯃꯔꯝ",
-    "fix": "ꯃꯊꯪꯗꯥ ꯀꯔꯤ ꯆꯨꯝꯊꯣꯛꯀꯅꯤ",
-    "whereStands": "ꯑꯦꯞꯂꯤꯀꯦꯁꯟ ꯆꯥꯎꯈꯠꯄꯥ",
-    "actionNeeded": "ꯊꯕꯛ ꯃꯊꯧ ꯇꯥꯏ",
-    "daysSince": "ꯅꯨꯃꯤꯠ ꯃꯃꯥꯡꯗꯥ ꯊꯥꯈꯤꯕꯥ",
-    "whatNext": "ꯃꯊꯪꯗꯥ ꯀꯔꯤ ꯇꯧꯒꯅꯤ"
   },
   "chat": {
     "title": "ꯁꯥꯔꯊꯤ AI ꯃꯇꯦꯡ ꯄꯥꯡꯕꯥ",

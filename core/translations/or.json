@@ -11,7 +11,6 @@
     "calculator": "EMI କାଲକୁଲେଟର",
     "locator": "ବ୍ୟାଙ୍କ ଖୋଜନ୍ତୁ",
     "paths": "ଆବେଦନ ପଥ",
-    "track": "ଟ୍ରାକ୍ କରନ୍ତୁ",
     "skip": "ମୁଖ୍ୟ ବିଷୟବସ୍ତୁକୁ ଯାଆନ୍ତୁ",
     "voiceGuide": "ସ୍ୱର",
     "voiceOn": "ଅନ୍",
@@ -26,7 +25,6 @@
     "heroTitleEm": "ଆମେ ଦେଖାଉ ସଠିକ୍ ବାଟ।",
     "promise": "ସଠିକ୍ ସରକାରୀ ଋଣ ଯୋଜନା ଖୋଜନ୍ତୁ, ଲାଭ ତୁଳନା କରନ୍ତୁ ଏବଂ ନିକଟସ୍ଥ ବିଶ୍ୱସ୍ତ ଅଂଶୀଦାର ବ୍ୟାଙ୍କ ପାଆନ୍ତୁ — କିଛି ମିନିଟରେ।",
     "cta": "ମୋ ଯୋଜନା ଖୋଜନ୍ତୁ",
-    "trackCta": "ଆବେଦନ ଟ୍ରାକ୍ କରନ୍ତୁ",
     "calcCta": "EMI କାଲକୁଲେଟର ଦେଖନ୍ତୁ",
     "heroProofTime": "୩ ମିନିଟ୍",
     "heroProofTimeLabel": "ଯାଞ୍ଚ ପାଇଁ",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "ଆଧାର, ଜାତି ପ୍ରମାଣପତ୍ର ଏବଂ ପ୍ରକଳ୍ପ କାଗଜପତ୍ରର ସ୍ପଷ୍ଟ ଫଟୋ ରଖନ୍ତୁ।",
       "ଫୋନରେ ଅସୁବିଧା ହେଲେ କମ୍ପ୍ୟୁଟରରେ ବ୍ୟାଙ୍କ ପୋର୍ଟାଲ୍ ଖୋଲନ୍ତୁ।",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "ଆପଣଙ୍କ ଆବେଦନ କେଉଁ ସ୍ଥିତିରେ ଅଛି ଜାଣନ୍ତୁ",
-    "subtitle": "ଆବେଦନ ଦାଖଲ କରିବା ପରେ ମିଳିଥିବା ରେଫରେନ୍ସ ନମ୍ବର ଦିଅନ୍ତୁ।",
-    "placeholder": "ଆପଣଙ୍କ ରେଫରେନ୍ସ ନମ୍ବର ଦିଅନ୍ତୁ (ଯଥା SS-2026-10001)",
-    "go": "ସ୍ଥିତି ଦେଖନ୍ତୁ",
-    "emptyError": "ଦୟାକରି ଆପଣଙ୍କ ଆବେଦନ ରେଫରେନ୍ସ ନମ୍ବର ଦିଅନ୍ତୁ।",
-    "notFound": "{ref} ପାଇଁ କୌଣସି ଆବେଦନ ମିଳିଲା ନାହିଁ। ନମ୍ବର ଯାଞ୍ଚ କରି ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।",
-    "pending": "ପଦକ୍ଷେପ ଆବଶ୍ୟକ",
-    "rejected": "ନାକଚ କାରଣ ବିଶ୍ଳେଷଣ",
-    "fix": "ପରବର୍ତ୍ତୀ କଣ ସୁଧାରିବେ",
-    "whereStands": "ଆବେଦନ ପ୍ରଗତି",
-    "actionNeeded": "ପଦକ୍ଷେପ ଆବଶ୍ୟକ",
-    "daysSince": "ଦିନ ତଳେ ଦାଖଲ",
-    "whatNext": "ପରବର୍ତ୍ତୀ କଣ କରିବେ"
   },
   "chat": {
     "title": "ସାରଥି AI ସହାୟକ",

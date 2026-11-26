@@ -11,7 +11,6 @@
     "calculator": "EMI मेजपी",
     "locator": "बँक सोदात",
     "paths": "अर्जाचे मार्ग",
-    "track": "तपासात",
     "skip": "मुख्य मजकुराचेर वचात",
     "voiceGuide": "आवाज",
     "voiceOn": "चालू",
@@ -26,7 +25,6 @@
     "heroTitleEm": "आमी दाखयतात योग्य मार्ग.",
     "promise": "योग्य सरकारी रीण येवजण सोदात, फायद्यांची तुलना करात आनी लागींची विश्वासू भागीदार बँक मेळयात — कांय मिनटां भितर.",
     "cta": "म्हजी येवजण सोदात",
-    "trackCta": "अर्ज तपासात",
     "calcCta": "EMI मेजपी वापरात",
     "heroProofTime": "३ मिनटां",
     "heroProofTimeLabel": "तपासपाक",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "आधार, जात प्रमाणपत्र आनी प्रकल्प कागदपत्रांचे स्पष्ट फोटो दवरात.",
       "फोनाचेर कठीण दिसल्यार संगणकाचेर बँक पोर्टल उगडात.",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "तुमचो अर्ज खंय पावला तें जाणात",
-    "subtitle": "तुमचो अर्ज सादर केल्या उपरांत मेळिल्लो संदर्भ नंबर घालात.",
-    "placeholder": "तुमचो संदर्भ नंबर घालात (देखीक SS-2026-10001)",
-    "go": "स्थिती पळयात",
-    "emptyError": "कृपया तुमचो अर्ज संदर्भ नंबर घालात.",
-    "notFound": "{ref} खातीर खंयचोच अर्ज मेळूंक ना. नंबर तपासून परत यत्न करात.",
-    "pending": "कारवाय गरजेची",
-    "rejected": "नकाराचें विश्लेषण",
-    "fix": "फुडें कितें सुदारचें",
-    "whereStands": "अर्जाची प्रगती",
-    "actionNeeded": "कारवाय गरजेची",
-    "daysSince": "दिसां पयलीं सादर",
-    "whatNext": "फुडें कितें करचें"
   },
   "chat": {
     "title": "सारथी AI सहाय्यक",

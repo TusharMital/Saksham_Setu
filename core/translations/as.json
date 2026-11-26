@@ -11,7 +11,6 @@
     "calculator": "EMI কেলকুলেটৰ",
     "locator": "বেংক বিচাৰক",
     "paths": "আবেদনৰ পথ",
-    "track": "ট্ৰেক কৰক",
     "skip": "মূল বিষয়বস্তুলৈ যাওক",
     "voiceGuide": "কণ্ঠস্বৰ",
     "voiceOn": "চালু",
@@ -26,7 +25,6 @@
     "heroTitleEm": "আমি আপোনাক সঠিক পথ দেখুৱাওঁ।",
     "promise": "সঠিক চৰকাৰী ঋণ আঁচনি বিচাৰক, সুবিধাসমূহ তুলনা কৰক আৰু ওচৰৰ নিৰ্ভৰযোগ্য অংশীদাৰ বেংক পাওক — কেইমিনিটমানতে।",
     "cta": "মোৰ আঁচনি বিচাৰক",
-    "trackCta": "আবেদন ট্ৰেক কৰক",
     "calcCta": "EMI কেলকুলেটৰ চাওক",
     "heroProofTime": "৩ মিনিট",
     "heroProofTimeLabel": "পৰীক্ষা কৰিবলৈ",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "আধাৰ, জাতি প্ৰমাণপত্ৰ আৰু প্ৰকল্পৰ কাগজ-পত্ৰৰ স্পষ্ট ফটো ৰাখক।",
       "ফোনত অসুবিধা হ'লে কম্পিউটাৰত বেংক প'ৰ্টেল খোলক।",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "আপোনাৰ আবেদন কোন অৱস্থাত আছে জানক",
-    "subtitle": "আবেদন দাখিল কৰাৰ পাছত পোৱা ৰেফাৰেন্স নম্বৰটো দিয়ক।",
-    "placeholder": "আপোনাৰ ৰেফাৰেন্স নম্বৰ লিখক (যেনে SS-2026-10001)",
-    "go": "স্থিতি চাওক",
-    "emptyError": "অনুগ্ৰহ কৰি আপোনাৰ আবেদন ৰেফাৰেন্স নম্বৰ লিখক।",
-    "notFound": "{ref} ৰ বাবে কোনো আবেদন পোৱা নগ'ল। ৰেফাৰেন্স নম্বৰ পৰীক্ষা কৰি পুনৰ চেষ্টা কৰক।",
-    "pending": "ব্যৱস্থা প্ৰয়োজন",
-    "rejected": "নাকচ হোৱাৰ বিশ্লেষণ",
-    "fix": "পৰৱৰ্তী সংশোধন",
-    "whereStands": "আবেদনৰ অগ্ৰগতি",
-    "actionNeeded": "ব্যৱস্থা প্ৰয়োজন",
-    "daysSince": "দিন আগতে দাখিল",
-    "whatNext": "পৰৱৰ্তী পদক্ষেপ"
   },
   "chat": {
     "title": "সাৰথি AI সহায়ক",

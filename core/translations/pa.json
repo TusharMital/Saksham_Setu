@@ -11,7 +11,6 @@
     "calculator": "EMI ਕੈਲਕੁਲੇਟਰ",
     "locator": "ਬੈਂਕ ਲੱਭੋ",
     "paths": "ਅਰਜ਼ੀ ਦੇ ਰਸਤੇ",
-    "track": "ਟਰੈਕ ਕਰੋ",
     "skip": "ਮੁੱਖ ਸਮੱਗਰੀ 'ਤੇ ਜਾਓ",
     "voiceGuide": "ਆਵਾਜ਼",
     "voiceOn": "ਚਾਲੂ",
@@ -26,7 +25,6 @@
     "heroTitleEm": "ਅਸੀਂ ਦਿਖਾਉਂਦੇ ਹਾਂ ਸਹੀ ਰਾਹ।",
     "promise": "ਸਹੀ ਸਰਕਾਰੀ ਕਰਜ਼ਾ ਯੋਜਨਾ ਲੱਭੋ, ਲਾਭਾਂ ਦੀ ਤੁਲਨਾ ਕਰੋ ਅਤੇ ਨੇੜੇ ਭਰੋਸੇਮੰਦ ਭਾਈਵਾਲ ਬੈਂਕ ਪਾਓ — ਕੁਝ ਹੀ ਮਿੰਟਾਂ ਵਿੱਚ।",
     "cta": "ਮੇਰੀ ਯੋਜਨਾ ਲੱਭੋ",
-    "trackCta": "ਅਰਜ਼ੀ ਟਰੈਕ ਕਰੋ",
     "calcCta": "EMI ਕੈਲਕੁਲੇਟਰ ਵਰਤੋ",
     "heroProofTime": "3 ਮਿੰਟ",
     "heroProofTimeLabel": "ਜਾਂਚ ਲਈ",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "ਆਧਾਰ, ਜਾਤੀ ਸਰਟੀਫਿਕੇਟ ਅਤੇ ਪ੍ਰੋਜੈਕਟ ਕਾਗਜ਼ਾਂ ਦੀਆਂ ਸਾਫ਼ ਫੋਟੋਆਂ ਰੱਖੋ।",
       "ਫੋਨ 'ਤੇ ਔਖਾ ਲੱਗੇ ਤਾਂ ਕੰਪਿਊਟਰ 'ਤੇ ਬੈਂਕ ਪੋਰਟਲ ਖੋਲ੍ਹੋ।",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "ਜਾਣੋ ਤੁਹਾਡੀ ਅਰਜ਼ੀ ਕਿੱਥੇ ਪਹੁੰਚੀ ਹੈ",
-    "subtitle": "ਆਪਣੀ ਅਰਜ਼ੀ ਜਮ੍ਹਾਂ ਕਰਨ ਤੋਂ ਬਾਅਦ ਮਿਲਿਆ ਹਵਾਲਾ ਨੰਬਰ ਦਰਜ ਕਰੋ।",
-    "placeholder": "ਆਪਣਾ ਹਵਾਲਾ ਨੰਬਰ ਦਰਜ ਕਰੋ (ਜਿਵੇਂ SS-2026-10001)",
-    "go": "ਸਥਿਤੀ ਦੇਖੋ",
-    "emptyError": "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਅਰਜ਼ੀ ਹਵਾਲਾ ਨੰਬਰ ਦਰਜ ਕਰੋ।",
-    "notFound": "{ref} ਲਈ ਕੋਈ ਅਰਜ਼ੀ ਨਹੀਂ ਮਿਲੀ। ਹਵਾਲਾ ਨੰਬਰ ਜਾਂਚ ਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
-    "pending": "ਕਾਰਵਾਈ ਲੋੜੀਂਦੀ",
-    "rejected": "ਅਸਵੀਕਾਰਨ ਵਿਸ਼ਲੇਸ਼ਣ",
-    "fix": "ਅੱਗੇ ਕੀ ਠੀਕ ਕਰਨਾ ਹੈ",
-    "whereStands": "ਅਰਜ਼ੀ ਦੀ ਪ੍ਰਗਤੀ",
-    "actionNeeded": "ਕਾਰਵਾਈ ਲੋੜੀਂਦੀ",
-    "daysSince": "ਦਿਨ ਪਹਿਲਾਂ ਜਮ੍ਹਾਂ",
-    "whatNext": "ਅੱਗੇ ਕੀ ਕਰਨਾ ਹੈ"
   },
   "chat": {
     "title": "ਸਾਰਥੀ AI ਸਹਾਇਕ",

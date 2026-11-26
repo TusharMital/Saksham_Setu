@@ -11,7 +11,6 @@
     "calculator": "EMI ᱠᱮᱞᱠᱩᱞᱮᱴᱚᱨ",
     "locator": "ᱵᱮᱸᱠ ᱯᱟᱱᱛᱮ",
     "paths": "ᱟᱨᱡᱤ ᱦᱚᱨ",
-    "track": "ᱴᱨᱮᱠ ᱢᱮ",
     "skip": "ᱢᱩᱲᱩᱛ ᱠᱟᱛᱷᱟ ᱛᱮ ᱪᱟᱞᱟᱜ ᱢᱮ",
     "voiceGuide": "ᱟᱲᱟᱝ",
     "voiceOn": "ᱪᱟᱹᱞᱩ",
@@ -26,7 +25,6 @@
     "heroTitleEm": "ᱟᱞᱮ ᱞᱮ ᱩᱫᱩᱜᱟ ᱥᱟᱹᱨᱤ ᱦᱚᱨ᱾",
     "promise": "ᱥᱟᱹᱨᱤ ᱥᱚᱨᱠᱟᱨᱤ ᱨᱤᱱ ᱡᱚᱡᱚᱱᱟ ᱯᱟᱱᱛᱮᱭ ᱢᱮ, ᱞᱟᱵᱷ ᱠᱚ ᱛᱩᱞᱟᱹᱡᱚᱠᱷᱟᱭ ᱢᱮ ᱟᱨ ᱥᱩᱨ ᱨᱮᱱᱟᱜ ᱯᱟᱹᱛᱭᱟᱹᱣᱟᱱ ᱵᱮᱸᱠ ᱧᱟᱢ ᱢᱮ — ᱛᱤᱱᱟᱹᱜ ᱜᱟᱱ ᱴᱤᱯᱤᱡ ᱨᱮᱜᱮ᱾",
     "cta": "ᱤᱧᱟᱜ ᱡᱚᱡᱚᱱᱟ ᱯᱟᱱᱛᱮ",
-    "trackCta": "ᱟᱨᱡᱤ ᱴᱨᱮᱠ ᱢᱮ",
     "calcCta": "EMI ᱠᱮᱞᱠᱩᱞᱮᱴᱚᱨ ᱵᱤᱰᱟᱹᱣ ᱢᱮ",
     "heroProofTime": "᱓ ᱴᱤᱯᱤᱡ",
     "heroProofTimeLabel": "ᱛᱩᱱᱠᱷᱤ ᱞᱟᱹᱜᱤᱫ",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "ᱟᱫᱷᱟᱨ, ᱡᱟᱹᱛᱤ ᱥᱟᱠᱟᱢ ᱟᱨ ᱯᱨᱚᱡᱮᱠᱴ ᱠᱟᱜᱚᱡᱽ ᱨᱮᱱᱟᱜ ᱥᱟᱯᱷᱟ ᱯᱷᱚᱴᱚ ᱫᱚᱦᱚᱭ ᱢᱮ᱾",
       "ᱯᱷᱚᱱ ᱨᱮ ᱟᱸᱴ ᱵᱩᱡᱷᱟᱹᱣ ᱞᱮᱱᱠᱷᱟᱱ ᱠᱚᱢᱯᱭᱩᱴᱚᱨ ᱨᱮ ᱵᱮᱸᱠ ᱯᱳᱨᱴᱟᱞ ᱡᱷᱤᱡᱽ ᱢᱮ᱾",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "ᱵᱟᱰᱟᱭ ᱢᱮ ᱟᱢᱟᱜ ᱟᱨᱡᱤ ᱚᱠᱟ ᱨᱮ ᱛᱤᱸᱜᱩ ᱟᱠᱟᱱᱟ",
-    "subtitle": "ᱟᱨᱡᱤ ᱡᱚᱢᱟ ᱛᱟᱭᱚᱢ ᱧᱟᱢ ᱟᱠᱟᱱ ᱨᱮᱯᱷᱚᱨᱮᱱᱥ ᱱᱚᱢᱵᱚᱨ ᱚᱞ ᱢᱮ᱾",
-    "placeholder": "ᱟᱢᱟᱜ ᱨᱮᱯᱷᱚᱨᱮᱱᱥ ᱱᱚᱢᱵᱚᱨ ᱚᱞ ᱢᱮ (ᱡᱮᱞᱮᱠᱟ SS-2026-10001)",
-    "go": "ᱦᱟᱞᱚᱛ ᱧᱮᱞ ᱢᱮ",
-    "emptyError": "ᱫᱟᱭᱟ ᱠᱟᱛᱮ ᱟᱢᱟᱜ ᱟᱨᱡᱤ ᱨᱮᱯᱷᱚᱨᱮᱱᱥ ᱱᱚᱢᱵᱚᱨ ᱚᱞ ᱢᱮ᱾",
-    "notFound": "{ref} ᱞᱟᱹᱜᱤᱫ ᱡᱟᱦᱟᱸᱱ ᱟᱨᱡᱤ ᱵᱟᱝ ᱧᱟᱢ ᱞᱮᱱᱟ᱾ ᱱᱚᱢᱵᱚᱨ ᱧᱮᱞ ᱠᱟᱛᱮ ᱟᱨᱦᱚᱸ ᱠᱩᱨᱩᱢᱩᱴᱩᱭ ᱢᱮ᱾",
-    "pending": "ᱠᱟᱹᱢᱤ ᱞᱟᱹᱠᱛᱤ",
-    "rejected": "ᱵᱟᱛᱤᱞ ᱨᱮᱱᱟᱜ ᱵᱤᱥᱞᱮᱥᱚᱱ",
-    "fix": "ᱞᱟᱦᱟ ᱛᱮ ᱪᱮᱫ ᱥᱩᱫᱷᱨᱟᱹᱣ ᱦᱩᱭᱩᱜᱼᱟ",
-    "whereStands": "ᱟᱨᱡᱤ ᱞᱟᱦᱟᱱᱛᱤ",
-    "actionNeeded": "ᱠᱟᱹᱢᱤ ᱞᱟᱹᱠᱛᱤ",
-    "daysSince": "ᱢᱟᱦᱟᱸ ᱢᱟᱲᱟᱝ ᱡᱚᱢᱟ",
-    "whatNext": "ᱞᱟᱦᱟ ᱛᱮ ᱪᱮᱫ ᱪᱤᱠᱟᱹᱭᱟ"
   },
   "chat": {
     "title": "ᱥᱟᱨᱛᱷᱤ AI ᱜᱚᱲᱚᱭᱤᱡ",

@@ -11,7 +11,6 @@
     "calculator": "EMI కాలిక్యులేటర్",
     "locator": "బ్యాంకు వెతకండి",
     "paths": "దరఖాస్తు మార్గాలు",
-    "track": "ట్రాక్ చేయండి",
     "skip": "ప్రధాన విషయానికి వెళ్ళండి",
     "voiceGuide": "వాయిస్",
     "voiceOn": "ఆన్",
@@ -26,7 +25,6 @@
     "heroTitleEm": "మేము సరైన మార్గం చూపుతాము.",
     "promise": "సరైన ప్రభుత్వ రుణ పథకాన్ని కనుగొనండి, ప్రయోజనాలను పోల్చండి మరియు మీకు దగ్గరలోని నమ్మకమైన భాగస్వామి బ్యాంకును పొందండి — నిమిషాల్లోనే.",
     "cta": "నా పథకాన్ని కనుగొనండి",
-    "trackCta": "దరఖాస్తును ట్రాక్ చేయండి",
     "calcCta": "EMI కాలిక్యులేటర్ చూడండి",
     "heroProofTime": "3 నిమిషాలు",
     "heroProofTimeLabel": "తనిఖీకి",
@@ -245,8 +243,6 @@
     "findEligibleFirstBtn": "Find Your Eligible Scheme First",
     "applicationPathFor": "Application Path for:",
     "findBanksForScheme": "Find Partner Banks & Official Portals for This Scheme",
-    "saveAndTrack": "Save Application & Get Tracking ID",
-    "needProfileForTrack": "Complete your profile on Find Scheme or save via Documents first to generate a persistent Tracking ID.",
     "stepsBank": [
       "ఆధార్, కుల ధృవీకరణ పత్రం మరియు ప్రాజెక్ట్ పత్రాల స్పష్టమైన ఫోటోలు ఉంచుకోండి.",
       "ఫోన్‌లో కష్టంగా ఉంటే కంప్యూటర్‌లో బ్యాంక్ పోర్టల్ తెరవండి.",
@@ -365,21 +361,6 @@
     "collapseSchedule": "Hide Year-by-Year Schedule",
     "viewSchemeDetails": "View Scheme Details",
     "applyScheme": "Apply for This Scheme"
-  },
-  "track": {
-    "title": "మీ దరఖాస్తు ఎక్కడ ఉందో ఖచ్చితంగా తెలుసుకోండి",
-    "subtitle": "దరఖాస్తు సమర్పించిన తర్వాత పొందిన రిఫరెన్స్ నంబర్‌ను నమోదు చేయండి.",
-    "placeholder": "మీ రిఫరెన్స్ నంబర్ నమోదు చేయండి (ఉదా. SS-2026-10001)",
-    "go": "స్థితి చూడండి",
-    "emptyError": "దయచేసి మీ దరఖాస్తు రిఫరెన్స్ నంబర్‌ను నమోదు చేయండి.",
-    "notFound": "{ref} కోసం దరఖాస్తు కనుగొనబడలేదు. నంబర్‌ను తనిఖీ చేసి మళ్ళీ ప్రయత్నించండి.",
-    "pending": "చర్య అవసరం",
-    "rejected": "తిరస్కరణ కారణ విశ్లేషణ",
-    "fix": "తర్వాత ఏమి సరిచేయాలి",
-    "whereStands": "దరఖాస్తు పురోగతి",
-    "actionNeeded": "చర్య అవసరం",
-    "daysSince": "రోజుల క్రితం సమర్పించబడింది",
-    "whatNext": "తర్వాత ఏమి చేయాలి"
   },
   "chat": {
     "title": "సారథి AI సహాయకుడు",
