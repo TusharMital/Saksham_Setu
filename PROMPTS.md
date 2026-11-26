@@ -667,3 +667,19 @@ What failed or was missing: None.
 Did it follow the rules? Yes.
 Next prompt it led to: Live Groq chatbot edge-case testing (P6c), reverse prompting on P0 (P10), final `README.md` (P11), and live deployment.
 Screenshot file names: `docs/03_AI_Tools/p9_claude_review_before.png`, `docs/03_AI_Tools/p9_claude_review_after.png`
+
+---
+
+### P6c | Groq API & Antigravity | Token-Safe DB Grounding, 429 Model Fallback & Live Chatbot Testing
+Date: 2026-11-26
+Run by: Tushar (25bcon2455) & Mousam (25bcon2411)
+Prompt (exact text): Optimized `load_scheme_grounding()` in `core/chatbot.py` to shortlist up to 12 whole `LoanScheme` DB records (~1,100 tokens) with Hindi/regional keyword mapping so requests stay well below Groq's 6,000 TPM free-tier limit, added automatic HTTP 429 retry with fallback between `llama-3.3-70b-versatile` and `llama-3.1-8b-instant`, and tested Sarthi live across valid English, valid Hindi, empty input, >500 characters, off-topic refusal, and prompt-injection refusal.
+Output summary (3 lines):
+- Shortlisted up to 12 complete `LoanScheme` DB records per request with bilingual keyword scoring, eliminating `Groq upstream HTTP 429` token-overflow errors.
+- Added automatic retry and secondary model fallback in `core/chatbot.py` while preserving HMAC-signed history, sentinel guards, URL stripping, and numeric verification.
+- Verified live Groq AI responses in English and Hindi plus graceful rejections for invalid, off-topic, and prompt-injection inputs.
+What worked: Sub-2-second grounded Groq replies in both English and Hindi with zero API key exposure.
+What failed or was missing: Initial 66-scheme prompt (~7,500 tokens) triggered Groq's 6,000 TPM rate limit; fixed via 12-record whole-scheme shortlisting.
+Did it follow the rules? Yes (`.env` remained git-ignored; zero secrets in code or screenshots).
+Next prompt it led to: Reverse prompting on P0 (P10), final `README.md` (P11), and live deployment.
+Screenshot file names: `docs/06_API_Integration/p6b_chatbot_api_code.png`, `docs/06_API_Integration/p6b_sarthi_real_response.png`, `docs/06_API_Integration/p6b_chatbot_edge_cases.png`

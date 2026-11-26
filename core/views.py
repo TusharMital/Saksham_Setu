@@ -319,10 +319,11 @@ class SchemeDetailView(APIView):
 
 class RecommendView(APIView):
     def post(self, request):
-        data = validate_applicant(request.data)
+        body = request.data if isinstance(request.data, dict) else {}
+        data = validate_applicant(body)
         raw_lang = (
-            request.data.get("lang")
-            or request.data.get("language")
+            body.get("lang")
+            or body.get("language")
             or request.query_params.get("lang")
             or "en"
         )
@@ -447,13 +448,14 @@ class LiveBankSearchView(APIView):
 
 class EmiView(APIView):
     def post(self, request):
-        amount, rate, tenure, moratorium = validate_emi_payload(request.data)
+        body = request.data if isinstance(request.data, dict) else {}
+        amount, rate, tenure, moratorium = validate_emi_payload(body)
         return Response({"demo": True, **calculate_emi(amount, rate, tenure, moratorium)})
 
 
 class ApplicationCreateView(APIView):
     def post(self, request):
-        data = request.data
+        data = request.data if isinstance(request.data, dict) else {}
         name = str(data.get("applicant_name") or data.get("full_name") or "").strip()
         scheme_code = str(data.get("scheme_code") or "").strip()
         partner = str(data.get("partner") or "").strip() or "To be chosen"

@@ -318,6 +318,8 @@ def lookup_pin_details(pin):
 def coords_from_pin(pin):
     table = load_pin_lookup()
     key = str(pin or "").strip()
+    if len(key) < 3 or not key.isdigit():
+        return None, None, ""
     if key in table:
         row = table[key]
         return row["lat"], row["lng"], row.get("place", "")

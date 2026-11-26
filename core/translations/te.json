@@ -742,7 +742,12 @@
     "errRate": "Too many questions in a short time. Please wait a little and try again.",
     "errAuth": "Chat is not set up on this server yet. Ask a staff member to add the Groq key.",
     "errNetwork": "Network problem. Please check your connection and try again.",
-    "errBad": "I could not read the helper's reply. Please try again."
+    "errBad": "I could not read the helper's reply. Please try again.",
+    "errUnavailable": "చాట్ తాత్కాలికంగా అందుబాటులో లేదు.",
+    "guardUnknown": "సరికైనా వివరాలు ధృవీకరించిన పథకం రికార్డులలో లేవు. దయచేసి పథకం వివరాల పేజీని చూడండి లేదా అధికారిక భాగస్వామి బ్యాంక్ లేదా పోర్టల్‌తో నిర్ధారించుకోండి.",
+    "guardOfftopic": "నేను ప్రభుత్వ రుణ పథకాలు, అర్హత, EMI/సబ్సిడీ ప్రాథమికాలు మరియు సాక్షం సేతు ఎలా పనిచేస్తుందో అనే విషయాలలో మాత్రమే సహాయపడగలను.",
+    "guardUnverified": "ఆ ఖచ్చితమైన సంఖ్యలను అధికారిక పథకం రికార్డులతో ధృవీకరించలేకపోయాను. దయచేసి పథకం వివరాల పేజీని చూడండి లేదా భాగస్వామి బ్యాంక్‌తో నిర్ధారించుకోండి.",
+    "guardDisclaimer": "గమనిక: సూచన ప్రోటోటైప్ డేటా — తుది నిబంధనలను ఎల్లప్పుడూ అధికారిక భాగస్వామి బ్యాంక్ లేదా పోర్టల్‌తో ధృవీకరించండి."
   },
   "footer": {
     "rights": "సక్షం సేతు — ఏకీకృత రాయితీ రుణ పోర్టల్.",

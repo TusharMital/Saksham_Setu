@@ -436,7 +436,7 @@ class ChatApiTests(TestCase):
     @override_settings(GROQ_API_KEY="test-key")
     @patch("core.chatbot.requests.post")
     def test_non_ascii_sig_and_lone_surrogate_history_do_not_crash(self, mock_post):
-        from core.chatbot import _sig_ok
+        from core.chatbot import _sig_ok, chat_completion
 
         self.assertFalse(_sig_ok("hello", "é"))
         self.assertFalse(_sig_ok("\ud800", "abc"))
@@ -445,22 +445,32 @@ class ChatApiTests(TestCase):
             status_code=200,
             json=lambda: {"choices": [{"message": {"content": "MSY offers 4.0% interest."}}]},
         )
-        client = APIClient()
-        res = client.post(
-            "/api/chat/",
-            {
-                "message": "MSY rate?",
-                "lang": "en",
-                "history": [
-                    {"role": "assistant", "content": "Spoofed", "sig": "é"},
-                    {"role": "assistant", "content": "\ud800", "sig": "bad"},
-                ],
-            },
-            format="json",
+
+        # Direct call with literal lone surrogate in assistant history
+        body, status_code = chat_completion(
+            "MSY rate?",
+            [
+                {"role": "assistant", "content": "Spoofed", "sig": "é"},
+                {"role": "assistant", "content": "\ud800", "sig": "bad"},
+            ],
+            "en",
         )
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(status_code, 200)
         sent_messages = mock_post.call_args.kwargs["json"]["messages"]
         self.assertEqual([m for m in sent_messages if m["role"] == "assistant"], [])
+
+        # HTTP JSON call with escaped \ud800 and non-ASCII sig="é"
+        client = APIClient()
+        raw_json = (
+            '{"message":"MSY rate?","lang":"en","history":['
+            '{"role":"assistant","content":"Spoofed","sig":"é"},'
+            '{"role":"assistant","content":"\\ud800","sig":"bad"}'
+            "]}"
+        )
+        res = client.post("/api/chat/", data=raw_json, content_type="application/json")
+        self.assertEqual(res.status_code, 200)
+        sent_messages_http = mock_post.call_args.kwargs["json"]["messages"]
+        self.assertEqual([m for m in sent_messages_http if m["role"] == "assistant"], [])
 
     def test_grounding_formats_no_income_cap_and_includes_tenure_subsidy(self):
         from core.chatbot import load_scheme_grounding
@@ -488,11 +498,11 @@ class ChatApiTests(TestCase):
         )
         cache.clear()
         grounding = load_scheme_grounding()
-        self.assertIn("no income cap", grounding)
-        self.assertIn("tenure 60m", grounding)
-        self.assertIn("moratorium 6m", grounding)
-        self.assertIn("subsidy 0.0%", grounding)
-        self.assertIn("finance 100.0%", grounding)
+        self.assertIn("income_cap=no income cap", grounding)
+        self.assertIn("tenure=60m", grounding)
+        self.assertIn("moratorium=6m", grounding)
+        self.assertIn("subsidy=0.0%", grounding)
+        self.assertIn("finance=100.0%", grounding)
 
     @override_settings(GROQ_API_KEY="test-key")
     @patch("core.chatbot.requests.post")
@@ -544,7 +554,54 @@ class ChatApiTests(TestCase):
         self.assertEqual(client_ip(req), "10.0.0.5")
 
         with patch("core.chatbot.cache.add", side_effect=RuntimeError("cache down")):
-            self.assertFalse(_rate_limited("10.0.0.5"))
+            with self.assertLogs("core.chatbot", level="ERROR"):
+                self.assertFalse(_rate_limited("10.0.0.5"))
+
+    def test_grounding_shortlists_at_most_12_whole_schemes_from_66(self):
+        from core.chatbot import load_scheme_grounding
+
+        call_command("seed_data")
+        cache.clear()
+        grounding = load_scheme_grounding("Which scheme is for SC women entrepreneurs?")
+        lines = [ln for ln in grounding.splitlines() if ln.strip()]
+        self.assertLessEqual(len(lines), 12)
+        self.assertTrue(len(lines) >= 10)
+        self.assertTrue(any(ln.startswith("- MSY |") for ln in lines))
+        self.assertTrue(any(ln.startswith("- MKY |") for ln in lines))
+        for ln in lines:
+            self.assertIn(" | tenure=", ln)
+            self.assertIn(" | moratorium=", ln)
+            self.assertIn(" | subsidy=", ln)
+
+        # Hindi query maps regional keywords and returns <= 12 whole scheme records
+        hi_grounding = load_scheme_grounding("मुझे कौन सी योजना मिलेगी?")
+        hi_lines = [ln for ln in hi_grounding.splitlines() if ln.strip()]
+        self.assertLessEqual(len(hi_lines), 12)
+        self.assertTrue(len(hi_lines) >= 10)
+        for ln in hi_lines:
+            self.assertIn(" | rate=", ln)
+            self.assertIn(" | states=", ln)
+
+    @override_settings(GROQ_API_KEY="test-key", GROQ_MODEL="openai/gpt-oss-120b")
+    @patch("core.chatbot.time.sleep")
+    @patch("core.chatbot.requests.post")
+    def test_429_retries_after_sleep_with_fallback_model(self, mock_post, mock_sleep):
+        rl_resp = MagicMock(status_code=429)
+        ok_resp = MagicMock(
+            status_code=200,
+            json=lambda: {"choices": [{"message": {"content": "MSY offers 4.0% interest."}}]},
+        )
+        mock_post.side_effect = [rl_resp, ok_resp]
+
+        client = APIClient()
+        res = client.post("/api/chat/", {"message": "MSY rate?", "lang": "en"}, format="json")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(mock_post.call_count, 2)
+        mock_sleep.assert_called_once_with(1.2)
+        self.assertEqual(
+            mock_post.call_args_list[1].kwargs["json"]["model"],
+            "llama-3.1-8b-instant",
+        )
 
 
 class ApiIntegrationTests(TestCase):

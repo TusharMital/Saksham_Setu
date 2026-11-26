@@ -742,7 +742,12 @@
     "errRate": "Too many questions in a short time. Please wait a little and try again.",
     "errAuth": "Chat is not set up on this server yet. Ask a staff member to add the Groq key.",
     "errNetwork": "Network problem. Please check your connection and try again.",
-    "errBad": "I could not read the helper's reply. Please try again."
+    "errBad": "I could not read the helper's reply. Please try again.",
+    "errUnavailable": "چيٽ هاڻي لاءِ غير موجود آهي.",
+    "guardUnknown": "مئي ان خاص تفصيل کي تصديق ٿيل اسڪيم رڪارڊ ۾ نه ڳولي سگهيو. مهرباني ڪري اسڪيم جي تفصيلن جي صفحي کي چيڪ ڪريو يا سرڪاري پارٽنر بينڪ يا پورٽل سان تصديق ڪريو.",
+    "guardOfftopic": "مان صرف سرڪاري قرضن جي اسڪيمن، اهلڪي، EMI/سبسڊي جي بنيادي ڳالهين ۽ ساڪشام سيٽو ڪيئن ڪم ڪري ٿو، انهن ۾ مدد ڪري سگهان ٿو.",
+    "guardUnverified": "مئي انهن صحيح انگن کي سرڪاري اسڪيم رڪارڊن سان تصديق نه ڪري سگهيو. مهرباني ڪري اسڪيم جي تفصيلن جي صفحي کي چيڪ ڪريو يا پارٽنر بينڪ سان تصديق ڪريو.",
+    "guardDisclaimer": "نوٽ: حوالو پروٽو ٽائپ ڊيٽا — مهرباني ڪري آخري شرطن کي هميشه سرڪاري پارٽنر بينڪ يا پورٽل سان تصديق ڪريو."
   },
   "footer": {
     "rights": "سڪشم سيتو — متحد رعايتي قرض پورٽل.",

@@ -291,7 +291,7 @@ export default function Sarthi() {
 
     window.addEventListener("sarthi:start-path-advisor", onStartAdvisor);
     return () => window.removeEventListener("sarthi:start-path-advisor", onStartAdvisor);
-  }, [lang]);
+  }, [lang, t]);
 
   useEffect(() => {
     const refresh = () => setVoiceInfo(getVoiceStatus(speakLang));
