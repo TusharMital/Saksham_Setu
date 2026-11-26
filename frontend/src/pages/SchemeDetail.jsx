@@ -5,11 +5,14 @@ import { api } from "../api.js";
 import { useAppState } from "../state.jsx";
 import { useI18n, useTranslatedScheme } from "../i18n.jsx";
 
-function formatCompactInr(val) {
+function formatCompactInr(val, units = {}) {
   const n = Number(val || 0);
-  if (n >= 10000000) return `₹${(n / 10000000).toFixed(2).replace(/\.00$/, "")} Cr`;
-  if (n >= 100000) return `₹${(n / 100000).toFixed(1).replace(/\.0$/, "")}L`;
-  if (n >= 1000) return `₹${Math.round(n / 1000)}K`;
+  const cr = units.cr || "Cr";
+  const l = units.l || "L";
+  const k = units.k || "K";
+  if (n >= 10000000) return `₹${(n / 10000000).toFixed(2).replace(/\.00$/, "")} ${cr}`;
+  if (n >= 100000) return `₹${(n / 100000).toFixed(1).replace(/\.0$/, "")}${l}`;
+  if (n >= 1000) return `₹${Math.round(n / 1000)}${k}`;
   return `₹${Math.round(n)}`;
 }
 
@@ -175,7 +178,7 @@ function EmiSvgVisuals({ emi, scheme, t }) {
                   strokeDasharray={tVal === 0 ? undefined : "4 4"}
                 />
                 <text x={pad.left - 8} y={y + 4} textAnchor="end" className="svg-axis-label">
-                  {formatCompactInr(labelVal)}
+                  {formatCompactInr(labelVal, { cr: t("calc.unitCr"), l: t("calc.unitL"), k: t("calc.unitK") })}
                 </text>
               </g>
             );
@@ -243,7 +246,7 @@ function EmiSvgVisuals({ emi, scheme, t }) {
 
 export default function SchemeDetail() {
   const { code } = useParams();
-  const { t } = useI18n();
+  const { t, tState, tCategory } = useI18n();
   const { form, setScheme } = useAppState();
   const [data, setData] = useState(null);
   const translatedData = useTranslatedScheme(data);
@@ -328,7 +331,7 @@ export default function SchemeDetail() {
           <span className="badge-pill">{activeData.code}</span>
           {(activeData.applicable_states || []).map((st) => (
             <span key={st} className="state-chip">
-              {st === "ALL" ? t("detail.allIndia") : st}
+              {st === "ALL" ? t("detail.allIndia") : tState(st)}
             </span>
           ))}
         </div>
@@ -344,7 +347,7 @@ export default function SchemeDetail() {
           <div className="detail-eligibility-pills">
             {(activeData.eligible_categories || []).map((cat) => (
               <span key={cat} className="cat-pill">
-                {cat}
+                {tCategory(cat)}
               </span>
             ))}
             {activeData.women_only && <span className="cat-pill women">{t("detail.womenOnly")}</span>}

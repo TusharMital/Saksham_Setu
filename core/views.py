@@ -14,11 +14,12 @@ from core.bank_locator import (
     resolve_coordinates_for_pin,
     reverse_geocode_coords,
 )
-from core.category_verifier import verify_category_and_document
+from core.category_verifier import VERIFY_DEFAULTS, verify_category_and_document
 from core.chatbot import chat_completion, client_ip, resolve_language
-from core.dynamic_translator import translate_schemes
+from core.dynamic_translator import translate_schemes, translate_texts
 from core.emi import calculate_emi
 from core.geo import coords_from_pin, load_india_districts, lookup_pin_details, rank_branches
+from core.i18n_templates import fmt_tpl, get_section_templates
 from core.i18n_validator import sanitize_bundle_with_fallback
 from core.languages import get_language_meta, list_supported_languages
 from core.models import Application, Branch, LoanScheme
@@ -610,6 +611,27 @@ class TranslateSchemesView(APIView):
         return Response(res, status=status.HTTP_200_OK)
 
 
+class TranslateTextsView(APIView):
+    def post(self, request):
+        body = request.data if isinstance(request.data, dict) else {}
+        raw_lang = body.get("lang") or body.get("language") or ""
+        try:
+            get_language_meta(raw_lang)
+        except ValueError:
+            return Response(
+                {"detail": f"Unsupported or missing language code: {raw_lang!r}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        texts = body.get("texts")
+        if not isinstance(texts, list):
+            return Response(
+                {"detail": "'texts' must be a list of strings."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        res = translate_texts(texts, raw_lang)
+        return Response(res, status=status.HTTP_200_OK)
+
+
 class VerifyCategoryView(APIView):
     def post(self, request):
         body = request.data if isinstance(request.data, dict) else {}
@@ -626,10 +648,12 @@ class VerifyCategoryView(APIView):
 class PinLookupView(APIView):
     def get(self, request):
         pin = request.query_params.get("pin", "")
+        lang_meta = resolve_language(request.query_params.get("lang") or "en")
+        tpl = get_section_templates("verify", VERIFY_DEFAULTS, lang=lang_meta["code"])
         lat, lng, place = coords_from_pin(pin)
         if lat is None:
             return Response(
-                {"detail": "This PIN is not in our lookup table. Allow location or pick a nearby city."},
+                {"detail": tpl.get("pinLookupMissingError") or "This PIN is not in our lookup table. Allow location or pick a nearby city."},
                 status=status.HTTP_404_NOT_FOUND,
             )
         return Response({"lat": lat, "lng": lng, "place": place, "demo": True})
@@ -637,13 +661,18 @@ class PinLookupView(APIView):
 
 class PinLookupDetailView(APIView):
     def get(self, request, pin):
+        lang_meta = resolve_language(request.query_params.get("lang") or "en")
+        tpl = get_section_templates("verify", VERIFY_DEFAULTS, lang=lang_meta["code"])
         try:
             details = lookup_pin_details(pin)
-        except ValueError as exc:
-            return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        except ValueError:
+            return Response(
+                {"detail": tpl.get("pinInvalidError") or "PIN code must be a valid 6-digit Indian postal code."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         if not details:
             return Response(
-                {"detail": f"No post office details found for PIN {pin}."},
+                {"detail": fmt_tpl(tpl.get("pinNotFoundError") or "No post office details found for PIN {pin}.", pin=pin)},
                 status=status.HTTP_404_NOT_FOUND,
             )
         return Response(details, status=status.HTTP_200_OK)

@@ -1,4 +1,5 @@
 import json
+import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -1087,6 +1088,60 @@ class I18nApiAndValidatorTests(TestCase):
             res = pool.call_json("sys", {"greeting": "Hello {name}"}, 256, "test")
         self.assertEqual(res, {"greeting": "नमस्ते {name}"})
         self.assertEqual(mock_post.call_count, 2)
+
+    @patch("core.dynamic_translator.requests.post")
+    @override_settings(GROQ_API_KEY="test-key")
+    def test_translate_texts_endpoint_caches_and_validates(self, mock_post):
+        bad = self.client.post("/api/i18n/translate-texts/", {"lang": "xx", "texts": ["Hi"]}, format="json")
+        self.assertEqual(bad.status_code, 400)
+
+        bad_type = self.client.post("/api/i18n/translate-texts/", {"lang": "hi", "texts": "not-list"}, format="json")
+        self.assertEqual(bad_type.status_code, 400)
+
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.json.return_value = {"choices": [{"message": {"content": '{"0": "जयपुर"}'}}]}
+        mock_post.return_value = mock_resp
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            with patch("core.dynamic_translator._text_cache_path", return_value=Path(tmpdir) / "txt_cache.json"):
+                res = self.client.post(
+                    "/api/i18n/translate-texts/",
+                    {"lang": "hi", "texts": ["Jaipur"]},
+                    format="json",
+                )
+                self.assertEqual(res.status_code, 200)
+                self.assertEqual(res.data["translations"]["Jaipur"], "जयपुर")
+                self.assertEqual(res.data["translated_count"], 1)
+
+                res_cached = self.client.post(
+                    "/api/i18n/translate-texts/",
+                    {"lang": "hi", "texts": ["Jaipur"]},
+                    format="json",
+                )
+                self.assertEqual(res_cached.status_code, 200)
+                self.assertEqual(res_cached.data["cached_count"], 1)
+                self.assertEqual(mock_post.call_count, 1)
+
+    def test_translate_schemes_includes_localized_enums_and_localized_pin_error(self):
+        call_command("seed_data")
+        with override_settings(GROQ_API_KEY=""):
+            res = self.client.post(
+                "/api/i18n/translate-schemes/",
+                {"lang": "hi", "scheme_codes": ["MSY"]},
+                format="json",
+            )
+        self.assertEqual(res.status_code, 200)
+        msy = res.data["translations"]["MSY"]
+        self.assertIn("govt_level", msy)
+        self.assertIn("state_name", msy)
+        self.assertIn("sectors", msy)
+        self.assertIn("available_channels", msy)
+        self.assertTrue(any("\u0900" <= ch <= "\u097f" for ch in msy["govt_level"]))
+
+        pin_err = self.client.get("/api/pin-lookup/123/?lang=hi")
+        self.assertEqual(pin_err.status_code, 400)
+        self.assertTrue(any("\u0900" <= ch <= "\u097f" for ch in pin_err.data["detail"]))
 
 
 class CategoryVerifierTests(TestCase):

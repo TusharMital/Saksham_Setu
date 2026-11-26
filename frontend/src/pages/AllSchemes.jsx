@@ -46,7 +46,11 @@ function clamp(val, min, max) {
 }
 
 export default function AllSchemes() {
-  const { t } = useI18n();
+  const { t, tState, tCategory } = useI18n();
+  const moneyUnits = useMemo(
+    () => ({ cr: t("calc.unitCr"), l: t("calc.unitL"), k: t("calc.unitK") }),
+    [t]
+  );
   const { form, setScheme } = useAppState();
   const navigate = useNavigate();
 
@@ -290,11 +294,12 @@ export default function AllSchemes() {
       });
     }
     if (stateFilter !== "ALL") {
+      const dispState = tState(stateFilter);
       chips.push({
         id: "state",
         label: onlyStateExclusive
-          ? `${stateFilter} (${t("allSchemes.exclusiveShort")})`
-          : stateFilter,
+          ? `${dispState} (${t("allSchemes.exclusiveShort")})`
+          : dispState,
         onRemove: () => {
           setStateFilter("ALL");
           setOnlyStateExclusive(false);
@@ -733,7 +738,7 @@ export default function AllSchemes() {
               <option value="ALL">{t("allSchemes.allIndia")}</option>
               {stateOptions.map((st) => (
                 <option key={st} value={st}>
-                  {st}
+                  {tState(st)}
                 </option>
               ))}
             </select>
@@ -876,7 +881,7 @@ export default function AllSchemes() {
             <small className="slider-limits">
               <span>{t("allSchemes.anyLabel")}</span>
               <span className="limit-mid">
-                {desiredLoan ? formatCompactMoney(desiredLoan, t("detail.noUpperCap")) : "—"}
+                {desiredLoan ? formatCompactMoney(desiredLoan, t("detail.noUpperCap"), moneyUnits) : "—"}
               </span>
               <span>{t("calc.amountMaxLimit")}</span>
             </small>
@@ -1009,7 +1014,11 @@ export default function AllSchemes() {
                 const isState = s.level === "state";
                 const isCompared = compareCodes.includes(s.code);
                 const stateBadgeLabel = isState
-                  ? (s.applicable_states || []).filter((st) => st !== "ALL").join(", ") ||
+                  ? s.state_name ||
+                    (s.applicable_states || [])
+                      .filter((st) => st !== "ALL")
+                      .map((st) => tState(st))
+                      .join(", ") ||
                     t("results.stateBadge")
                   : t("allSchemes.allIndia");
                 const subsidyText = s.subsidy_note || s.subsidy_margin_note;
@@ -1018,7 +1027,7 @@ export default function AllSchemes() {
                 const categoriesText =
                   (s.eligible_categories || []).length === 6
                     ? t("allSchemes.allCategoriesShort")
-                    : (s.eligible_categories || []).join(", ") || t("allSchemes.allOption");
+                    : (s.eligible_categories || []).map((c) => tCategory(c)).join(", ") || t("allSchemes.allOption");
 
                 return (
                   <article
@@ -1075,7 +1084,7 @@ export default function AllSchemes() {
                         <div className="catalog-metric-cell">
                           <small>{t("allSchemes.metricLoanRange")}</small>
                           <strong>
-                            <bdi>{formatLoanRange(s.min_loan, s.max_loan, t("detail.noUpperCap"))}</bdi>
+                            <bdi>{formatLoanRange(s.min_loan, s.max_loan, t("detail.noUpperCap"), moneyUnits)}</bdi>
                           </strong>
                         </div>
                         <div className="catalog-metric-cell">
@@ -1140,8 +1149,10 @@ export default function AllSchemes() {
         loanAmountBasis={desiredLoan || form.loan_amount || 500000}
         profileSummary={
           stateFilter !== "ALL"
-            ? stateFilter
-            : form.state || t("allSchemes.allIndia")
+            ? tState(stateFilter)
+            : form.state
+              ? tState(form.state)
+              : t("allSchemes.allIndia")
         }
         setScheme={setScheme}
       />

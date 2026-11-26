@@ -19,6 +19,7 @@ from core.geo import (
     lookup_pin_details,
     normalize_indian_state,
 )
+from core.dynamic_translator import load_bank_translation_cache
 from core.i18n_templates import fmt_tpl, get_section_templates
 from core.models import Branch, LoanScheme
 
@@ -510,7 +511,22 @@ def _collect_local_branches_for_radius(
 ):
     """Collect Overpass + directory branches strictly within effective_radius km."""
     tpl = get_section_templates("bankBackend", BANK_BACKEND_DEFAULTS, lang=lang)
+    channels_tpl = get_section_templates("channels", {}, lang=lang)
+    bank_cache = load_bank_translation_cache() if lang != "en" else {}
     osm_branches, overpass_ok = fetch_overpass_banks(user_lat, user_lng, effective_radius)
+
+    def _inst_tr(inst_obj, field, default=""):
+        if not inst_obj:
+            return default
+        if lang != "en":
+            cached = bank_cache.get(f"{lang}:{inst_obj['id']}")
+            if isinstance(cached, dict):
+                val = cached.get(field)
+                if isinstance(val, list) and val:
+                    return val
+                if isinstance(val, str) and val.strip():
+                    return val.strip()
+        return inst_obj.get(field, default)
 
     branches_by_inst = {}
     all_branch_records = []
@@ -592,7 +608,7 @@ def _collect_local_branches_for_radius(
                 "source": "osm_overpass",
                 "name": ob["name"],
                 "institution_id": inst_id,
-                "institution_name": inst["name"] if inst else ob["name"],
+                "institution_name": _inst_tr(inst, "name") if inst else ob["name"],
                 "short_code": inst["short_code"] if inst else "BANK",
                 "institution_type": inst_type,
                 "institution_label": _institution_label(inst_type, tpl),
@@ -612,16 +628,12 @@ def _collect_local_branches_for_radius(
                 "phone_source": phone_source,
                 "tel_href": tel_href,
                 "official_url": inst.get("official_url", "") if inst else "",
-                "headquarters": inst.get("headquarters", "") if inst else "India",
-                "overview": inst.get("overview", "") if inst else tpl["osmDefaultOverview"],
-                "processing_time": inst.get("processing_time", tpl["defaultProcTime"]) if inst else tpl["defaultProcTime"],
-                "collateral_policy": inst.get("collateral_policy", tpl["defaultCollateral"]) if inst else tpl["defaultCollateral"],
-                "bank_required_documents": inst.get("bank_required_documents", []) if inst else [
-                    "Aadhaar Card & PAN Card",
-                    "Category / Income Certificate",
-                    "Project Report & Bank Passbook",
-                ],
-                "helpline_hours": inst.get("helpline_hours", tpl["defaultHelpline"]) if inst else tpl["defaultHelpline"],
+                "headquarters": _inst_tr(inst, "headquarters", "") if inst else tpl.get("defaultHq", "India"),
+                "overview": _inst_tr(inst, "overview", "") if inst else tpl["osmDefaultOverview"],
+                "processing_time": _inst_tr(inst, "processing_time", tpl["defaultProcTime"]) if inst else tpl["defaultProcTime"],
+                "collateral_policy": _inst_tr(inst, "collateral_policy", tpl["defaultCollateral"]) if inst else tpl["defaultCollateral"],
+                "bank_required_documents": _inst_tr(inst, "bank_required_documents", []) if inst else tpl.get("defaultDocs", []),
+                "helpline_hours": _inst_tr(inst, "helpline_hours", tpl["defaultHelpline"]) if inst else tpl["defaultHelpline"],
                 "supported_channels": supported_channels,
                 "health": {
                     "funds_available": True,
@@ -641,8 +653,8 @@ def _collect_local_branches_for_radius(
                 "why": fmt_tpl(
                     tpl["whyLiveOsm"],
                     dist=dist,
-                    inst=inst["name"] if inst else tpl["labelDefault"],
-                    channels=", ".join(supported_channels[:3]),
+                    inst=_inst_tr(inst, "name") if inst else tpl["labelDefault"],
+                    channels=", ".join(channels_tpl.get(ch, ch) for ch in supported_channels[:3]),
                 ),
             }
         )
@@ -730,7 +742,7 @@ def _collect_local_branches_for_radius(
                 "source": "directory_branch",
                 "name": db_b.name,
                 "institution_id": inst_id,
-                "institution_name": inst["name"] if inst else db_b.name,
+                "institution_name": _inst_tr(inst, "name") if inst else db_b.name,
                 "short_code": inst["short_code"] if inst else db_b.partner_type,
                 "institution_type": inst_type,
                 "institution_label": inst_type_label,
@@ -750,12 +762,12 @@ def _collect_local_branches_for_radius(
                 "phone_source": phone_source,
                 "tel_href": tel_href,
                 "official_url": inst.get("official_url", "") if inst else "",
-                "headquarters": inst.get("headquarters", "") if inst else db_b.state,
-                "overview": inst.get("overview", "") if inst else (db_b.notes or tpl["labelDefault"]),
-                "processing_time": inst.get("processing_time", tpl["defaultProcTime"]) if inst else tpl["defaultProcTime"],
-                "collateral_policy": inst.get("collateral_policy", tpl["defaultCollateral"]) if inst else tpl["defaultCollateral"],
-                "bank_required_documents": inst.get("bank_required_documents", []) if inst else [],
-                "helpline_hours": inst.get("helpline_hours", tpl["defaultHelpline"]) if inst else tpl["defaultHelpline"],
+                "headquarters": _inst_tr(inst, "headquarters", "") if inst else db_b.state,
+                "overview": _inst_tr(inst, "overview", "") if inst else (db_b.notes or tpl["labelDefault"]),
+                "processing_time": _inst_tr(inst, "processing_time", tpl["defaultProcTime"]) if inst else tpl["defaultProcTime"],
+                "collateral_policy": _inst_tr(inst, "collateral_policy", tpl["defaultCollateral"]) if inst else tpl["defaultCollateral"],
+                "bank_required_documents": _inst_tr(inst, "bank_required_documents", []) if inst else [],
+                "helpline_hours": _inst_tr(inst, "helpline_hours", tpl["defaultHelpline"]) if inst else tpl["defaultHelpline"],
                 "supported_channels": supported_channels,
                 "fund_quota_crore": db_b.fund_quota_crore,
                 "npa_percent": db_b.npa_percent,
@@ -872,6 +884,8 @@ def live_search_banks_and_portals(
     )
 
     # 4. Build Official Application Portals strictly filtered to scheme's available_channels
+    bank_cache = load_bank_translation_cache() if lang != "en" else {}
+    states_tpl = get_section_templates("states", {}, lang=lang)
     portals = []
     for entry in directory:
         if entry.get("institution_type") != "PORTAL":
@@ -892,21 +906,33 @@ def live_search_banks_and_portals(
         ):
             portal_url = scheme.official_portal_url or scheme.govt_portal_url
 
+        tr_portal = bank_cache.get(f"{lang}:{entry['id']}") if lang != "en" else None
+        if not isinstance(tr_portal, dict):
+            tr_portal = {}
+
         toll_free = entry.get("toll_free_phone", "")
         toll_free_disp = entry.get("toll_free_display", toll_free)
+        raw_st = scheme.applicable_states[0] if scheme and scheme.applicable_states else ""
+        portal_state = (
+            tpl["allIndiaLabel"]
+            if (not raw_st or raw_st.upper() == "ALL")
+            else states_tpl.get(raw_st, raw_st)
+        )
+        portal_name = tr_portal.get("name") or entry["name"]
+        portal_hq = tr_portal.get("headquarters") or entry.get("headquarters", tpl["onlineNationalPortal"])
         portals.append(
             {
                 "id": entry["id"],
                 "source": "official_portal",
-                "name": entry["name"],
+                "name": portal_name,
                 "institution_id": entry["id"],
-                "institution_name": entry["name"],
+                "institution_name": portal_name,
                 "short_code": entry["short_code"],
                 "institution_type": "PORTAL",
                 "institution_label": _institution_label("PORTAL", tpl),
-                "address": entry.get("headquarters", tpl["onlineNationalPortal"]),
+                "address": portal_hq,
                 "district": "",
-                "state": (scheme.applicable_states[0] if scheme and scheme.applicable_states else tpl["allIndiaLabel"]),
+                "state": portal_state,
                 "pin_code": "",
                 "lat": None,
                 "lng": None,
@@ -923,12 +949,12 @@ def live_search_banks_and_portals(
                 "phone_source": "toll_free",
                 "tel_href": _format_tel_href(toll_free),
                 "official_url": portal_url,
-                "headquarters": entry.get("headquarters", ""),
-                "overview": entry.get("overview", ""),
-                "processing_time": entry.get("processing_time", ""),
-                "collateral_policy": entry.get("collateral_policy", ""),
-                "bank_required_documents": entry.get("bank_required_documents", []),
-                "helpline_hours": entry.get("helpline_hours", ""),
+                "headquarters": portal_hq,
+                "overview": tr_portal.get("overview") or entry.get("overview", ""),
+                "processing_time": tr_portal.get("processing_time") or entry.get("processing_time", ""),
+                "collateral_policy": tr_portal.get("collateral_policy") or entry.get("collateral_policy", ""),
+                "bank_required_documents": tr_portal.get("bank_required_documents") or entry.get("bank_required_documents", []),
+                "helpline_hours": tr_portal.get("helpline_hours") or entry.get("helpline_hours", ""),
                 "supported_channels": ch,
                 "provided_schemes": schemes_cache[ch_key],
                 "all_branches": [],

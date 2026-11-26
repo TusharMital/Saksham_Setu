@@ -5,7 +5,7 @@ import L from "leaflet";
 import Icon from "../components/Icon.jsx";
 import { api } from "../api.js";
 import { useAppState } from "../state.jsx";
-import { useI18n, useTranslatedScheme, useTranslatedSchemes } from "../i18n.jsx";
+import { useI18n, useTranslatedScheme, useTranslatedSchemes, useTranslatedTexts } from "../i18n.jsx";
 
 const CHANNEL_LABELS = {
   pmsuraj: "PM-SURAJ",
@@ -21,12 +21,14 @@ const CHANNEL_LABELS = {
 
 const RADIUS_OPTIONS = [5, 10, 25];
 
-function formatCompactInr(val, noCapLabel = "No cap") {
+function formatCompactInr(val, noCapLabel = "No cap", units = {}) {
   if (val === null || val === undefined) return noCapLabel;
   const n = Number(val);
   if (Number.isNaN(n)) return "—";
-  if (n >= 10000000) return `₹${(n / 10000000).toFixed(2).replace(/\.00$/, "")} Cr`;
-  if (n >= 100000) return `₹${(n / 100000).toFixed(1).replace(/\.0$/, "")}L`;
+  const cr = units.cr || "Cr";
+  const l = units.l || "L";
+  if (n >= 10000000) return `₹${(n / 10000000).toFixed(2).replace(/\.00$/, "")} ${cr}`;
+  if (n >= 100000) return `₹${(n / 100000).toFixed(1).replace(/\.0$/, "")}${l}`;
   return `₹${n.toLocaleString("en-IN")}`;
 }
 
@@ -127,6 +129,7 @@ function InstitutionDetailsModal({
   onCopyPhone,
   copiedKey,
   t,
+  trText,
 }) {
   const [modalTab, setModalTab] = useState("overview");
   const [schemeQuery, setSchemeQuery] = useState("");
@@ -186,10 +189,10 @@ function InstitutionDetailsModal({
                 </span>
               )}
             </div>
-            <h2>{item.institution_name || item.name}</h2>
+            <h2>{trText(item.institution_name || item.name)}</h2>
             {item.name !== item.institution_name && (
               <p className="modal-branch-subtitle">
-                {t("locator.selectedBranchLabel")} <strong>{item.name}</strong> — {item.address}
+                {t("locator.selectedBranchLabel")} <strong>{trText(item.name)}</strong> — {trText(item.address)}
               </p>
             )}
           </div>
@@ -348,7 +351,15 @@ function InstitutionDetailsModal({
                           {t("compare.interestRate")}: <b><bdi>{s.interest_rate}{t("calc.pctPa")}</bdi></b>
                         </span>
                         <span>
-                          {t("compare.maxLoanLimit")}: <b><bdi>{formatCompactInr(s.max_loan, t("detail.noUpperCap"))}</bdi></b>
+                          {t("compare.maxLoanLimit")}:{" "}
+                          <b>
+                            <bdi>
+                              {formatCompactInr(s.max_loan, t("detail.noUpperCap"), {
+                                cr: t("calc.unitCr"),
+                                l: t("calc.unitL"),
+                              })}
+                            </bdi>
+                          </b>
                         </span>
                       </div>
                       <Link
@@ -381,16 +392,16 @@ function InstitutionDetailsModal({
                     <article key={`${br.branch_name}-${idx}`} className="modal-branch-row">
                       <div className="modal-branch-info">
                         <div className="modal-branch-name-row">
-                          <strong>{br.branch_name}</strong>
+                          <strong>{trText(br.branch_name)}</strong>
                           {br.distance_km != null && (
                             <span className="distance-badge">
                               <bdi>{br.distance_km} {t("locator.kmUnit")}</bdi>
                             </span>
                           )}
                         </div>
-                        <p>{br.address}</p>
+                        <p>{trText(br.address)}</p>
                         <small>
-                          {[br.district, br.state, br.pin_code].filter(Boolean).join(" • ")}
+                          {[trText(br.district), trText(br.state), br.pin_code].filter(Boolean).join(" • ")}
                         </small>
                       </div>
                       <div className="modal-branch-actions">
@@ -465,7 +476,7 @@ function InstitutionDetailsModal({
 }
 
 export default function BranchLocator() {
-  const { t, lang } = useI18n();
+  const { t, tState, lang } = useI18n();
   const { form, scheme, setScheme, setBranch } = useAppState();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -750,6 +761,31 @@ export default function BranchLocator() {
 
   const combinedItems = useMemo(() => [...branches, ...portals], [branches, portals]);
 
+  const dynamicLocatorTexts = useMemo(() => {
+    const out = [];
+    if (resolvedLocation) {
+      if (resolvedLocation.post_office) out.push(resolvedLocation.post_office);
+      if (resolvedLocation.district) out.push(resolvedLocation.district);
+      if (resolvedLocation.place) out.push(resolvedLocation.place);
+    }
+    combinedItems.forEach((item) => {
+      if (item.name) out.push(item.name);
+      if (item.address) out.push(item.address);
+      if (item.institution_name) out.push(item.institution_name);
+      if (Array.isArray(item.all_branches)) {
+        item.all_branches.forEach((br) => {
+          if (br.branch_name) out.push(br.branch_name);
+          if (br.address) out.push(br.address);
+          if (br.district) out.push(br.district);
+          if (br.state) out.push(br.state);
+        });
+      }
+    });
+    return out;
+  }, [combinedItems, resolvedLocation]);
+
+  const trLocatorText = useTranslatedTexts(dynamicLocatorTexts);
+
   const typeCounts = useMemo(() => {
     return {
       all: combinedItems.length,
@@ -882,13 +918,15 @@ export default function BranchLocator() {
           <p>
             {resolvedLocation
               ? `${t("locator.withinRadiusChannels", { radius: String(effectiveRadiusKm), code: activeSchemeCode })} • ${
-                  resolvedLocation.location_label ||
                   `${[
-                    resolvedLocation.post_office || resolvedLocation.district || resolvedLocation.place,
-                    resolvedLocation.state,
+                    trLocatorText(
+                      resolvedLocation.post_office || resolvedLocation.district || resolvedLocation.place
+                    ),
+                    tState(resolvedLocation.state),
                   ]
                     .filter(Boolean)
-                    .join(", ")}${resolvedLocation.pin ? ` (PIN ${resolvedLocation.pin})` : ""}`
+                    .join(", ")}${resolvedLocation.pin ? ` (${t("locator.pinBadge", { pin: resolvedLocation.pin })})` : ""}` ||
+                  trLocatorText(resolvedLocation.location_label || "")
                 }`
               : t("locator.promptSearchLocation")}
           </p>
@@ -1067,9 +1105,9 @@ export default function BranchLocator() {
               >
                 <Popup>
                   <div style={{ padding: "4px", maxWidth: "220px" }}>
-                    <strong style={{ fontSize: "13.5px", color: "#0f172a" }}>{b.name}</strong>
+                    <strong style={{ fontSize: "13.5px", color: "#0f172a" }}>{trLocatorText(b.name)}</strong>
                     <p style={{ margin: "4px 0", fontSize: "12px", color: "#475569" }}>
-                      {b.address}
+                      {trLocatorText(b.address)}
                     </p>
                     <div style={{ display: "flex", gap: "8px", alignItems: "center", fontSize: "12px" }}>
                       <span style={{ fontWeight: 700, color: "#15803d" }}>
@@ -1232,8 +1270,8 @@ export default function BranchLocator() {
                         <Icon name={isPortal ? "globe" : "bank"} size={20} />
                       </span>
                       <div className="bank-identity">
-                        <h2>{item.name}</h2>
-                        <p>{item.address}</p>
+                        <h2>{trLocatorText(item.name)}</h2>
+                        <p>{trLocatorText(item.address)}</p>
                       </div>
                       {item.distance_km != null ? (
                         <span className="distance-badge">
@@ -1273,7 +1311,7 @@ export default function BranchLocator() {
                     <div className="rank-reason-box">
                       <Icon name="checkCircle" size={15} />
                       <div>
-                        <strong>{item.institution_name}</strong>
+                        <strong>{trLocatorText(item.institution_name)}</strong>
                         <p>{item.why}</p>
                       </div>
                     </div>
@@ -1375,6 +1413,7 @@ export default function BranchLocator() {
           onCopyPhone={handleCopyPhone}
           copiedKey={copiedKey}
           t={t}
+          trText={trLocatorText}
         />
       )}
     </div>

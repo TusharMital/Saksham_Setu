@@ -19,5 +19,6 @@ urlpatterns = [
     path("verify-category/", views.VerifyCategoryView.as_view()),
     path("i18n/languages/", views.I18nLanguagesView.as_view()),
     path("i18n/translate-schemes/", views.TranslateSchemesView.as_view()),
+    path("i18n/translate-texts/", views.TranslateTextsView.as_view()),
     path("i18n/<str:lang_code>/", views.I18nBundleView.as_view()),
 ]

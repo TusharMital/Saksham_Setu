@@ -7,9 +7,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env", override=False)
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-only-not-for-production")
-DEBUG = os.getenv("DEBUG", "True").lower() in ("true", "1", "yes")
+DEBUG = os.getenv("DJANGO_DEBUG", os.getenv("DEBUG", "True")).lower() in ("true", "1", "yes")
 
-_allowed = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1")
+_allowed = os.getenv("DJANGO_ALLOWED_HOSTS", os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1"))
 ALLOWED_HOSTS = [h.strip() for h in _allowed.split(",") if h.strip()]
 if "testserver" not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append("testserver")
@@ -78,6 +78,14 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+_database_url = (os.getenv("DATABASE_URL") or "").strip()
+if _database_url:
+    try:
+        import dj_database_url  # type: ignore
+
+        DATABASES["default"] = dj_database_url.parse(_database_url, conn_max_age=600)
+    except ImportError:
+        pass
 
 AUTH_PASSWORD_VALIDATORS = []
 

@@ -225,6 +225,7 @@
     "showHelpFor": "{label} के लिए सहायता दिखाएँ",
     "toggleHelpTitle": "फ़ील्ड मार्गदर्शन टॉगल करें",
     "helpDialogAria": "सहायता: {label}",
+    "findingMatches": "मिलान खोज रहे हैं...",
     "speechSelected": "चयनित",
     "speechChecked": "चेक्ड",
     "speechUnchecked": "अनचेक्ड"
@@ -576,7 +577,8 @@
     "gateSelectPlaceholder": "-- ऋण योजना चुनें --",
     "pinAriaLabel": "6-अंकीय भारतीय पिन कोड",
     "filterTypeAria": "संस्थान के प्रकार के अनुसार फ़िल्टर करें",
-    "radiusAria": "खोज दायरा"
+    "radiusAria": "खोज दायरा",
+    "pinBadge": "PIN {pin}"
   },
   "calc": {
     "title": "EMI कैलकुलेटर",
@@ -676,7 +678,12 @@
     "tenureUnitAria": "अवधि इकाई",
     "svgYearAria": "वर्ष {year}: मूलधन {principal}, ब्याज {interest}, अंतिम शेष {balance}",
     "svgYearShort": "व{year}",
-    "savingsNeutralTitle": "{code} @ {rate}% बनाम 11.0%"
+    "savingsNeutralTitle": "{code} @ {rate}% बनाम 11.0%",
+    "yearColHeader": "वर्ष",
+    "vsLabel": "vs.",
+    "unitCr": "करोड़",
+    "unitL": "L",
+    "unitK": "K"
   },
   "chat": {
     "title": "सारथी AI सहायक",
@@ -870,7 +877,10 @@
     "notSpecified": "निर्दिष्ट नहीं",
     "matchedSummary": "मैच हुआ: स्कोर {score}/100 (ब्याज {interest}, सब्सिडी {subsidy}, ऋण फिट {loanFit}, विशेष {special}).",
     "rejectedPrefix": "अस्वीकृत: ",
-    "acceptedSummary": "स्वीकृत: आप {name} के लिए राज्य, वर्ग, आय, आयु, ऋण और आवेदक-प्रकार के नियमों को पूरा करते हैं।"
+    "acceptedSummary": "स्वीकृत: आप {name} के लिए राज्य, वर्ग, आय, आयु, ऋण और आवेदक-प्रकार के नियमों को पूरा करते हैं।",
+    "unitCr": "करोड़",
+    "unitLakh": "लाख",
+    "allIndia": "समस्त भारत"
   },
   "verify": {
     "invalidCategoryMsg": "कृपया वैध श्रेणी चुनें (SC, ST, OBC, EWS, या General).",
@@ -910,7 +920,13 @@
     "altAgencyMinority": "NMDFC (राष्ट्रीय अल्पसंख्यक विकास एवं वित्त निगम)",
     "altAgencyGeneral": "पीएम मुद्रा योजना (PMMY) या PMEGP",
     "indiaLabel": "भारत",
-    "defaultScaName": "राज्य चैनलाइज़िंग एजेंसी (SCA)"
+    "defaultScaName": "राज्य चैनलाइज़िंग एजेंसी (SCA)",
+    "art341Citation": "भारत के संविधान की धारा 341 के अंतर्गत संविधान (अनुसूचित जातियाँ) आदेश, 1950",
+    "doptCitation": "DoPT OM क्रमांक 36039/1/2019-Estt(Res) दिनांक 31.01.2019 (103वां संविधान संशोधन)",
+    "nsfdcCitation": "NSFDC लेंडिंग नीति और MoSJE अनुसूचित जातियों कल्याण दिशानिर्देश (वार्षिक परिवार आय <= रु 5,00,000)",
+    "pinInvalidError": "PIN कोड एक मान्य 6-अंकीय भारतीय डाक कोड होना चाहिए।",
+    "pinNotFoundError": "PIN {pin} के लिए डाकघर विवरण नहीं मिला।",
+    "pinLookupMissingError": "यह PIN हमारी लुकअप टेबल में नहीं है। स्थान की अनुमति दें या पास की किसी शहर का चयन करें।"
   },
   "bankBackend": {
     "labelPSB": "सार्वजनिक क्षेत्र बैंक",
@@ -945,7 +961,13 @@
     "osmDefaultAddress": "OpenStreetMap से प्राप्त शाखा स्थान",
     "onlineNationalPortal": "ऑनलाइन राष्ट्रीय पोर्टल",
     "allIndiaLabel": "संपूर्ण भारत",
-    "eligibleSchemesLabel": "पात्र योजनाएँ"
+    "eligibleSchemesLabel": "पात्र योजनाएँ",
+    "pinLabel": "PIN {pin}",
+    "defaultDocs": [
+      "Aadhaar कार्ड और PAN कार्ड",
+      "श्रेणी / आय प्रमाण पत्र",
+      "प्रोजेक्ट रिपोर्ट और बैंक पासबुक"
+    ]
   },
   "channels": {
     "pmsuraj": "PM-SURAJ",
@@ -968,5 +990,55 @@
     "bank": "नजदीकी भागीदार बैंक शाखा",
     "sca": "राज्य चैनलाइज़िंग एजेंसी (SCA)",
     "mfi": "सूचीबद्ध NBFC-MFI"
+  },
+  "states": {
+    "Andaman and Nicobar Islands": "अंडमान और निकोबार द्वीप समूह",
+    "Andhra Pradesh": "आंध्र प्रदेश",
+    "Arunachal Pradesh": "अरुणाचल प्रदेश",
+    "Assam": "असम",
+    "Bihar": "बिहार",
+    "Chandigarh": "चंडीगढ़",
+    "Chhattisgarh": "छत्तीसगढ़",
+    "Dadra and Nagar Haveli and Daman and Diu": "दादरा और नगर हवेली और दमन और दीव",
+    "Delhi": "दिल्ली",
+    "Goa": "गोवा",
+    "Gujarat": "गुजरात",
+    "Haryana": "हरियाणा",
+    "Himachal Pradesh": "हिमाचल प्रदेश",
+    "Jammu and Kashmir": "जम्मू और कश्मीर",
+    "Jharkhand": "झारखंड",
+    "Karnataka": "कर्नाटक",
+    "Kerala": "केरल",
+    "Ladakh": "लद्दाख",
+    "Lakshadweep": "लक्षद्वीप",
+    "Madhya Pradesh": "मध्य प्रदेश",
+    "Maharashtra": "महाराष्ट्र",
+    "Manipur": "मणिपुर",
+    "Meghalaya": "मेघालय",
+    "Mizoram": "मिज़ोरम",
+    "Nagaland": "नागालैंड",
+    "Odisha": "ओडिशा",
+    "Puducherry": "पुदुचेरी",
+    "Punjab": "पंजाब",
+    "Rajasthan": "राजस्थान",
+    "Sikkim": "सिक्किम",
+    "Tamil Nadu": "तमिलनाडु",
+    "Telangana": "तेलंगाना",
+    "Tripura": "त्रिपुरा",
+    "Uttar Pradesh": "उत्तर प्रदेश",
+    "Uttarakhand": "उत्तराखंड",
+    "West Bengal": "पश्चिम बंगाल"
+  },
+  "sectors": {
+    "agriculture": "कृषि सहायक",
+    "manufacturing": "विनिर्माण",
+    "trade": "व्यापार",
+    "service": "सेवाएँ",
+    "transport": "परिवहन",
+    "education": "शिक्षा",
+    "housing": "आवास",
+    "sanitation": "स्वच्छता / कारीगर",
+    "microfinance": "सूक्ष्म वित्त",
+    "business": "व्यापार / MSME"
   }
 }

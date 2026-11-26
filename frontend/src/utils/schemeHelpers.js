@@ -103,28 +103,33 @@ export function formatMoney(val, noCapLabel = "No fixed cap") {
   return `₹${num.toLocaleString("en-IN")}`;
 }
 
-export function formatCompactMoney(val, noCapLabel = "No Cap") {
+export function formatCompactMoney(val, noCapLabel = "No Cap", units = {}) {
   if (val === null || val === undefined) return noCapLabel;
   const num = Number(val);
   if (Number.isNaN(num)) return "—";
-  if (num >= 10000000) return `₹${(num / 10000000).toFixed(2).replace(/\.?0+$/, "")} Cr`;
-  if (num >= 100000) return `₹${(num / 100000).toFixed(2).replace(/\.?0+$/, "")}L`;
-  if (num >= 1000) return `₹${Math.round(num / 1000)}K`;
+  const cr = units.cr || "Cr";
+  const l = units.l || "L";
+  const k = units.k || "K";
+  if (num >= 10000000) return `₹${(num / 10000000).toFixed(2).replace(/\.?0+$/, "")} ${cr}`;
+  if (num >= 100000) return `₹${(num / 100000).toFixed(2).replace(/\.?0+$/, "")}${l}`;
+  if (num >= 1000) return `₹${Math.round(num / 1000)}${k}`;
   return `₹${num.toLocaleString("en-IN")}`;
 }
 
-export function formatLoanRange(minLoan, maxLoan, noCapLabel = "No Cap") {
+export function formatLoanRange(minLoan, maxLoan, noCapLabel = "No Cap", units = {}) {
   const minStr = minLoan !== null && minLoan !== undefined && Number(minLoan) > 0
-    ? formatCompactMoney(minLoan, noCapLabel)
+    ? formatCompactMoney(minLoan, noCapLabel, units)
     : "₹0";
-  const maxStr = maxLoan !== null && maxLoan !== undefined ? formatCompactMoney(maxLoan, noCapLabel) : noCapLabel;
+  const maxStr = maxLoan !== null && maxLoan !== undefined ? formatCompactMoney(maxLoan, noCapLabel, units) : noCapLabel;
   return `${minStr} – ${maxStr}`;
 }
 
 export function matchesSectorPurpose(scheme, sectorKey) {
   if (!sectorKey || sectorKey === "all") return true;
-  const sectors = (scheme.sectors || []).map((s) => String(s).toLowerCase());
-  const channels = (scheme.available_channels || []).map((c) => String(c).toLowerCase());
+  const rawSectors = scheme.raw_sectors || scheme.sectors || [];
+  const sectors = rawSectors.map((s) => String(s).toLowerCase());
+  const rawChannels = scheme.raw_available_channels || scheme.available_channels || [];
+  const channels = rawChannels.map((c) => String(c).toLowerCase());
   const text = [scheme.code, scheme.name, scheme.overview, scheme.description]
     .filter(Boolean)
     .join(" ")
@@ -176,7 +181,8 @@ export function matchesSectorPurpose(scheme, sectorKey) {
 
 export function matchesChannelFilter(scheme, channelKey) {
   if (!channelKey || channelKey === "all") return true;
-  const channels = (scheme.available_channels || []).map((c) => String(c).toLowerCase());
+  const rawChannels = scheme.raw_available_channels || scheme.available_channels || [];
+  const channels = rawChannels.map((c) => String(c).toLowerCase());
   if (channelKey === "direct_portal") {
     return channels.some((c) =>
       ["state_portal", "kviconline", "standupmitra", "pmvishwakarma"].includes(c)

@@ -225,6 +225,7 @@
     "showHelpFor": "{label} এর জন্য সহায়তা দেখান",
     "toggleHelpTitle": "ফিল্ড নির্দেশিকা টগল করুন",
     "helpDialogAria": "সহায়তা: {label}",
+    "findingMatches": "মিল খোঁজা হচ্ছে...",
     "speechSelected": "নির্বাচিত",
     "speechChecked": "চেক করা",
     "speechUnchecked": "অচেক করা"
@@ -576,7 +577,8 @@
     "gateSelectPlaceholder": "-- একটি ঋণ প্রকল্প নির্বাচন করুন --",
     "pinAriaLabel": "৬-অঙ্কের ভারতীয় পিন কোড",
     "filterTypeAria": "প্রকার অনুযায়ী প্রতিষ্ঠান ফিল্টার করুন",
-    "radiusAria": "অনুসন্ধানের ব্যাসার্ধ"
+    "radiusAria": "অনুসন্ধানের ব্যাসার্ধ",
+    "pinBadge": "PIN {pin}"
   },
   "calc": {
     "title": "EMI ক্যালকুলেটর",
@@ -676,7 +678,12 @@
     "tenureUnitAria": "মেয়াদ একক",
     "svgYearAria": "বছর {year}: মূলধন {principal}, সুদ {interest}, অবশিষ্ট ব্যালেন্স {balance}",
     "svgYearShort": "Y{year}",
-    "savingsNeutralTitle": "{code} @ {rate}% বনাম ১১.০%"
+    "savingsNeutralTitle": "{code} @ {rate}% বনাম ১১.০%",
+    "yearColHeader": "বছর",
+    "vsLabel": "vs.",
+    "unitCr": "Cr",
+    "unitL": "L",
+    "unitK": "K"
   },
   "chat": {
     "title": "সারথি AI সহায়ক",
@@ -870,7 +877,10 @@
     "notSpecified": "নির্দিষ্ট নয়",
     "matchedSummary": "মিল পাওয়া গেছে: স্কোর {score}/100 (ব্যাংকিং {interest}, সাবসিডি {subsidy}, ঋণ উপযোগিতা {loanFit}, বিশেষ {special})।",
     "rejectedPrefix": "প্রত্যাখ্যাত:",
-    "acceptedSummary": "গ্রহণযোগ্য: আপনি {name} এর জন্য রাজ্য, বিভাগ, আয়, বয়স, ঋণ এবং আবেদনকারী-প্রকারের নিয়ম পূরণ করেন।"
+    "acceptedSummary": "গ্রহণযোগ্য: আপনি {name} এর জন্য রাজ্য, বিভাগ, আয়, বয়স, ঋণ এবং আবেদনকারী-প্রকারের নিয়ম পূরণ করেন।",
+    "unitCr": "Cr",
+    "unitLakh": "lakh",
+    "allIndia": "সারা ভারত"
   },
   "verify": {
     "invalidCategoryMsg": "দয়া করে একটি বৈধ বিভাগ নির্বাচন করুন (SC, ST, OBC, EWS, বা General)।",
@@ -880,7 +890,7 @@
     "generalCertMismatchMsg": "সার্টিফিকেটের মিল নেই: একটি '{certificate_type}' 'General' বিভাগের সাথে জোড়া লাগানো যায় না। আপনার সার্টিফিকেটে মুদ্রিত বিভাগ নির্বাচন করুন।",
     "generalCertMismatchNext": "আপনার বিভাগকে সার্টিফিকেটের সাথে মিলিয়ে আপডেট করুন বা 'Not Available Yet' নির্বাচন করুন।",
     "docMismatchMsg": "ডকুমেন্ট-টু-ডিপার্টমেন্ট মিল নেই: '{certificate_type}' আইনগতভাবে দাবিকৃত বিভাগ '{category}' এর সাথে মেলে না।{extra_rule}",
-    "docMismatchExtraEws": "Under DoPT OM No. 36039/1/2019-Estt(Res), SC/ST/OBC persons are excluded from EWS reservation.",
+    "docMismatchExtraEws": "DoPT OM নং 36039/1/2019-Estt(Res) অনুযায়ী, SC/ST/OBC ব্যক্তিদের EWS সংরক্ষণ থেকে বাদ দেওয়া হয়েছে।",
     "docMismatchNext": "আপনার দাবিকৃত বিভাগের সাথে মিলিয়ে অফিসিয়াল সার্টিফিকেট প্রদান করুন, অথবা আপনার নির্বাচিত বিভাগ সংশোধন করুন।",
     "notNotifiedMsg": "'{caste}' {loan_state} এ Scheduled Caste (SC) হিসাবে NOT বিজ্ঞপ্তি পায়নি; {loan_state} এ এটি {actual_cat} ({citation}) এর অধীনে পড়ে।",
     "notNotifiedNext": "{loan_state} এ {actual_cat} বিভাগে আবেদন করুন (যেমন NBCFDC/State OBC বা কেন্দ্রীয় MSME স্কিম যেমন PM MUDRA/PMEGP) NSFDC এর পরিবর্তে।",
@@ -910,7 +920,13 @@
     "altAgencyMinority": "NMDFC (National Minorities Development & Finance Corp.)",
     "altAgencyGeneral": "PM MUDRA Yojana (PMMY) বা PMEGP",
     "indiaLabel": "ভারত",
-    "defaultScaName": "State Channelising Agency (SCA)"
+    "defaultScaName": "State Channelising Agency (SCA)",
+    "art341Citation": "ভারতের সংবিধানের ৩৪১ নং ধারা অনুযায়ী সংবিধান (সংরক্ষিত শ্রেণি) অর্ডার, ১৯৫০",
+    "doptCitation": "DoPT OM No. 36039/1/2019-Estt(Res) dated 31.01.2019 (103rd Constitutional Amendment)",
+    "nsfdcCitation": "NSFDC Lending Policy & MoSJE Scheduled Castes Welfare Guidelines (Annual Family Income <= Rs 5,00,000)",
+    "pinInvalidError": "PIN code must be a valid 6-digit Indian postal code.",
+    "pinNotFoundError": "No post office details found for PIN {pin}.",
+    "pinLookupMissingError": "This PIN is not in our lookup table. Allow location or pick a nearby city."
   },
   "bankBackend": {
     "labelPSB": "Public Sector Bank",
@@ -945,7 +961,13 @@
     "osmDefaultAddress": "OpenStreetMap থেকে শাখার অবস্থান",
     "onlineNationalPortal": "অনলাইন জাতীয় পোর্টাল",
     "allIndiaLabel": "সারা ভারত",
-    "eligibleSchemesLabel": "যোগ্য স্কিম"
+    "eligibleSchemesLabel": "যোগ্য স্কিম",
+    "pinLabel": "PIN {pin}",
+    "defaultDocs": [
+      "Aadhaar Card & PAN Card",
+      "Category / Income Certificate",
+      "Project Report & Bank Passbook"
+    ]
   },
   "channels": {
     "pmsuraj": "PM-SURAJ",
@@ -968,5 +990,55 @@
     "bank": "নিকটস্থ পার্টনার ব্যাংক শাখা",
     "sca": "রাজ্য চ্যানেলিং এজেন্সি (SCA)",
     "mfi": "এমপেনেলড NBFC-MFI"
+  },
+  "states": {
+    "Andaman and Nicobar Islands": "Andaman and Nicobar Islands",
+    "Andhra Pradesh": "Andhra Pradesh",
+    "Arunachal Pradesh": "Arunachal Pradesh",
+    "Assam": "Assam",
+    "Bihar": "Bihar",
+    "Chandigarh": "Chandigarh",
+    "Chhattisgarh": "Chhattisgarh",
+    "Dadra and Nagar Haveli and Daman and Diu": "Dadra and Nagar Haveli and Daman and Diu",
+    "Delhi": "Delhi",
+    "Goa": "Goa",
+    "Gujarat": "Gujarat",
+    "Haryana": "Haryana",
+    "Himachal Pradesh": "Himachal Pradesh",
+    "Jammu and Kashmir": "Jammu and Kashmir",
+    "Jharkhand": "Jharkhand",
+    "Karnataka": "Karnataka",
+    "Kerala": "Kerala",
+    "Ladakh": "Ladakh",
+    "Lakshadweep": "Lakshadweep",
+    "Madhya Pradesh": "Madhya Pradesh",
+    "Maharashtra": "Maharashtra",
+    "Manipur": "Manipur",
+    "Meghalaya": "Meghalaya",
+    "Mizoram": "Mizoram",
+    "Nagaland": "Nagaland",
+    "Odisha": "Odisha",
+    "Puducherry": "Puducherry",
+    "Punjab": "Punjab",
+    "Rajasthan": "Rajasthan",
+    "Sikkim": "Sikkim",
+    "Tamil Nadu": "Tamil Nadu",
+    "Telangana": "Telangana",
+    "Tripura": "Tripura",
+    "Uttar Pradesh": "Uttar Pradesh",
+    "Uttarakhand": "Uttarakhand",
+    "West Bengal": "West Bengal"
+  },
+  "sectors": {
+    "agriculture": "Agriculture allied",
+    "manufacturing": "Manufacturing",
+    "trade": "Trading",
+    "service": "Services",
+    "transport": "Transport",
+    "education": "Education",
+    "housing": "Housing",
+    "sanitation": "Sanitation / Artisan",
+    "microfinance": "Micro-Finance",
+    "business": "Business / MSME"
   }
 }

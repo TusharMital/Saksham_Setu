@@ -225,6 +225,7 @@
     "showHelpFor": "Show help for {label}",
     "toggleHelpTitle": "Toggle field guidance",
     "helpDialogAria": "Help: {label}",
+    "findingMatches": "Finding matches...",
     "speechSelected": "selected",
     "speechChecked": "checked",
     "speechUnchecked": "not checked"
@@ -576,7 +577,8 @@
     "gateSelectPlaceholder": "-- Select a Loan Scheme --",
     "pinAriaLabel": "6-digit Indian PIN code",
     "filterTypeAria": "Filter institutions by type",
-    "radiusAria": "Search radius"
+    "radiusAria": "Search radius",
+    "pinBadge": "PIN {pin}"
   },
   "calc": {
     "title": "EMI کیلکولیٹر",
@@ -676,7 +678,12 @@
     "tenureUnitAria": "Tenure unit",
     "svgYearAria": "Year {year}: Principal {principal}, Interest {interest}, Closing Balance {balance}",
     "svgYearShort": "Y{year}",
-    "savingsNeutralTitle": "{code} @ {rate}% vs. 11.0%"
+    "savingsNeutralTitle": "{code} @ {rate}% vs. 11.0%",
+    "yearColHeader": "Year",
+    "vsLabel": "vs.",
+    "unitCr": "Cr",
+    "unitL": "L",
+    "unitK": "K"
   },
   "chat": {
     "title": "سارتھی AI مددگار",
@@ -870,7 +877,10 @@
     "notSpecified": "not specified",
     "matchedSummary": "Matched: score {score}/100 (interest {interest}, subsidy {subsidy}, loan fit {loanFit}, special {special}).",
     "rejectedPrefix": "Rejected: ",
-    "acceptedSummary": "Accepted: you meet the state, category, income, age, loan, and applicant-type rules for {name}."
+    "acceptedSummary": "Accepted: you meet the state, category, income, age, loan, and applicant-type rules for {name}.",
+    "unitCr": "Cr",
+    "unitLakh": "lakh",
+    "allIndia": "All India"
   },
   "verify": {
     "invalidCategoryMsg": "Please select a valid category (SC, ST, OBC, EWS, or General).",
@@ -910,7 +920,13 @@
     "altAgencyMinority": "NMDFC (National Minorities Development & Finance Corp.)",
     "altAgencyGeneral": "PM MUDRA Yojana (PMMY) or PMEGP",
     "indiaLabel": "India",
-    "defaultScaName": "State Channelising Agency (SCA)"
+    "defaultScaName": "State Channelising Agency (SCA)",
+    "art341Citation": "Constitution (Scheduled Castes) Order, 1950 under Article 341 of the Constitution of India",
+    "doptCitation": "DoPT OM No. 36039/1/2019-Estt(Res) dated 31.01.2019 (103rd Constitutional Amendment)",
+    "nsfdcCitation": "NSFDC Lending Policy & MoSJE Scheduled Castes Welfare Guidelines (Annual Family Income <= Rs 5,00,000)",
+    "pinInvalidError": "PIN code must be a valid 6-digit Indian postal code.",
+    "pinNotFoundError": "No post office details found for PIN {pin}.",
+    "pinLookupMissingError": "This PIN is not in our lookup table. Allow location or pick a nearby city."
   },
   "bankBackend": {
     "labelPSB": "Public Sector Bank",
@@ -945,7 +961,13 @@
     "osmDefaultAddress": "Branch location from OpenStreetMap",
     "onlineNationalPortal": "Online National Portal",
     "allIndiaLabel": "All India",
-    "eligibleSchemesLabel": "eligible schemes"
+    "eligibleSchemesLabel": "eligible schemes",
+    "pinLabel": "PIN {pin}",
+    "defaultDocs": [
+      "Aadhaar Card & PAN Card",
+      "Category / Income Certificate",
+      "Project Report & Bank Passbook"
+    ]
   },
   "channels": {
     "pmsuraj": "PM-SURAJ",
@@ -968,5 +990,55 @@
     "bank": "Nearest Partner Bank Branch",
     "sca": "State Channelising Agency (SCA)",
     "mfi": "Empanelled NBFC-MFI"
+  },
+  "states": {
+    "Andaman and Nicobar Islands": "Andaman and Nicobar Islands",
+    "Andhra Pradesh": "Andhra Pradesh",
+    "Arunachal Pradesh": "Arunachal Pradesh",
+    "Assam": "Assam",
+    "Bihar": "Bihar",
+    "Chandigarh": "Chandigarh",
+    "Chhattisgarh": "Chhattisgarh",
+    "Dadra and Nagar Haveli and Daman and Diu": "Dadra and Nagar Haveli and Daman and Diu",
+    "Delhi": "Delhi",
+    "Goa": "Goa",
+    "Gujarat": "Gujarat",
+    "Haryana": "Haryana",
+    "Himachal Pradesh": "Himachal Pradesh",
+    "Jammu and Kashmir": "Jammu and Kashmir",
+    "Jharkhand": "Jharkhand",
+    "Karnataka": "Karnataka",
+    "Kerala": "Kerala",
+    "Ladakh": "Ladakh",
+    "Lakshadweep": "Lakshadweep",
+    "Madhya Pradesh": "Madhya Pradesh",
+    "Maharashtra": "Maharashtra",
+    "Manipur": "Manipur",
+    "Meghalaya": "Meghalaya",
+    "Mizoram": "Mizoram",
+    "Nagaland": "Nagaland",
+    "Odisha": "Odisha",
+    "Puducherry": "Puducherry",
+    "Punjab": "Punjab",
+    "Rajasthan": "Rajasthan",
+    "Sikkim": "Sikkim",
+    "Tamil Nadu": "Tamil Nadu",
+    "Telangana": "Telangana",
+    "Tripura": "Tripura",
+    "Uttar Pradesh": "Uttar Pradesh",
+    "Uttarakhand": "Uttarakhand",
+    "West Bengal": "West Bengal"
+  },
+  "sectors": {
+    "agriculture": "Agriculture allied",
+    "manufacturing": "Manufacturing",
+    "trade": "Trading",
+    "service": "Services",
+    "transport": "Transport",
+    "education": "Education",
+    "housing": "Housing",
+    "sanitation": "Sanitation / Artisan",
+    "microfinance": "Micro-Finance",
+    "business": "Business / MSME"
   }
 }

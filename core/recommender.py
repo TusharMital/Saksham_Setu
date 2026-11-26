@@ -26,7 +26,27 @@ DEFAULT_REJECTION_TEMPLATES = {
     "matchedSummary": "Matched: score {score}/100 (interest {interest}, subsidy {subsidy}, loan fit {loanFit}, special {special}).",
     "rejectedPrefix": "Rejected: ",
     "acceptedSummary": "Accepted: you meet the state, category, income, age, loan, and applicant-type rules for {name}.",
+    "unitCr": "Cr",
+    "unitLakh": "lakh",
+    "allIndia": "All India",
 }
+
+
+def _load_extra_section(section_name: str, lang: str) -> dict:
+    code = str(lang or "en").strip().lower()
+    if code not in SUPPORTED_LANGUAGES or code == "en":
+        return {}
+    en_path = TRANSLATIONS_DIR / "en.json"
+    tgt_path = TRANSLATIONS_DIR / f"{code}.json"
+    if not en_path.exists() or not tgt_path.exists():
+        return {}
+    try:
+        en_sec = json.loads(en_path.read_text(encoding="utf-8")).get(section_name) or {}
+        tgt_sec = json.loads(tgt_path.read_text(encoding="utf-8")).get(section_name) or {}
+        repaired, _ = sanitize_bundle_with_fallback(en_sec, tgt_sec)
+        return repaired
+    except (OSError, ValueError):
+        return {}
 
 
 @lru_cache(maxsize=32)
@@ -128,19 +148,35 @@ def scheme_to_dict(scheme):
     }
 
 
-def _fmt_inr(amount):
+def _fmt_inr(amount, tpl=None):
+    cr = (tpl or DEFAULT_REJECTION_TEMPLATES).get("unitCr", "Cr")
+    lakh = (tpl or DEFAULT_REJECTION_TEMPLATES).get("unitLakh", "lakh")
     n = float(amount)
     if n >= 10000000:
-        return f"₹{n / 10000000:.2f} Cr".replace(".00 Cr", " Cr")
+        return f"₹{n / 10000000:.2f}".rstrip("0").rstrip(".") + f" {cr}"
     if n >= 100000:
-        return f"₹{n / 100000:.1f} lakh".replace(".0 lakh", " lakh")
+        return f"₹{n / 100000:.1f}".rstrip("0").rstrip(".") + f" {lakh}"
     return f"₹{int(n):,}"
 
 
 def layer1_evaluate(applicant, scheme, lang="en"):
     """Evaluate all Layer-1 eligibility rules and return (accepted, summary_reason, rejection_reasons)."""
     tpl = _rejection_templates(lang)
+    states_map = _load_extra_section("states", lang)
+    form_map = _load_extra_section("form", lang)
     rejection_reasons = []
+
+    def _tr_state(name_str):
+        key = str(name_str or "").strip()
+        if not key:
+            return tpl["notSpecified"]
+        if key.upper() == "ALL":
+            return tpl.get("allIndia", "All India")
+        return states_map.get(key, key)
+
+    def _tr_app_type(t_str):
+        key = str(t_str or "").strip().lower()
+        return form_map.get(key, key)
 
     # 1. State applicability check
     raw_states = _list(scheme.get("applicable_states") or scheme.get("states_supported"))
@@ -151,8 +187,8 @@ def layer1_evaluate(applicant, scheme, lang="en"):
             _fmt_tpl(
                 tpl["stateMismatch"],
                 name=scheme["name"],
-                states=", ".join(str(s) for s in raw_states),
-                userState=applicant.get("state") or tpl["notSpecified"],
+                states=", ".join(_tr_state(s) for s in raw_states),
+                userState=_tr_state(applicant.get("state")),
             )
         )
 
@@ -204,8 +240,8 @@ def layer1_evaluate(applicant, scheme, lang="en"):
             rejection_reasons.append(
                 _fmt_tpl(
                     tpl["incomeExceeded"],
-                    income=_fmt_inr(income),
-                    ceiling=_fmt_inr(ceiling),
+                    income=_fmt_inr(income, tpl),
+                    ceiling=_fmt_inr(ceiling, tpl),
                 )
             )
 
@@ -219,8 +255,8 @@ def layer1_evaluate(applicant, scheme, lang="en"):
             rejection_reasons.append(
                 _fmt_tpl(
                     tpl["loanTooLow"],
-                    loan=_fmt_inr(loan),
-                    minLoan=_fmt_inr(min_loan),
+                    loan=_fmt_inr(loan, tpl),
+                    minLoan=_fmt_inr(min_loan, tpl),
                 )
             )
     if max_raw is not None:
@@ -229,8 +265,8 @@ def layer1_evaluate(applicant, scheme, lang="en"):
             rejection_reasons.append(
                 _fmt_tpl(
                     tpl["loanTooHigh"],
-                    loan=_fmt_inr(loan),
-                    maxLoan=_fmt_inr(max_loan),
+                    loan=_fmt_inr(loan, tpl),
+                    maxLoan=_fmt_inr(max_loan, tpl),
                 )
             )
 
@@ -255,8 +291,8 @@ def layer1_evaluate(applicant, scheme, lang="en"):
         rejection_reasons.append(
             _fmt_tpl(
                 tpl["applicantType"],
-                allowed=", ".join(allowed_types),
-                userType=app_type,
+                allowed=", ".join(_tr_app_type(t) for t in allowed_types),
+                userType=_tr_app_type(app_type),
             )
         )
 

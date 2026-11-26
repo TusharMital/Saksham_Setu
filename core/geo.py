@@ -46,6 +46,12 @@ BANK_BACKEND_DEFAULTS = {
     "onlineNationalPortal": "Online National Portal",
     "allIndiaLabel": "All India",
     "eligibleSchemesLabel": "eligible schemes",
+    "pinLabel": "PIN {pin}",
+    "defaultDocs": [
+        "Aadhaar Card & PAN Card",
+        "Category / Income Certificate",
+        "Project Report & Bank Passbook",
+    ],
 }
 
 EARTH_KM = 6371.0

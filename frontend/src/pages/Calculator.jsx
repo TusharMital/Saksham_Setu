@@ -93,11 +93,14 @@ function formatExactInr(val) {
   return `₹${num.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
 }
 
-function formatCompactInr(val) {
+function formatCompactInr(val, units = {}) {
   const n = Number(val || 0);
-  if (n >= 10000000) return `₹${(n / 10000000).toFixed(2).replace(/\.00$/, "")} Cr`;
-  if (n >= 100000) return `₹${(n / 100000).toFixed(1).replace(/\.0$/, "")}L`;
-  if (n >= 1000) return `₹${Math.round(n / 1000)}K`;
+  const cr = units.cr || "Cr";
+  const l = units.l || "L";
+  const k = units.k || "K";
+  if (n >= 10000000) return `₹${(n / 10000000).toFixed(2).replace(/\.00$/, "")} ${cr}`;
+  if (n >= 100000) return `₹${(n / 100000).toFixed(1).replace(/\.0$/, "")}${l}`;
+  if (n >= 1000) return `₹${Math.round(n / 1000)}${k}`;
   return `₹${Math.round(n)}`;
 }
 
@@ -496,7 +499,7 @@ function YearlyRepaymentSvg({ yearly, principal, moratoriumMonths, t }) {
           </span>
           {moratoriumMonths > 0 && (
             <span className="moratorium-legend-tag">
-              {t("calc.moratoriumShort")}: {moratoriumMonths}m
+              {t("calc.moratoriumShort")}: {t("detail.monthsShort", { months: String(moratoriumMonths) })}
             </span>
           )}
         </div>
@@ -511,6 +514,7 @@ function YearlyRepaymentSvg({ yearly, principal, moratoriumMonths, t }) {
         {/* Horizontal gridlines + Left (Balance) & Right (Annual Payment) Y-axis labels */}
         {yTicks.map((tick) => {
           const y = pad.top + plotH * (1 - tick);
+          const units = { cr: t("calc.unitCr"), l: t("calc.unitL"), k: t("calc.unitK") };
           return (
             <g key={tick}>
               <line
@@ -522,7 +526,7 @@ function YearlyRepaymentSvg({ yearly, principal, moratoriumMonths, t }) {
                 strokeDasharray={tick === 0 ? undefined : "4 4"}
               />
               <text x={pad.left - 8} y={y + 4} textAnchor="end" className="svg-axis-label">
-                {formatCompactInr(maxBalance * tick)}
+                {formatCompactInr(maxBalance * tick, units)}
               </text>
               <text
                 x={pad.left + plotW + 8}
@@ -530,7 +534,7 @@ function YearlyRepaymentSvg({ yearly, principal, moratoriumMonths, t }) {
                 textAnchor="start"
                 className="svg-axis-label svg-axis-right"
               >
-                {formatCompactInr(barScaleMax * tick)}
+                {formatCompactInr(barScaleMax * tick, units)}
               </text>
             </g>
           );
@@ -692,7 +696,7 @@ function YearlyRepaymentSvg({ yearly, principal, moratoriumMonths, t }) {
             <strong>{t("calc.yearLabel", { year: String(inspected.year) })}</strong>
             {inspected.is_moratorium_year && (
               <span className="moratorium-badge-sm">
-                {t("calc.moratoriumShort")} ({inspected.moratorium_months}m)
+                {t("calc.moratoriumShort")} ({t("detail.monthsShort", { months: String(inspected.moratorium_months) })})
               </span>
             )}
           </div>
@@ -1374,11 +1378,11 @@ export default function Calculator() {
                 disabled={isLocked}
                 value={clamp(amount, AMOUNT_MIN, AMOUNT_MAX)}
                 onChange={(e) => handleAmountSlider(e.target.value)}
-                aria-label={`${t("calc.amount")} slider`}
+                aria-label={t("allSchemes.sliderAria", { label: t("calc.amount") })}
               />
               <small className="slider-limits">
                 <span><bdi>{t("calc.amountMinLimit")}</bdi></span>
-                <span className="limit-mid"><bdi>{formatCompactInr(amount)}</bdi></span>
+                <span className="limit-mid"><bdi>{formatCompactInr(amount, { cr: t("calc.unitCr"), l: t("calc.unitL"), k: t("calc.unitK") })}</bdi></span>
                 <span><bdi>{t("calc.amountMaxLimit")}</bdi></span>
               </small>
             </div>
@@ -1418,7 +1422,7 @@ export default function Calculator() {
                 disabled={isLocked}
                 value={clamp(rate, RATE_MIN, RATE_MAX)}
                 onChange={(e) => handleRateSlider(e.target.value)}
-                aria-label={`${t("calc.rate")} slider`}
+                aria-label={t("allSchemes.sliderAria", { label: t("calc.rate") })}
               />
               <small className="slider-limits">
                 <span>1%</span>
@@ -1483,7 +1487,7 @@ export default function Calculator() {
                     : clamp(tenure, TENURE_MIN_MONTHS, TENURE_MAX_MONTHS)
                 }
                 onChange={(e) => handleTenureSlider(e.target.value)}
-                aria-label={`${t("calc.tenure")} slider`}
+                aria-label={t("allSchemes.sliderAria", { label: t("calc.tenure") })}
               />
               <small className="slider-limits">
                 <span>{tenureUnit === "years" ? t("calc.minYearsLimit") : t("calc.minMonthsLimit")}</span>
@@ -1526,7 +1530,7 @@ export default function Calculator() {
                 disabled={isLocked}
                 value={clamp(moratorium, 0, maxMoratorium)}
                 onChange={(e) => handleMoratoriumSlider(e.target.value)}
-                aria-label={`${t("calc.moratoriumShort")} slider`}
+                aria-label={t("allSchemes.sliderAria", { label: t("calc.moratoriumShort") })}
               />
               <small className="slider-limits">
                 <span>{t("calc.moratoriumZeroLimit")}</span>
@@ -1723,7 +1727,7 @@ export default function Calculator() {
               ) : (
                 <p>
                   <bdi>
-                    {t("calc.bankMarketLabel")} {formatExactInr(marketComparison.marketInterest)} vs.{" "}
+                    {t("calc.bankMarketLabel")} {formatExactInr(marketComparison.marketInterest)} {t("calc.vsLabel")}{" "}
                     {formatExactInr(activeCalc.total_interest)} ({translatedLockedScheme.code})
                   </bdi>
                 </p>
@@ -1797,7 +1801,7 @@ export default function Calculator() {
               <table>
                 <thead>
                   <tr>
-                    <th>{t("calc.yearLabel", { year: "" }).trim()}</th>
+                    <th>{t("calc.yearColHeader")}</th>
                     <th>{t("calc.openingBal")}</th>
                     <th>{t("calc.principalPaid")}</th>
                     <th>{t("calc.interestPaid")}</th>

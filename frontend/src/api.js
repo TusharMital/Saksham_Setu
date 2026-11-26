@@ -38,8 +38,10 @@ export const api = {
   createApplication: (body) => request("/applications/", { method: "POST", body: JSON.stringify(body) }),
   pdfUrl: (ref) => `${BASE}/applications/${encodeURIComponent(ref)}/pdf/`,
   chat: (body) => request("/chat/", { method: "POST", body: JSON.stringify(body) }),
-  pin: (pin) => request(`/pin-lookup/?pin=${encodeURIComponent(pin)}`),
-  pinLookup: (pin) => request(`/pin-lookup/${encodeURIComponent(pin)}/`),
+  pin: (pin, lang) =>
+    request(`/pin-lookup/?pin=${encodeURIComponent(pin)}${lang ? `&lang=${encodeURIComponent(lang)}` : ""}`),
+  pinLookup: (pin, lang) =>
+    request(`/pin-lookup/${encodeURIComponent(pin)}/${lang ? `?lang=${encodeURIComponent(lang)}` : ""}`),
   districts: () => request("/locations/districts/"),
   verifyCategory: (body) => request("/verify-category/", { method: "POST", body: JSON.stringify(body) }),
   languages: () => request("/i18n/languages/"),
@@ -48,5 +50,10 @@ export const api = {
     request("/i18n/translate-schemes/", {
       method: "POST",
       body: JSON.stringify({ lang, scheme_codes: schemeCodes }),
+    }),
+  translateTexts: (lang, texts) =>
+    request("/i18n/translate-texts/", {
+      method: "POST",
+      body: JSON.stringify({ lang, texts }),
     }),
 };

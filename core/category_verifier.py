@@ -48,6 +48,9 @@ VERIFY_DEFAULTS = {
     "altAgencyGeneral": "PM MUDRA Yojana (PMMY) or PMEGP",
     "indiaLabel": "India",
     "defaultScaName": "State Channelising Agency (SCA)",
+    "art341Citation": "Constitution (Scheduled Castes) Order, 1950 under Article 341 of the Constitution of India",
+    "doptCitation": "DoPT OM No. 36039/1/2019-Estt(Res) dated 31.01.2019 (103rd Constitutional Amendment)",
+    "nsfdcCitation": "NSFDC Lending Policy & MoSJE Scheduled Castes Welfare Guidelines (Annual Family Income <= Rs 5,00,000)",
 }
 
 CATEGORY_CERT_MAP = {
@@ -156,7 +159,10 @@ def verify_category_and_document(payload: dict[str, Any], lang: str = "en") -> d
     """Verify claimed category, document type, state notification (Art. 341), and EWS rules (DoPT 2019)."""
     rules = load_state_category_rules()
     states_dict = rules.get("states", {})
-    tpl = get_section_templates("verify", VERIFY_DEFAULTS, lang=lang or payload.get("lang") or "en")
+    eff_lang = str(lang or payload.get("lang") or "en").strip().lower()
+    tpl = get_section_templates("verify", VERIFY_DEFAULTS, lang=eff_lang)
+    form_tpl = get_section_templates("form", {}, lang=eff_lang)
+    states_tpl = get_section_templates("states", {}, lang=eff_lang)
 
     loan_state = _normalize_state(payload.get("loan_state"), states_dict)
     certificate_state = _normalize_state(payload.get("certificate_state"), states_dict)
@@ -168,11 +174,22 @@ def verify_category_and_document(payload: dict[str, Any], lang: str = "en") -> d
         True if payload.get("ews_assets_compliant") is None else payload.get("ews_assets_compliant")
     )
 
+    cert_label_map = {
+        "sc_cert": form_tpl.get("cert_sc") or certificate_type,
+        "ews_cert": form_tpl.get("cert_ews") or certificate_type,
+        "st_cert": form_tpl.get("cert_st") or certificate_type,
+        "obc_cert": form_tpl.get("cert_obc") or certificate_type,
+        "none": form_tpl.get("cert_none") or certificate_type,
+    }
+    cert_display = cert_label_map.get(certificate_type, certificate_type) if eff_lang != "en" else certificate_type
+    loan_state_disp = states_tpl.get(loan_state, loan_state) if (loan_state and eff_lang != "en") else loan_state
+    cert_state_disp = states_tpl.get(certificate_state, certificate_state) if (certificate_state and eff_lang != "en") else certificate_state
+
     nsfdc_cap = int(rules["nsfdc_rules"]["max_annual_income"])
     ews_cap = int(rules["ews_rules"]["max_annual_income"])
-    art341_citation = rules["sc_constitutional_rule"]["citation"]
-    dopt_citation = rules["ews_rules"]["citation"]
-    nsfdc_citation = rules["nsfdc_rules"]["citation"]
+    art341_citation = tpl.get("art341Citation") or rules["sc_constitutional_rule"]["citation"]
+    dopt_citation = tpl.get("doptCitation") or rules["ews_rules"]["citation"]
+    nsfdc_citation = tpl.get("nsfdcCitation") or rules["nsfdc_rules"]["citation"]
 
     if category not in VALID_CATEGORIES:
         return {
@@ -218,7 +235,7 @@ def verify_category_and_document(payload: dict[str, Any], lang: str = "en") -> d
                 "loan_state": loan_state,
                 "certificate_type": certificate_type,
                 "citation": dopt_citation if certificate_type == "ews_cert" else art341_citation,
-                "message": fmt_tpl(tpl["generalCertMismatchMsg"], certificate_type=certificate_type),
+                "message": fmt_tpl(tpl["generalCertMismatchMsg"], certificate_type=cert_display),
                 "next_step": tpl["generalCertMismatchNext"],
             }
         if category != "GENERAL" and certificate_type != expected_cert:
@@ -240,7 +257,7 @@ def verify_category_and_document(payload: dict[str, Any], lang: str = "en") -> d
                 "citation": dopt_citation if "ews_cert" in (certificate_type, expected_cert) else art341_citation,
                 "message": fmt_tpl(
                     tpl["docMismatchMsg"],
-                    certificate_type=certificate_type,
+                    certificate_type=cert_display,
                     category=category,
                     extra_rule=extra_rule,
                 ),
@@ -267,13 +284,13 @@ def verify_category_and_document(payload: dict[str, Any], lang: str = "en") -> d
                     "message": fmt_tpl(
                         tpl["notNotifiedMsg"],
                         caste=lookup["canonical_caste"],
-                        loan_state=loan_state,
+                        loan_state=loan_state_disp,
                         actual_cat=actual_cat,
                         citation=art341_citation,
                     ),
                     "next_step": fmt_tpl(
                         tpl["notNotifiedNext"],
-                        loan_state=loan_state,
+                        loan_state=loan_state_disp,
                         actual_cat=actual_cat,
                     ),
                 }
@@ -292,11 +309,11 @@ def verify_category_and_document(payload: dict[str, Any], lang: str = "en") -> d
                 "citation": art341_citation,
                 "message": fmt_tpl(
                     tpl["interstateMsg"],
-                    certificate_state=certificate_state,
-                    loan_state=loan_state,
+                    certificate_state=cert_state_disp,
+                    loan_state=loan_state_disp,
                     note=tpl.get("interstateMigrationNote") or rules["sc_constitutional_rule"]["interstate_migration_note"],
                 ),
-                "next_step": fmt_tpl(tpl["interstateNext"], loan_state=loan_state),
+                "next_step": fmt_tpl(tpl["interstateNext"], loan_state=loan_state_disp),
             }
 
         # 4. Verified SC + Document + State Match
@@ -311,7 +328,7 @@ def verify_category_and_document(payload: dict[str, Any], lang: str = "en") -> d
                 "loan_state": loan_state,
                 "certificate_type": certificate_type,
                 "citation": f"{art341_citation}; {nsfdc_citation}",
-                "message": fmt_tpl(tpl["scCertMissingMsg"], loan_state=loan_state or tpl["indiaLabel"]),
+                "message": fmt_tpl(tpl["scCertMissingMsg"], loan_state=loan_state_disp or tpl["indiaLabel"]),
                 "next_step": tpl["scCertMissingNext"],
             }
 
@@ -334,7 +351,7 @@ def verify_category_and_document(payload: dict[str, Any], lang: str = "en") -> d
             "citation": f"{art341_citation}; {nsfdc_citation}",
             "message": fmt_tpl(
                 tpl["scVerifiedMsg"],
-                loan_state=loan_state or tpl["indiaLabel"],
+                loan_state=loan_state_disp or tpl["indiaLabel"],
                 income_note=income_note,
             ),
             "next_step": (
@@ -395,7 +412,7 @@ def verify_category_and_document(payload: dict[str, Any], lang: str = "en") -> d
             "loan_state": loan_state,
             "certificate_type": certificate_type,
             "citation": dopt_citation if certificate_type == "ews_cert" else art341_citation,
-            "message": fmt_tpl(tpl["minorityCertMismatchMsg"], certificate_type=certificate_type),
+            "message": fmt_tpl(tpl["minorityCertMismatchMsg"], certificate_type=cert_display),
             "next_step": tpl["minorityCertMismatchNext"],
         }
 

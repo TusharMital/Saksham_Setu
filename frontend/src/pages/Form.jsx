@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HelpField from "../components/HelpField.jsx";
 import Icon from "../components/Icon.jsx";
 import { api } from "../api.js";
 import { useAppState } from "../state.jsx";
-import { useI18n } from "../i18n.jsx";
+import { useI18n, useTranslatedTexts } from "../i18n.jsx";
 
 const FALLBACK_STATES = [
   "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar",
@@ -47,7 +47,7 @@ function resolveDistrictOption(stateName, rawDistrict, statesMap) {
 }
 
 export default function Form() {
-  const { t, lang } = useI18n();
+  const { t, tState, lang } = useI18n();
   const { form, updateForm, setResult } = useAppState();
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
@@ -89,16 +89,35 @@ export default function Form() {
     ? Object.keys(statesMap).sort((a, b) => a.localeCompare(b))
     : FALLBACK_STATES;
 
-  const districts = (() => {
-    if (!form.state) return [{ value: "", label: f("selectStateFirst") }];
+  const rawDistrictBase = useMemo(() => {
+    if (!form.state) return [];
     const base = [...(statesMap[form.state] || [])];
     const hasDistrict =
       form.district && base.some((d) => d.toLowerCase() === String(form.district).toLowerCase());
     if (form.district && form.district !== "Other" && !hasDistrict) {
       base.unshift(form.district);
     }
-    const opts = base.map((d) => ({ value: d, label: d }));
-    if (!base.includes("Other")) {
+    return base;
+  }, [form.state, form.district, statesMap]);
+
+  const dynamicFormTexts = useMemo(() => {
+    const items = [...rawDistrictBase];
+    if (pinInfo) {
+      if (pinInfo.block) items.push(pinInfo.block);
+      if (pinInfo.district) items.push(pinInfo.district);
+      if (Array.isArray(pinInfo.post_offices)) {
+        pinInfo.post_offices.forEach((po) => items.push(po));
+      }
+    }
+    return items;
+  }, [rawDistrictBase, pinInfo]);
+
+  const trFormText = useTranslatedTexts(dynamicFormTexts);
+
+  const districts = (() => {
+    if (!form.state) return [{ value: "", label: f("selectStateFirst") }];
+    const opts = rawDistrictBase.map((d) => ({ value: d, label: trFormText(d) }));
+    if (!rawDistrictBase.includes("Other")) {
       opts.push({ value: "Other", label: f("otherOption") });
     }
     return [selectPlaceholder, ...opts];
@@ -123,7 +142,7 @@ export default function Form() {
       setPinNote("");
 
       api
-        .pinLookup(cleanPin)
+        .pinLookup(cleanPin, lang)
         .then((res) => {
           if (reqId !== pinReqRef.current) return;
           setPinInfo(res);
@@ -342,13 +361,13 @@ export default function Form() {
                         <Icon name="checkCircle" size={15} />
                         <span>
                           <strong>
-                            {selectedPostOffice || pinInfo.post_offices?.[0] || pinInfo.district}
+                            {trFormText(selectedPostOffice || pinInfo.post_offices?.[0] || pinInfo.district)}
                           </strong>
                           {pinInfo.block && pinInfo.block !== pinInfo.district
-                            ? `, ${pinInfo.block}`
+                            ? `, ${trFormText(pinInfo.block)}`
                             : ""}
-                          {pinInfo.district ? `, ${pinInfo.district}` : ""}
-                          {pinInfo.state ? ` (${pinInfo.state})` : ""}
+                          {pinInfo.district ? `, ${trFormText(pinInfo.district)}` : ""}
+                          {pinInfo.state ? ` (${tState(pinInfo.state)})` : ""}
                         </span>
                       </div>
                       {pinInfo.post_offices?.length > 1 && (
@@ -364,7 +383,7 @@ export default function Form() {
                           >
                             {pinInfo.post_offices.map((po) => (
                               <option key={po} value={po}>
-                                {po}
+                                {trFormText(po)}
                               </option>
                             ))}
                           </select>
@@ -379,7 +398,7 @@ export default function Form() {
                   help={f("state_help")}
                   value={form.state}
                   onChange={(v) => updateForm({ state: v, district: "" })}
-                  options={[selectPlaceholder, ...stateNames.map((s) => ({ value: s, label: s }))]}
+                  options={[selectPlaceholder, ...stateNames.map((s) => ({ value: s, label: tState(s) }))]}
                   error={errors.state}
                 />
                 <HelpField
@@ -451,7 +470,7 @@ export default function Form() {
                   help={f("certificate_state_help")}
                   value={form.certificate_state}
                   onChange={(v) => updateForm({ certificate_state: v })}
-                  options={[selectPlaceholder, ...stateNames.map((s) => ({ value: s, label: s }))]}
+                  options={[selectPlaceholder, ...stateNames.map((s) => ({ value: s, label: tState(s) }))]}
                 />
                 <div style={{ gridColumn: "1 / -1" }}>
                   <HelpField
@@ -716,7 +735,7 @@ export default function Form() {
               onClick={handleNext}
               disabled={busy}
             >
-              <span>{busy ? "..." : step < 3 ? f("next") : f("submit")}</span>
+              <span>{busy ? f("findingMatches") : step < 3 ? f("next") : f("submit")}</span>
               <Icon name="arrow" size={18} />
             </button>
           </div>

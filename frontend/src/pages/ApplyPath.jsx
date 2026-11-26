@@ -5,14 +5,20 @@ import { api } from "../api.js";
 import { useAppState } from "../state.jsx";
 import { useI18n, useTranslatedScheme, useTranslatedSchemes } from "../i18n.jsx";
 
-function buildChannelConfig(channelKey, scheme, t) {
+function buildChannelConfig(channelKey, scheme, t, tState) {
   const officialUrl =
     scheme?.official_portal_url || scheme?.govt_portal_url || "https://www.jansamarth.in/";
   const bankUrl = scheme?.bank_portal_url || "";
   const schemeQuery = scheme?.code ? `?scheme=${encodeURIComponent(scheme.code)}` : "";
+  const rawState = scheme?.applicable_states?.[0];
+  const stateDisplay = rawState
+    ? rawState === "ALL"
+      ? t("detail.allIndia")
+      : tState(rawState)
+    : t("paths.stateFallback");
   const c = (sub) => t(`paths.channels.${channelKey}.${sub}`, {
     scheme: scheme?.name || t("paths.yourMatchedScheme"),
-    state: scheme?.applicable_states?.[0] || t("paths.stateFallback"),
+    state: stateDisplay,
   });
 
   const configs = {
@@ -136,7 +142,7 @@ function buildChannelConfig(channelKey, scheme, t) {
 }
 
 export default function ApplyPath() {
-  const { t } = useI18n();
+  const { t, tState } = useI18n();
   const {
     scheme,
     setScheme,
@@ -323,7 +329,7 @@ export default function ApplyPath() {
     ? selectedScheme.available_channels
     : [];
   const channels = allowedChannelKeys
-    .map((k) => buildChannelConfig(k, selectedScheme, t))
+    .map((k) => buildChannelConfig(k, selectedScheme, t, tState))
     .filter(Boolean);
 
   return (

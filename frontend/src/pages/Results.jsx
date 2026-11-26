@@ -12,7 +12,7 @@ import {
 } from "../utils/schemeHelpers.js";
 
 export default function Results() {
-  const { t, lang } = useI18n();
+  const { t, tState, tCategory, lang } = useI18n();
   const { result, setResult, form, setScheme } = useAppState();
   const [activeTab, setActiveTab] = useState("all");
   const [compareCodes, setCompareCodes] = useState([]);
@@ -38,7 +38,7 @@ export default function Results() {
       .then((res) => {
         if (!cancelled && res) setResult(res);
       })
-      .catch(() => {});
+      .catch(() => { });
     return () => {
       cancelled = true;
     };
@@ -50,7 +50,7 @@ export default function Results() {
   const matched = useTranslatedSchemes(rawMatched);
   const rejected = useTranslatedSchemes(rawRejected);
 
-  const userState = form.state || t("paths.stateFallback");
+  const userState = form.state ? tState(form.state) : t("paths.stateFallback");
   const centralSchemes = useMemo(() => matched.filter((s) => (s.level || "central") === "central"), [matched]);
   const stateSchemes = useMemo(() => matched.filter((s) => s.level === "state"), [matched]);
 
@@ -121,7 +121,7 @@ export default function Results() {
           <div>
             <span>{t("results.profileLabel")} </span>
             <strong>
-              {form.state} • {form.caste_category || "General"} •{" "}
+              {tState(form.state)} • {tCategory(form.caste_category || "General")} •{" "}
               <bdi>₹{Number(form.loan_amount || 0).toLocaleString("en-IN")}</bdi>
             </strong>
           </div>
@@ -376,7 +376,7 @@ export default function Results() {
         setCompareNotice={setCompareNotice}
         onToggleCompare={toggleCompare}
         loanAmountBasis={form.loan_amount || 500000}
-        profileSummary={`${form.state || t("allSchemes.allIndia")} (${form.caste_category || t("form.cat_general")})`}
+        profileSummary={`${form.state ? tState(form.state) : t("allSchemes.allIndia")} (${tCategory(form.caste_category || "General")})`}
         setScheme={setScheme}
       />
     </div>

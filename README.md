@@ -107,12 +107,12 @@ cd Saksham_Setu
 # 2. Install Python dependencies
 pip install -r requirements.txt
 
-# 3. Configure environment variables (never commit .env)
-cp .env.example .env
-# Edit .env and set:
-#   GROQ_API_KEY=gsk_your_actual_key_here
-#   GROQ_MODEL=llama-3.3-70b-versatile
-#   DJANGO_SECRET_KEY=your-local-secret-key
+# 3. Create environment variables in .env (never commit .env)
+cat << 'EOF' > .env
+GROQ_API_KEY=gsk_your_actual_key_here
+GROQ_MODEL=llama-3.3-70b-versatile
+DJANGO_SECRET_KEY=your-local-secret-key
+EOF
 
 # 4. Run database migrations and seed the 66-scheme & branch catalog
 python manage.py migrate

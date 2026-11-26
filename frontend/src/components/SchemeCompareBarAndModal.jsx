@@ -22,7 +22,7 @@ export default function SchemeCompareBarAndModal({
   profileSummary,
   setScheme,
 }) {
-  const { t } = useI18n();
+  const { t, tCategory } = useI18n();
   const navigate = useNavigate();
   const translatedCompared = useTranslatedSchemes(comparedSchemes);
   const [compareDetails, setCompareDetails] = useState({});
@@ -195,7 +195,7 @@ export default function SchemeCompareBarAndModal({
                               <strong>
                                 {s.score
                                   ? `${s.score}%`
-                                  : (s.eligible_categories || []).join(", ") || t("allSchemes.allOption")}
+                                  : (s.eligible_categories || []).map((c) => tCategory(c)).join(", ") || t("allSchemes.allOption")}
                               </strong>
                             </dd>
                           </div>

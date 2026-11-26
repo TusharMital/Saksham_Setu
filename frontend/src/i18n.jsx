@@ -7,6 +7,7 @@ const LANG_STORAGE_KEY = "ss-lang";
 const BUNDLE_CACHE_PREFIX = "ss-i18n-bundle-v1-";
 const LANGUAGES_CACHE_KEY = "ss-i18n-languages-v1";
 const SCHEME_CACHE_PREFIX = "ss-scheme-i18n-v1-";
+const TEXT_CACHE_PREFIX = "ss-text-i18n-v1-";
 
 const LOCAL_DICTS = { en, hi };
 
@@ -203,11 +204,49 @@ export function I18nProvider({ children }) {
       return text;
     };
 
+    const tState = (stateName) => {
+      if (!stateName) return "";
+      const key = String(stateName).trim();
+      if (key.toUpperCase() === "ALL") {
+        const allVal = lookup(dict, "detail.allIndia") ?? lookup(en, "detail.allIndia");
+        return typeof allVal === "string" ? allVal : key;
+      }
+      const val = lookup(dict, `states.${key}`);
+      if (typeof val === "string" && val.trim()) return val;
+      return key;
+    };
+
+    const tCategory = (cat) => {
+      if (!cat) return "";
+      const norm = String(cat).trim().toLowerCase();
+      const mapKey =
+        norm === "sc"
+          ? "form.cat_sc"
+          : norm === "st"
+            ? "form.cat_st"
+            : norm === "obc"
+              ? "form.cat_obc"
+              : norm === "ews"
+                ? "form.cat_ews"
+                : norm === "general"
+                  ? "form.cat_general"
+                  : norm === "minority"
+                    ? "form.cat_minority"
+                    : "";
+      if (mapKey) {
+        const val = lookup(dict, mapKey) ?? lookup(en, mapKey);
+        if (typeof val === "string" && val.trim()) return val;
+      }
+      return String(cat);
+    };
+
     return {
       lang,
       setLang,
       toggle,
       t,
+      tState,
+      tCategory,
       dict,
       speakLang: currentLanguageMeta.speech_locale || "en-IN",
       direction: currentLanguageMeta.direction || "ltr",
@@ -259,13 +298,23 @@ function mergeSchemeTranslation(scheme, tr) {
   if (!scheme || !tr) return scheme;
   return {
     ...scheme,
+    raw_sectors: scheme.raw_sectors || scheme.sectors,
+    raw_available_channels: scheme.raw_available_channels || scheme.available_channels,
     name: tr.name || scheme.name,
     agency: tr.agency || scheme.agency,
+    govt_level: tr.govt_level || scheme.govt_level,
+    state_name: tr.state_name || scheme.state_name,
     overview: tr.overview || scheme.overview,
     description: tr.overview || scheme.description,
     interest_rate_note: tr.interest_rate_note || scheme.interest_rate_note,
     subsidy_margin_note: tr.subsidy_margin_note || scheme.subsidy_margin_note,
     subsidy_note: tr.subsidy_note || tr.subsidy_margin_note || scheme.subsidy_note,
+    sectors_localized:
+      Array.isArray(tr.sectors) && tr.sectors.length ? tr.sectors : scheme.sectors_localized,
+    available_channels_localized:
+      Array.isArray(tr.available_channels) && tr.available_channels.length
+        ? tr.available_channels
+        : scheme.available_channels_localized,
     key_highlights:
       Array.isArray(tr.key_highlights) && tr.key_highlights.length
         ? tr.key_highlights
@@ -361,4 +410,113 @@ export function useTranslatedScheme(scheme) {
   const arr = useMemo(() => (scheme ? [scheme] : []), [scheme]);
   const translated = useTranslatedSchemes(arr);
   return scheme ? translated[0] || scheme : null;
+}
+
+const memoryTextTransCache = new Map();
+
+function readTextTransCache(lang) {
+  if (memoryTextTransCache.has(lang)) return memoryTextTransCache.get(lang);
+  try {
+    const raw = localStorage.getItem(`${TEXT_CACHE_PREFIX}${lang}`);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object") {
+        memoryTextTransCache.set(lang, parsed);
+        return parsed;
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+  return {};
+}
+
+function writeTextTransCache(lang, entries) {
+  const existing = readTextTransCache(lang);
+  const merged = { ...existing, ...entries };
+  memoryTextTransCache.set(lang, merged);
+  try {
+    localStorage.setItem(`${TEXT_CACHE_PREFIX}${lang}`, JSON.stringify(merged));
+  } catch {
+    /* ignore */
+  }
+  return merged;
+}
+
+export function useTranslatedTexts(texts) {
+  const { lang } = useI18n();
+  const [textMap, setTextMap] = useState(() =>
+    lang === "en" ? {} : readTextTransCache(lang)
+  );
+  const inflightTextRef = useRef(new Set());
+
+  const cleanList = useMemo(() => {
+    if (!Array.isArray(texts)) return [];
+    const seen = new Set();
+    const out = [];
+    for (const raw of texts) {
+      const s = typeof raw === "string" ? raw.trim() : "";
+      if (s && !seen.has(s)) {
+        seen.add(s);
+        out.push(s);
+      }
+    }
+    return out;
+  }, [texts]);
+
+  const listKey = useMemo(() => cleanList.join("\u0001"), [cleanList]);
+
+  useEffect(() => {
+    if (lang === "en" || !listKey) {
+      setTextMap({});
+      return;
+    }
+    const cached = readTextTransCache(lang);
+    setTextMap(cached);
+
+    const missing = cleanList.filter(
+      (txt) => !cached[txt] && !inflightTextRef.current.has(`${lang}:${txt}`)
+    );
+    if (missing.length === 0) return;
+
+    let cancelled = false;
+    missing.forEach((txt) => inflightTextRef.current.add(`${lang}:${txt}`));
+
+    const batches = [];
+    for (let i = 0; i < missing.length; i += 40) {
+      batches.push(missing.slice(i, i + 40));
+    }
+
+    Promise.all(
+      batches.map((batch) =>
+        api
+          .translateTexts(lang, batch)
+          .then((res) => {
+            if (res?.translations && typeof res.translations === "object") {
+              const updated = writeTextTransCache(lang, res.translations);
+              if (!cancelled) {
+                setTextMap(updated);
+              }
+            }
+          })
+          .catch(() => {})
+          .finally(() => {
+            batch.forEach((txt) => inflightTextRef.current.delete(`${lang}:${txt}`));
+          })
+      )
+    );
+
+    return () => {
+      cancelled = true;
+    };
+  }, [lang, listKey, cleanList]);
+
+  return useCallback(
+    (raw) => {
+      if (!raw || lang === "en") return raw;
+      const key = String(raw).trim();
+      return textMap[key] || raw;
+    },
+    [lang, textMap]
+  );
 }
