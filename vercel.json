@@ -2,34 +2,32 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "services": {
     "frontend": {
-      "root": "frontend/",
+      "root": "frontend",
       "framework": "vite"
     },
     "backend": {
       "root": ".",
-      "entrypoint": "api/index.py",
-      "buildCommand": "python3 manage.py migrate --noinput && python3 manage.py seed_data",
-      "includeFiles": [
-        "db.sqlite3",
-        "data/**",
-        "branches.json",
-        "schemes.json",
-        "pin_lookup.json"
-      ]
+      "framework": "django"
     }
   },
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": { "service": "backend" }
+      "destination": {
+        "service": "backend"
+      }
     },
     {
       "source": "/admin/(.*)",
-      "destination": { "service": "backend" }
+      "destination": {
+        "service": "backend"
+      }
     },
     {
       "source": "/((?!api/|admin/).*)",
-      "destination": { "service": "frontend" }
+      "destination": {
+        "service": "frontend"
+      }
     }
   ]
 }

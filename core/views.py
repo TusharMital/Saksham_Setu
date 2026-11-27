@@ -693,7 +693,7 @@ class DistrictsListView(APIView):
 
 class HealthView(APIView):
     def get(self, request):
-        db_error = os.environ.get("_VERCEL_DB_INIT_ERROR") or None
+        db_error = os.environ.get("_VERCEL_BOOT_ERROR") or os.environ.get("_VERCEL_DB_INIT_ERROR") or None
         try:
             schemes_count = LoanScheme.objects.count()
         except Exception as exc:

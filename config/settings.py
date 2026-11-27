@@ -96,7 +96,7 @@ if _database_url:
                 "NAME": BASE_DIR / "db.sqlite3",
             }
         }
-elif os.environ.get("VERCEL"):
+elif os.environ.get("VERCEL") or os.environ.get("VERCEL_ENV"):
     _src_db = BASE_DIR / "db.sqlite3"
     _tmp_db = Path("/tmp/db.sqlite3")
     try:
@@ -109,7 +109,7 @@ elif os.environ.get("VERCEL"):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": str(_tmp_db),
+            "NAME": "/tmp/db.sqlite3",
         }
     }
 else:
@@ -128,7 +128,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "/static/"
-STATIC_ROOT = Path("/tmp/staticfiles") if os.environ.get("VERCEL") else BASE_DIR / "staticfiles"
+STATIC_ROOT = Path("/tmp/staticfiles") if (os.environ.get("VERCEL") or os.environ.get("VERCEL_ENV")) else BASE_DIR / "staticfiles"
 try:
     os.makedirs(STATIC_ROOT, exist_ok=True)
 except OSError:
@@ -136,6 +136,7 @@ except OSError:
 FRONTEND_DIST = BASE_DIR / "frontend" / "dist"
 STATICFILES_DIRS = [FRONTEND_DIST] if FRONTEND_DIST.exists() else []
 WHITENOISE_ROOT = FRONTEND_DIST if FRONTEND_DIST.exists() else BASE_DIR
+WHITENOISE_USE_FINDERS = True
 STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
